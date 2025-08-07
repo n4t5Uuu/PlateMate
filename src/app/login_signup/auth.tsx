@@ -4,12 +4,11 @@ import { useState } from "react";
 import { Mail, Lock, User} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
 import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
-import Logo from "../../components/logo/platemate-logo";
-import InputField from "@/components/custom_components/login_signup_input";
+import {AuthLogo} from "../../components/logo/platemate-logo";
+import InputField from "@/components/custom_components/login-signup-input";
 
 export default function Auth() {
     const [formData, setFormData] = useState({
@@ -34,7 +33,7 @@ export default function Auth() {
     <div className="w-screen min-h-screen border-4 flex flex-col items-center justify-center bg-gradient-to-br
                         from-red-50 via-white to-gray-50">
         <div className="w-full max-w-md">
-            <Logo />
+            <AuthLogo />
             
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-md">
                 <CardHeader className="space-y-1 pb-4">
