@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 
 import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
 import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
-import {AuthLogo} from "../../components/logo/platemate-logo";
-import InputField from "@/components/custom_components/login-signup-input";
+import {AuthLogo} from "./logo/platemate-logo";
+import InputField from "@/app/login-signup-input";
 
 export default function Auth() {
     const [formData, setFormData] = useState({

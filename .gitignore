@@ -40,5 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# ignores the checklist file as it's not needed in the repository
+# but can be used locally for tracking tasks
+checklist.txt
 
-
+# ignore the PocketBase executable
+pocketbase.exe

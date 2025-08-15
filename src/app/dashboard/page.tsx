@@ -1,4 +1,4 @@
-import Sidebar from "@/components/custom_components/sidebar";
+import Sidebar from "@/app/dashboard/sidebar";
 
 export default function dashboard() {
     return (
