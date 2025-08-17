@@ -45,4 +45,4 @@ next-env.d.ts
 checklist.txt
 
 # ignore the PocketBase executable
-pocketbase.exe
+

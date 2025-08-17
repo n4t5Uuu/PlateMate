@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
-export function statsCard() {
+export function StatsCard() {
     const sampleStats =[
         {
             name: "Current Projects"
@@ -23,7 +23,7 @@ export function statsCard() {
     )
 }
 
-export function projectCard() {
+export function ProjectCard() {
     const sampleProjects = [
         {
             name: "Project A"
