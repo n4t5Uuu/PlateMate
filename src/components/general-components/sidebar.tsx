@@ -13,7 +13,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarRail, 
-} from "../../components/ui/sidebar";
+} from "../ui/sidebar";
 
 import {
     Dialog,
@@ -22,12 +22,12 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger
-} from "../../components/ui/dialog";
+} from "../ui/dialog";
 
-import {Avatar, AvatarFallback, AvatarImage} from "../../components/ui/avatar";
+import {Avatar, AvatarFallback, AvatarImage} from "../ui/avatar";
 import {Home, FolderOpen, Pin, Calendar, Cog, GroupIcon, Plus, Trash, CalendarCheck2, LayoutTemplate, LucideIcon} from "lucide-react";
 
-import {SidebarLogo} from "../logo/platemate-logo"
+import {SidebarLogo} from "../../app/logo/platemate-logo"
 
 type NavItems = {
     name: string,
@@ -99,9 +99,6 @@ const shortcutItems: NavItems[] = [
     }
 ]
 
-//for now the sample projects are stored in a list containing an object
-// when ui is done, get the projects in the database and store it somewhere (maybe an list containing multiple objects?)
-// so we can display it
 const samplePinnedProjects: NavItems[] = [
     {
         name: "Civic Mall",
@@ -123,9 +120,6 @@ const samplePinnedProjects: NavItems[] = [
     }
 ]
 
-//for now the sample projects are stored in a list containing an object
-// when ui is done, get the projects in the database and store it somewhere (maybe an list containing multiple objects?)
-// so we can display it
 const sampleWorkspace: NavItems[] =[
     {
         name: "Civic Mall",
@@ -153,9 +147,7 @@ const sampleWorkspace: NavItems[] =[
     }
 ]
 
-export default function SideBar({...props} : React.ComponentProps<typeof Sidebar>) {
-
-    //TODO: change the color of the sidebar
+export default function AppSideBar({...props} : React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar variant="inset" {...props}>
             <SidebarHeader>
@@ -205,19 +197,19 @@ export default function SideBar({...props} : React.ComponentProps<typeof Sidebar
                 </SidebarGroup>
             </SidebarContent>
             
-            {/*for the footer, this is where the settings and profile of the user*/}
+            
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
+                        <SidebarMenuButton asChild> 
                             <div className="flex items-center gap-3 p-2">
                                 <Avatar>
                                     <AvatarImage />
-                                    <AvatarFallback>AO</AvatarFallback> {/**here put the initial of the first and last name of the user */}
+                                    <AvatarFallback>AY</AvatarFallback> 
                                 </Avatar>
                                 <div className="flex flex-col text-left">
-                                    <span className="text-sm font-medium">Alden Olmedo</span>
-                                    <span className="text-xs font-muted-foreground">Architect</span>
+                                    <span className="text-sm font-medium">Alessandra Yadao</span>
+                                    <span className="text-xs text-gray-500">Architect</span> 
                                 </div>
                             </div>
                         </SidebarMenuButton>
