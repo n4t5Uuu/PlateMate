@@ -15,6 +15,7 @@ import {
     SidebarRail, 
 } from "../ui/sidebar";
 
+//use dialog for the profile of the user??
 import {
     Dialog,
     DialogContent,
@@ -102,18 +103,6 @@ const shortcutItems: NavItems[] = [
 const samplePinnedProjects: NavItems[] = [
     {
         name: "Civic Mall",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    },
-    {
-        name: "Skyscraper",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    },
-    {
-        name: "Riyadh Park",
         url: "#",
         icon: Cog,
         isActive: false
@@ -205,7 +194,7 @@ export default function AppSideBar({...props} : React.ComponentProps<typeof Side
                             <div className="flex items-center gap-3 p-2">
                                 <Avatar>
                                     <AvatarImage />
-                                    <AvatarFallback>AY</AvatarFallback> 
+                                    <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400">AY</AvatarFallback> 
                                 </Avatar>
                                 <div className="flex flex-col text-left">
                                     <span className="text-sm font-medium">Alessandra Yadao</span>
@@ -228,6 +217,6 @@ export default function AppSideBar({...props} : React.ComponentProps<typeof Side
 
             <SidebarRail />
         </Sidebar>
-)
+    )
 }
 
