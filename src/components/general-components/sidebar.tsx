@@ -194,7 +194,7 @@ export default function AppSideBar({...props} : React.ComponentProps<typeof Side
                             <div className="flex items-center gap-3 p-2">
                                 <Avatar>
                                     <AvatarImage />
-                                    <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400">AY</AvatarFallback> 
+                                    <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">AY</AvatarFallback> 
                                 </Avatar>
                                 <div className="flex flex-col text-left">
                                     <span className="text-sm font-medium">Alessandra Yadao</span>
@@ -204,7 +204,7 @@ export default function AppSideBar({...props} : React.ComponentProps<typeof Side
                         </SidebarMenuButton>
                     </SidebarMenuItem>
 
-                    <SidebarMenuItem>
+                    <SidebarMenuItem className="mt-1">
                         <SidebarMenuButton asChild>
                             <a href="#" className= ""> {/**edit this */}
                                 <Cog />

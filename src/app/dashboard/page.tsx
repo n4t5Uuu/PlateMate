@@ -1,10 +1,81 @@
 import AppSidebar from "@/components/general-components/sidebar";
-import {StatsCard, ProjectCard} from "./dashboard-card";
 import SearchBar from "../../components/general-components/search-bar";
+import StatsCard from "./stats-card";
+import ProjectCard from "./project-card";
 
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import {Button} from "@/components/ui/button";
 import {Plus, Bell, FolderOpen, Clock, CheckCircle, Users, Funnel} from "lucide-react";
+
+const sampleProjects = [
+    {
+        projectName: "Downtom Office Complex",
+        client: "Wyvern Corp",
+        progress: 75,
+        dueDate: "Dec 15, 2026",
+        status: "Active" as const,
+        teamMembers: 8,
+        priority: "high" as const
+    },
+    {
+        projectName: "Al Qasr Mall",
+        client: "Alden Olmedo",
+        progress: 55,
+        dueDate: "Dec 30, 2030",
+        status: "Delayed" as const,
+        teamMembers: 6,
+        priority: "medium" as const
+    },
+    {
+        projectName: "Avenues",
+        client: "Alexa Yadao",
+        progress: 100,
+        dueDate: "Dec 31, 2030",
+        status: "Completed" as const,
+        teamMembers: 6,
+        priority: "low" as const
+    },
+    {
+        projectName: "The Line",
+        client: "King Salman",
+        progress: 90,
+        dueDate: "Dec 30, 2030",
+        status: "Review" as const,
+        teamMembers: 20,
+        priority: "high" as const
+    }
+];
+
+const statsCardData = [
+    {
+        title: "Active Projects",
+        value: "12",
+        change: "+2 from last month",
+        changeType: "positive" as const,
+        Icon: FolderOpen
+    },
+    {
+        title: "Pending Tasks",
+        value: "24",
+        change: "+5 from yesterday",
+        changeType: "neutral" as const,
+        Icon: Clock
+    },
+    {
+        title: "Team Members",
+        value: "18",
+        change: "+3 new this week",
+        changeType: "positive" as const,
+        Icon: Users
+    },
+    {
+        title: "Completed",
+        value: "8",
+        change: "+2 this week",
+        changeType: "positive" as const,
+        Icon: CheckCircle
+    }
+]
 
 export default function dashboard() {
     return (
@@ -28,7 +99,7 @@ export default function dashboard() {
                                 <Bell className="h-4 w-4"/>
                             </Button>
 
-                            <Button className="bg-gradient-to-br from-red-400 to-red-600 cursor-pointer h-11 w-40 hover:from-red-500 hover:to-red-800">
+                            <Button variant="outline" className="bg-gradient-to-br from-red-400 to-red-600 cursor-pointer h-11 w-40 hover:from-red-500 hover:to-red-800 text-white">
                                 <Plus className="w-4 h-4 mr-2"/>
                                 New Project
                             </Button>
@@ -39,37 +110,16 @@ export default function dashboard() {
                 {/*Main Content*/}
                 <div className="flex-1 space-y-6 p-6">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <StatsCard 
-                            title="Active Projects"
-                            value="12"
-                            change="+2 from last month"
-                            changeType="positive"
-                            Icon={FolderOpen}
-                        />
-
-                        <StatsCard 
-                            title="Pending Tasks"
-                            value="24"
-                            change="+5 from yesterday"
-                            changeType="neutral"
-                            Icon={Clock}
-                        />
-
-                        <StatsCard 
-                            title="Team Members"
-                            value="18"
-                            change="+3 new this week"
-                            changeType="positive"
-                            Icon={Users}
-                        />
-
-                        <StatsCard 
-                            title="Completed"
-                            value="8"
-                            change="+2 this week"
-                            changeType="positive"
-                            Icon={CheckCircle}
-                        />
+                        {statsCardData.map((data) => (
+                            <StatsCard 
+                                key={data.title}
+                                title={data.title}
+                                value={data.value}
+                                change={data.change}
+                                changeType={data.changeType}
+                                Icon={data.Icon}
+                            />
+                        ))}
                     </div>
 
                     <div className="grid gap-6 lg:grid-cols-3">
@@ -87,13 +137,26 @@ export default function dashboard() {
                                 </div>
                             </div>
 
-                            <div className="flex-1">
-
+                            <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-4 ">
+                                {/**placeholder yung key rn siguro and yung key is yung
+                                            id ng projects a database */}
+                                {sampleProjects.map((items) => (
+                                    <ProjectCard 
+                                        key={items.projectName} 
+                                        projectTitle={items.projectName}
+                                        clientName={items.client}
+                                        progress={items.progress}
+                                        dueDate={items.dueDate}
+                                        teamMembers={items.teamMembers}
+                                        status={items.status}
+                                        priority={items.priority}
+                                    />
+                                ))}
                             </div>
                         </div>
 
                         <div className="lg:col-span-1 border-3 border-black">
-
+                            
                         </div>
                     </div>
                 </div>

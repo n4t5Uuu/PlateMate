@@ -10,7 +10,7 @@ interface StatsCardProps {
     Icon: LucideIcon
 }
 
-export function StatsCard({title, value, change, changeType, Icon}: StatsCardProps) {
+export default function StatsCard({title, value, change, changeType, Icon}: StatsCardProps) {
     const changeColors = {
         positive: "text-green-600",
         negative: "text-red-600",
@@ -27,32 +27,6 @@ export function StatsCard({title, value, change, changeType, Icon}: StatsCardPro
             <CardContent className="-mt-5">
                 <div className="font-bold text-2xl">{value}</div>
                 <span className={`text-sm ${changeColors[changeType]}`}>{change}</span>
-            </CardContent>
-        </Card>
-    )
-}
-
-interface ProjectCardProps {
-    projectTitle: string
-    clientName: string
-    progress: number
-    dueDate: string
-    status: "active" | "review" | "completed" | "delayed"
-    teamMembers?: number
-    priority: "high" | "medium" | "low"
-}
-
-export function ProjectCard({projectTitle, clientName, progress, dueDate, status, 
-    teamMembers, priority}: ProjectCardProps) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>{projectTitle}</CardTitle>
-
-            </CardHeader>
-            
-            <CardContent>
-
             </CardContent>
         </Card>
     )
