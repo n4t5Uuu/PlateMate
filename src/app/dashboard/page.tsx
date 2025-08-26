@@ -159,7 +159,35 @@ export default function dashboard() {
                         <div className="lg:col-span-1">
                             <RecentActivity />
 
-                            
+                            <div className="space-y-2">
+                                <h3 className="text-lg font-semibold text-gray-900">This Week</h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-start justify-between p-3 rounded-lg bg-yellow-50">
+                                        <div className="flex flex-col">
+                                            <p className="text-yellow-800 font-semibold">Due Today</p>
+                                            <p className="text-sm text-yellow-600">3 tasks</p>
+                                        </div>
+                                        <h3 className="text-3xl text-yellow-800 font-semibold self-center">3</h3>
+                                    </div>
+
+                                    <div className="flex items-start justify-between p-3 rounded-lg bg-blue-50">
+                                        <div className="flex flex-col">
+                                            <p className="text-blue-800 font-semibold">Meetings</p>
+                                            <p className="text-sm text-blue-600">3 scheduled</p>
+                                        </div>
+                                        <h3 className="text-3xl text-blue-800 font-semibold self-center">3</h3>
+                                    </div>
+
+                                    <div className="flex items-start justify-between p-3 rounded-lg bg-red-50">
+                                        <div className="flex flex-col">
+                                            <p className="text-red-800 font-semibold">Overdue Tasks</p>
+                                            <p className="text-sm text-red-600">2 tasks</p>
+                                        </div>
+                                        <h3 className="text-3xl text-red-800 font-semibold self-center">2</h3>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

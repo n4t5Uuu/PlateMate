@@ -39,7 +39,7 @@ const sampleActivities = [
 
 export default function RecentActivity() {
     return (
-        <Card>
+        <Card className="mb-4">
             <CardHeader>
                 <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
             </CardHeader>
