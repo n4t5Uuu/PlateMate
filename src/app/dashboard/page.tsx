@@ -31,7 +31,7 @@ const sampleProjects = [
         projectName: "Avenues",
         client: "Alexa Yadao",
         progress: 100,
-        dueDate: "Dec 31, 2030",
+        dueDate: "Nov 31, 2030",
         status: "Completed" as const,
         teamMembers: 6,
         priority: "low" as const
@@ -162,6 +162,14 @@ export default function dashboard() {
                             <div className="space-y-2">
                                 <h3 className="text-lg font-semibold text-gray-900">This Week</h3>
                                 <div className="space-y-3">
+                                    <div className="flex items-start justify-between p-3 rounded-lg bg-green-50">
+                                        <div className="flex flex-col">
+                                            <p className="text-green-800 font-semibold">Completed Tasks</p>
+                                            <p className="text-sm text-green-600">5 tasks</p>
+                                        </div>
+                                        <h3 className="text-3xl text-green-800 font-semibold self-center">5</h3>
+                                    </div>
+
                                     <div className="flex items-start justify-between p-3 rounded-lg bg-yellow-50">
                                         <div className="flex flex-col">
                                             <p className="text-yellow-800 font-semibold">Due Today</p>
