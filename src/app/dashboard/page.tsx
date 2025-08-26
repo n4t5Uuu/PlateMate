@@ -2,6 +2,7 @@ import AppSidebar from "@/components/general-components/sidebar";
 import SearchBar from "../../components/general-components/search-bar";
 import StatsCard from "./stats-card";
 import ProjectCard from "./project-card";
+import RecentActivity from "./recent-activity";
 
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import {Button} from "@/components/ui/button";
@@ -155,7 +156,9 @@ export default function dashboard() {
                             </div>
                         </div>
 
-                        <div className="lg:col-span-1 border-3 border-black">
+                        <div className="lg:col-span-1">
+                            <RecentActivity />
+
                             
                         </div>
                     </div>
