@@ -4,13 +4,19 @@ import { useState } from "react";
 import { Mail, Lock, User} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
 import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
 import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
-import {AuthLogo} from "./logo/platemate-logo";
-import InputField from "@/app/login-signup-input";
+import {AuthLogo} from "../components/general-components/platemate-logo";
+import InputField from "@/components/general-components/login-signup-input";
+
+import {useAuth} from "@/hooks/use-auth";
+
 
 export default function Auth() {
+    const [isLoading, setIsLoading] = useState(false);
+    
+    const {login, signUp, signOut} = useAuth();
+
     const [formData, setFormData] = useState({
         firstName: "",
         middleName: "",
@@ -20,7 +26,6 @@ export default function Auth() {
         confirmPassword: ""
     });
 
-    //ask gpt here kung baket naaccess ung key kahit di siya naka enclosed sa double quotes
     const handleInputChange = (field: string) => 
         (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({

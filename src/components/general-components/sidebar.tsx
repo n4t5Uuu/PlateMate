@@ -28,7 +28,7 @@ import {
 import {Avatar, AvatarFallback, AvatarImage} from "../ui/avatar";
 import {Home, FolderOpen, Pin, Calendar, Cog, GroupIcon, Plus, Trash, CalendarCheck2, LayoutTemplate, LucideIcon} from "lucide-react";
 
-import {SidebarLogo} from "../../app/logo/platemate-logo"
+import {SidebarLogo} from "./platemate-logo"
 
 type NavItems = {
     name: string,

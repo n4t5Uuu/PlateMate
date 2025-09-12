@@ -8,6 +8,10 @@ import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sid
 import {Button} from "@/components/ui/button";
 import {Plus, Bell, FolderOpen, Clock, CheckCircle, Users, Funnel} from "lucide-react";
 
+export const metadata = {
+    title: "Dashboard"
+}
+
 const sampleProjects = [
     {
         projectName: "Downtom Office Complex",
@@ -100,7 +104,8 @@ export default function dashboard() {
                                 <Bell className="h-4 w-4"/>
                             </Button>
 
-                            <Button variant="outline" className="bg-gradient-to-br from-red-400 to-red-600 cursor-pointer h-11 w-40 hover:from-red-500 hover:to-red-800 text-white">
+                            <Button variant="outline" className="bg-gradient-to-br from-red-400 to-red-600 cursor-pointer h-11 w-40 
+                            hover:from-red-500 hover:to-red-800 text-white hover:text-white">
                                 <Plus className="w-4 h-4 mr-2"/>
                                 New Project
                             </Button>
