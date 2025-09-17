@@ -8,16 +8,23 @@ import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/compo
 import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
 import {AuthLogo} from "../components/general-components/platemate-logo";
 import InputField from "@/components/general-components/login-signup-input";
+import {toast} from "sonner";
 
 import {useAuth} from "@/hooks/use-auth";
 
 
-export default function Auth() {
+export default function AuthPage() {
     const [isLoading, setIsLoading] = useState(false);
     
-    const {login, signUp, signOut} = useAuth();
+    const {login, signUp, loading} = useAuth();
 
-    const [formData, setFormData] = useState({
+    const [loginData, setLoginData] = useState({
+        email: "",
+        password: ""
+    });
+
+    //login form state
+    const [signUpData, setSignUpData] = useState({
         firstName: "",
         middleName: "",
         lastName: "",
@@ -26,12 +33,46 @@ export default function Auth() {
         confirmPassword: ""
     });
 
-    const handleInputChange = (field: string) => 
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: e.target.value
-        }))
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        const result = await login(loginData.email, loginData.password);
+
+        if(result.success) {
+            toast.success("Logged in successfully", {
+                description: `Welcome back, User`, 
+                icon: `${User}`//place an icon here pero di me sure if tama toh
+            }) 
+        } else {
+            toast.error("Invalid Credentials");
+        }
+
+        setIsLoading(false);
+    }
+
+    const handleSignup = async(e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        if(signUpData.password !== signUpData.confirmPassword) {
+            toast.error("Passwords Mismatch", {
+                description: "Passwords do not match. Please try again"
+            })
+            return;
+        }
+
+        const fullName = signUpData.firstName.concat(" ", signUpData.lastName);
+
+        const result = await signUp(signUpData.email, signUpData.password, fullName);
+
+        if(result.success) {
+            toast.success("Account Created")
+        } else {
+            toast.error("Unexpected Error")
+        }
+
+        setIsLoading(false);
     }
     
     return (
@@ -64,12 +105,6 @@ export default function Auth() {
                             </TabsTrigger>
                         </TabsList>
 
-                        {/*
-                            TODO: when the user presses the login or sign in button 
-                            and there is nothing on the field, it will show an error message.
-                            Create a condition that checks if the field is empty and show an 
-                            error message 
-                        */}
                         <TabsContent value="Login" className="space-y-4 animate-in fade-in-50 slide-in-from-left-2 duration-300">
                             <InputField 
                                 id="login-email"
@@ -77,9 +112,8 @@ export default function Auth() {
                                 type="email"
                                 placeholder="Enter your email"
                                 Icon={Mail}
-                                onChange={handleInputChange("email")}
-                                //required
-                                //error={formData.email ? "" : "Email is required"}
+                                onChange={(e) => setLoginData((prev) => ({...prev, email: e.target.value}))}
+                                required
                             />
                             
                             <InputField 
@@ -88,9 +122,8 @@ export default function Auth() {
                                 type="password"
                                 placeholder="Enter your password"
                                 Icon={Lock}
-                                onChange={handleInputChange("password")}
-                                //required
-                                //error={formData.password ? "" : "Password is required"}
+                                onChange={(e) => setLoginData((prev) => ({...prev, password: e.target.value}))}
+                                required
                             />
 
                             <div className="flex items-center justify-between text-sm">
@@ -101,11 +134,15 @@ export default function Auth() {
                                 <button className="text-red-500 hover:text-red-600 font-medium">Forget password?</button>
                             </div>
 
-                            <Button className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
-                            to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
-                            text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
-                            transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer">
-                                Sign In
+                            <Button 
+                                className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
+                                to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
+                                text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
+                                transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
+                                type="submit"
+                                disabled={isLoading || loading}>
+                                    
+                                {isLoading ? "Logging In..." : "Log In"}
                             </Button>
                         </TabsContent>
 
@@ -116,9 +153,8 @@ export default function Auth() {
                                 type="text"
                                 placeholder="Enter your first name"
                                 Icon={User}
-                                onChange={handleInputChange("firstName")}
-                                //required
-                                //error={formData.email ? "" : "Email is required"}
+                                onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
+                                required
                             />
 
                             <InputField 
@@ -127,9 +163,8 @@ export default function Auth() {
                                 type="text"
                                 placeholder="Enter your middle name"
                                 Icon={User}
-                                onChange={handleInputChange("middleName")}
-                                //required
-                                //error={formData.email ? "" : "Email is required"}
+                                onChange={(e) => setSignUpData((data) => ({...data, middleName: e.target.value}))}
+                                required
                             />
 
                             <InputField 
@@ -138,9 +173,8 @@ export default function Auth() {
                                 type="text"
                                 placeholder="Enter your last name"
                                 Icon={User}
-                                onChange={handleInputChange("lastName")}
-                                //required
-                                //error={formData.email ? "" : "Email is required"}
+                                onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
+                                required
                             />
 
                             <InputField 
@@ -149,9 +183,8 @@ export default function Auth() {
                                 type="email"
                                 placeholder="Enter your email"
                                 Icon={Mail}
-                                onChange={handleInputChange("email")}
-                                //required
-                                //error={formData.email ? "" : "Email is required"}
+                                onChange={(e) => setSignUpData((data) => ({...data, email: e.target.value}))}
+                                required
                             />
 
                             <InputField 
@@ -160,9 +193,8 @@ export default function Auth() {
                                 type="password"
                                 placeholder="Create a password"
                                 Icon={Lock}
-                                onChange={handleInputChange("password")}
-                                //required
-                                //error={formData.password ? "" : "Password is required"}
+                                onChange={(e) => setSignUpData((data) => ({...data, password: e.target.value}))}
+                                required
                             />
 
                             <InputField 
@@ -171,9 +203,8 @@ export default function Auth() {
                                 type="password"
                                 placeholder="Confirm your password"
                                 Icon={Lock}
-                                onChange={handleInputChange("confirmPassword")}
-                                //required
-                                //error={formData.password ? "" : "Password is required"}
+                                onChange={(e) => setSignUpData((data) => ({...data, confirmPassword: e.target.value}))}
+                                required
                             />
 
                             <div className="flex items-start space-x-2 text-sm">
@@ -185,11 +216,15 @@ export default function Auth() {
                                 </span>
                             </div>
 
-                            <Button className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
-                            to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
-                            text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
-                            transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer">
-                                Create Account
+                            <Button 
+                                className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
+                                to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
+                                text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
+                                transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
+                                type="submit"
+                                disabled={isLoading || loading}>
+
+                                {isLoading ? "Creating Account..." : "Create Account"}
                             </Button>
                         </TabsContent>
                     </Tabs>

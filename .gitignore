@@ -44,5 +44,3 @@ next-env.d.ts
 # but can be used locally for tracking tasks
 /checklist
 
-# ignore the PocketBase executable
-

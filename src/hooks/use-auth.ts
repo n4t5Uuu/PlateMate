@@ -34,7 +34,7 @@ export function useAuth() {
 
     const signUp = async(email: string, password: string, fullName: string) => {
         setLoading(true);
-        const result = await authHelper.signUp(email, password, fullName);
+        const result = await authHelper.signUp(email, password, fullName); //maybe change it to first name and last name?
 
         if(result.success && result.user) {
             const mappedData: Omit<User, "id" | "updated" | "created"> = {

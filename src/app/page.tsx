@@ -1,4 +1,4 @@
-import Auth from './auth';
+import AuthPage from './auth-page';
 
 export const metadata = {
   title: "PlateMate Portal"
@@ -9,7 +9,7 @@ export default function Home() {
   return (
 
     <>
-      <Auth />
+      <AuthPage />
     </>
   )
     
