@@ -9,7 +9,7 @@ export interface Project {
     dueDate: string;
     status: "active" | "review" | "completed" | "delayed";
     priority: "low" | "medium" | "high";
-    teamMembers: string[]; //array of user ids
+    teamMembers?: string[]; //array of user ids
     owner: string; //user id
     created: string;
     updated: string;
@@ -26,7 +26,7 @@ export interface Activity {
     updated: string;
 }
 
-const dataHelper = {
+export const dataHelper = {
 
     async createProject(projectData: Omit<Project, 'id' | 'created' | 'updated'>) {
         try {

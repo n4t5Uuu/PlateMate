@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import {useRouter} from "next/navigation";
+
 import { Mail, Lock, User} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,12 +12,13 @@ import {AuthLogo} from "../components/general-components/platemate-logo";
 import InputField from "@/components/general-components/login-signup-input";
 import {toast} from "sonner";
 
-import {useAuth} from "@/hooks/use-auth";
+import useAuth from "@/hooks/use-auth";
 
 
 export default function AuthPage() {
     const [isLoading, setIsLoading] = useState(false);
-    
+
+    const router = useRouter();
     const {login, signUp, loading} = useAuth();
 
     const [loginData, setLoginData] = useState({
@@ -26,13 +29,13 @@ export default function AuthPage() {
     //login form state
     const [signUpData, setSignUpData] = useState({
         firstName: "",
-        middleName: "",
         lastName: "",
         email: "",
         password: "",
         confirmPassword: ""
     });
 
+    //dito na magreredirect?
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -41,9 +44,11 @@ export default function AuthPage() {
 
         if(result.success) {
             toast.success("Logged in successfully", {
-                description: `Welcome back, User`, 
-                icon: `${User}`//place an icon here pero di me sure if tama toh
+                description: `Welcome back, User`, //kunin sa pocketbase yung first name ng user
+                icon: `${User}`//place an icon here pero not sure if this correct
             }) 
+            
+            router.push("/dashboard")
         } else {
             toast.error("Invalid Credentials");
         }
@@ -147,35 +152,27 @@ export default function AuthPage() {
                         </TabsContent>
 
                         <TabsContent value="Sign Up" className="space-y-4 animate-in fade-in-50 slide-in-from-right-2 duration-300">
-                            <InputField 
-                                id="signup-first-name"
-                                label="First Name"
-                                type="text"
-                                placeholder="Enter your first name"
-                                Icon={User}
-                                onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
-                                required
-                            />
+                            <div className="flex items-center content-center gap-x-3">
+                                <InputField 
+                                    id="signup-first-name"
+                                    label="First Name"
+                                    type="text"
+                                    placeholder="Enter your first name"
+                                    Icon={User}
+                                    onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
+                                    required 
+                                />
 
-                            <InputField 
-                                id="signup-middle-name"
-                                label="Middle Name"
-                                type="text"
-                                placeholder="Enter your middle name"
-                                Icon={User}
-                                onChange={(e) => setSignUpData((data) => ({...data, middleName: e.target.value}))}
-                                required
-                            />
-
-                            <InputField 
-                                id="signup-last-name"
-                                label="Last Name"
-                                type="text"
-                                placeholder="Enter your last name"
-                                Icon={User}
-                                onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
-                                required
-                            />
+                                <InputField 
+                                    id="signup-last-name"
+                                    label="Last Name"
+                                    type="text"
+                                    placeholder="Enter your last name"
+                                    Icon={User}
+                                    onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
+                                    required
+                                />
+                            </div>
 
                             <InputField 
                                 id="signup-email"

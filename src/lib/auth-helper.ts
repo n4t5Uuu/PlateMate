@@ -1,6 +1,7 @@
 import pb from '@/lib/pb';
 import getErrorMessage from './error-message';
 
+//i think iseparate yung first and last name
 export interface User {
     id: string;
     email: string;
@@ -19,7 +20,7 @@ export const authHelper = {
             const data = {
                 email,
                 password, 
-                passwordConfirm: password,
+                passwordConfirm: password, //edit toh kasi i think need palitan
                 fullName, //i think break down parin ito to given name and last name
             }
             
