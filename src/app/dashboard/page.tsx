@@ -1,5 +1,5 @@
-import AppSidebar from "@/components/general-components/sidebar";
-import SearchBar from "../../components/general-components/search-bar";
+import AppSidebar from "@/components/page-components/sidebar";
+import SearchBar from "../../components/page-components/search-bar";
 import StatsCard from "./stats-card";
 import ProjectCard from "./project-card";
 import RecentActivity from "./recent-activity";
@@ -82,7 +82,7 @@ const statsCardData = [
     }
 ]
 
-export default function dashboard() {
+export default function Dashboard() {
     return (
         <SidebarProvider>
             <AppSidebar />

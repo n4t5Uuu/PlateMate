@@ -8,8 +8,8 @@ import { Mail, Lock, User} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
 import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
-import {AuthLogo} from "../components/general-components/platemate-logo";
-import InputField from "@/components/general-components/login-signup-input";
+import {AuthLogo} from "../components/page-components/platemate-logo";
+import InputField from "@/components/page-components/login-signup-input";
 import {toast} from "sonner";
 
 import useAuth from "@/hooks/use-auth";

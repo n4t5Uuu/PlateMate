@@ -1,7 +1,7 @@
 import {NextResponse} from 'next/server';
 import {authHelper} from "@/lib/auth-helper";
 
-async function POST(req: Request) {
+export async function POST(req: Request) {
     const {email, password, fullName} = await req.json();
 
     const result = await authHelper.signUp(email, password, fullName);
