@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  nextjs:
+    build: ./nextjs   # folder where your Next.js Dockerfile is
+    container_name: nextjs_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - pocketbase
+
+  pocketbase:
+    build: ./pocketbase   # folder where your PocketBase Dockerfile is
+    container_name: pb_app
+    restart: always
+    ports:
+      - "8090:8090"
+    volumes:
+      - pb_data:/pb/pb_data  # persistent storage for database files
+
+volumes:
+  pb_data:
