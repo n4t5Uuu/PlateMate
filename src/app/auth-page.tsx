@@ -1,25 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import {useRouter} from "next/navigation";
-
-import { Mail, Lock, User} from "lucide-react";
-
+import { useRouter } from "next/navigation";
+import { Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {Card, CardContent, CardHeader, CardTitle, CardDescription} from "@/components/ui/card";
-import {Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
-import {AuthLogo} from "../components/page-components/platemate-logo";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { AuthLogo } from "@/components/page-components/platemate-logo";
 import InputField from "@/components/page-components/login-signup-input";
-import {toast} from "sonner";
-
+import { toast } from "sonner";
 import useAuth from "@/hooks/use-auth";
-
 
 export default function AuthPage() {
     const [isLoading, setIsLoading] = useState(false);
-
+    const {loading} = useAuth();
     const router = useRouter();
-    const {login, signUp, loading} = useAuth();
 
     const [loginData, setLoginData] = useState({
         email: "",
@@ -35,46 +30,87 @@ export default function AuthPage() {
         confirmPassword: ""
     });
 
-    //dito na magreredirect?
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        const result = await login(loginData.email, loginData.password);
+        try {
+            const res = await fetch("api/auth/login", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    email: loginData.email,
+                    password: loginData.password
+                }),
+            })
 
-        if(result.success) {
-            toast.success("Logged in successfully", {
-                description: `Welcome back, User`, //kunin sa pocketbase yung first name ng user
-                icon: `${User}`//place an icon here pero not sure if this correct
-            }) 
-            
-            router.push("/dashboard")
-        } else {
-            toast.error("Invalid Credentials");
+            const result = await res.json();
+
+            if(result.success) {
+                toast.success("Logged In Successfully", {
+                    description: `Welcome back, ${result.user.fullName.split(" ")[0] || "User"}!`,
+                });
+
+                router.push("/dashboard");
+            } else {
+                toast.error("Login Failed", {
+                    description: result.error || "Please check your credentials and try again."
+                });
+            }
+        } catch (err) {
+            toast.error("Login Failed", {
+                description: "An unexpected error occurred. Please try again."
+            });
+            console.error(err);
         }
 
         setIsLoading(false);
     }
 
-    const handleSignup = async(e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        if(signUpData.password !== signUpData.confirmPassword) {
-            toast.error("Passwords Mismatch", {
-                description: "Passwords do not match. Please try again"
-            })
+        if (signUpData.password !== signUpData.confirmPassword) {
+            toast.error("Passwords mismatch", {
+                description: "Passwords do not match. Please try again."
+            });
+            setIsLoading(false);
             return;
         }
 
-        const fullName = signUpData.firstName.concat(" ", signUpData.lastName);
+        try {
+            const res = await fetch("api/auth/signup", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    email: signUpData.email,
+                    password: signUpData.password,
+                    fullName: `${signUpData.firstName} ${signUpData.lastName}`
+                })
+            });
 
-        const result = await signUp(signUpData.email, signUpData.password, fullName);
+            const result = await res.json();
 
-        if(result.success) {
-            toast.success("Account Created")
-        } else {
-            toast.error("Unexpected Error")
+            if(result.success) {
+                toast.success("Account Created Successfully", {
+                    //sending of email would be handled by pocketbase
+                    description: "Please verify your email, then log in to continue."
+                });
+                
+                //redirects to auth page to log in again
+                router.push("/");
+            } else {
+                toast.error("Signup Failed", {
+                    description: result.error || "An error occurred. Please try again."
+                });
+            }
+
+        } catch (err) {
+            toast.error("Signup Failed", {
+                description: "Server or Network error. Please try again later."
+            });
+            console.error(err);
         }
 
         setIsLoading(false);
@@ -111,47 +147,69 @@ export default function AuthPage() {
                         </TabsList>
 
                         <TabsContent value="Login" className="space-y-4 animate-in fade-in-50 slide-in-from-left-2 duration-300">
-                            <InputField 
-                                id="login-email"
-                                label="Email"
-                                type="email"
-                                placeholder="Enter your email"
-                                Icon={Mail}
-                                onChange={(e) => setLoginData((prev) => ({...prev, email: e.target.value}))}
-                                required
-                            />
+                            <form onSubmit={handleLogin} className="space-y-4">
+                                <InputField 
+                                    id="login-email"
+                                    label="Email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    Icon={Mail}
+                                    onChange={(e) => setLoginData((prev) => ({...prev, email: e.target.value}))}
+                                    required
+                                />
                             
-                            <InputField 
-                                id="login-password"
-                                label="Password"
-                                type="password"
-                                placeholder="Enter your password"
-                                Icon={Lock}
-                                onChange={(e) => setLoginData((prev) => ({...prev, password: e.target.value}))}
-                                required
-                            />
+                                <InputField 
+                                    id="login-password"
+                                    label="Password"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    Icon={Lock}
+                                    onChange={(e) => setLoginData((prev) => ({...prev, password: e.target.value}))}
+                                    required
+                                />
 
-                            <div className="flex items-center justify-between text-sm">
-                                <label className="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" className="rounded border-gray-300 text-red-500 focus:ring-red" />
-                                    <span className="text-gray-600">Remember me</span>
-                                </label>
-                                <button className="text-red-500 hover:text-red-600 font-medium">Forget password?</button>
-                            </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input type="checkbox" className="rounded border-gray-300 text-red-500 focus:ring-red" />
+                                        <span className="text-gray-600">Remember me</span>
+                                    </label>
+                                    <button className="text-red-500 hover:text-red-600 font-medium">Forget password?</button>
+                                </div>
 
-                            <Button 
-                                className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
-                                to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
-                                text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
-                                transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
-                                type="submit"
-                                disabled={isLoading || loading}>
-                                    
-                                {isLoading ? "Logging In..." : "Log In"}
-                            </Button>
+                                <Button 
+                                    className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
+                                    to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
+                                    text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
+                                    transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
+                                    type="submit"
+                                    disabled={isLoading || loading}>
+                                        
+                                    {isLoading ? "Logging In..." : "Log In"}
+                                </Button>
+                            </form>
                         </TabsContent>
 
                         <TabsContent value="Sign Up" className="space-y-4 animate-in fade-in-50 slide-in-from-right-2 duration-300">
+                            <form onSubmit={handleSignup}>
+                                <InputField 
+                                    id="signup-first-name"
+                                    label="First Name"
+                                    type="text"
+                                    placeholder="Enter your first name"
+                                    Icon={User}
+                                    onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
+                                    required
+                                />
+
+                                <InputField 
+                                    id="signup-middle-name"
+                                    label="Middle Name"
+                                    type="text"
+                                    placeholder="Enter your middle name"
+                                    Icon={User}
+                                    onChange={(e) => setSignUpData((data) => ({...data, middleName: e.target.value}))}
+                                    required
+                                />
                             <div className="flex items-center content-center gap-x-3">
                                 <InputField 
                                     id="signup-first-name"
@@ -172,57 +230,67 @@ export default function AuthPage() {
                                     onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
                                     required
                                 />
+                                <InputField 
+                                    id="signup-last-name"
+                                    label="Last Name"
+                                    type="text"
+                                    placeholder="Enter your last name"
+                                    Icon={User}
+                                    onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
+                                    required
+                                />
                             </div>
 
-                            <InputField 
-                                id="signup-email"
-                                label="Email"
-                                type="email"
-                                placeholder="Enter your email"
-                                Icon={Mail}
-                                onChange={(e) => setSignUpData((data) => ({...data, email: e.target.value}))}
-                                required
-                            />
+                                <InputField 
+                                    id="signup-email"
+                                    label="Email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    Icon={Mail}
+                                    onChange={(e) => setSignUpData((data) => ({...data, email: e.target.value}))}
+                                    required
+                                />
 
-                            <InputField 
-                                id="signup-password"
-                                label="Password"
-                                type="password"
-                                placeholder="Create a password"
-                                Icon={Lock}
-                                onChange={(e) => setSignUpData((data) => ({...data, password: e.target.value}))}
-                                required
-                            />
+                                <InputField 
+                                    id="signup-password"
+                                    label="Password"
+                                    type="password"
+                                    placeholder="Create a password"
+                                    Icon={Lock}
+                                    onChange={(e) => setSignUpData((data) => ({...data, password: e.target.value}))}
+                                    required
+                                />
 
-                            <InputField 
-                                id="signup-confirm-password"
-                                label="Confirm Password"
-                                type="password"
-                                placeholder="Confirm your password"
-                                Icon={Lock}
-                                onChange={(e) => setSignUpData((data) => ({...data, confirmPassword: e.target.value}))}
-                                required
-                            />
+                                <InputField 
+                                    id="signup-confirm-password"
+                                    label="Confirm Password"
+                                    type="password"
+                                    placeholder="Confirm your password"
+                                    Icon={Lock}
+                                    onChange={(e) => setSignUpData((data) => ({...data, confirmPassword: e.target.value}))}
+                                    required
+                                />
 
-                            <div className="flex items-start space-x-2 text-sm">
-                                <input type="checkbox" className="mt-1 rounded border-gray-300 text-red-500 focus:ring-red-500" />
-                                <span className="text-gray-600 leading-relaxed">
-                                    I agree to the {" "}
-                                    <button className="text-red-500 hover:text-red-600 font-medium cursor-pointer">Terms of Services</button> and {" "}
-                                    <button className="text-red-500 hover:text-red-600 font-medium cursor-pointer">Privacy Policy</button>
-                                </span>
-                            </div>
+                                <div className="flex items-start space-x-2 text-sm">
+                                    <input type="checkbox" className="mt-1 rounded border-gray-300 text-red-500 focus:ring-red-500" />
+                                    <span className="text-gray-600 leading-relaxed">
+                                        I agree to the {" "}
+                                        <button className="text-red-500 hover:text-red-600 font-medium cursor-pointer">Terms of Services</button> and {" "}
+                                        <button className="text-red-500 hover:text-red-600 font-medium cursor-pointer">Privacy Policy</button>
+                                    </span>
+                                </div>
 
-                            <Button 
-                                className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
-                                to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
-                                text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
-                                transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
-                                type="submit"
-                                disabled={isLoading || loading}>
+                                <Button 
+                                    className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
+                                    to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
+                                    text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
+                                    transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
+                                    type="submit"
+                                    disabled={isLoading || loading}>
 
-                                {isLoading ? "Creating Account..." : "Create Account"}
-                            </Button>
+                                    {isLoading ? "Creating Account..." : "Create Account"}
+                                </Button>
+                            </form>
                         </TabsContent>
                     </Tabs>
 
