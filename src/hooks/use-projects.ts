@@ -1,7 +1,7 @@
 "use client"
 
 import {useState, useEffect} from "react";
-import {dataHelper, type Project} from "@/lib/data-helper";
+import {projectHelper, type Project} from "@/lib/project-helper";
 
 export function useProject(userId?: string) {
     const [project, setProject] = useState<Project[]>([]);
@@ -12,7 +12,7 @@ export function useProject(userId?: string) {
         setLoading(true);   
         setError(null);
 
-        const result = await dataHelper.getProjects();
+        const result = await projectHelper.getProjects();
 
         if(result.success){
             setProject(result?.projects as Project[])
@@ -29,7 +29,7 @@ export function useProject(userId?: string) {
     }, [userId])
 
     const createProject = async (projectData: Omit<Project, "id" | "created" | "updated">) => {
-        const result = await dataHelper.createProject(projectData);
+        const result = await projectHelper.createProject(projectData);
 
         if(result.success) {
             await fetchProjects();
@@ -39,7 +39,7 @@ export function useProject(userId?: string) {
     }
 
     const updateProject = async (id: string, projectData: Partial<Project>) => {
-        const result = await dataHelper.updateProject(id, projectData);
+        const result = await projectHelper.updateProject(id, projectData);
 
         if(result.success) {
             await fetchProjects();

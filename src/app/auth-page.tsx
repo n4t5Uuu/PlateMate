@@ -190,56 +190,28 @@ export default function AuthPage() {
                         </TabsContent>
 
                         <TabsContent value="Sign Up" className="space-y-4 animate-in fade-in-50 slide-in-from-right-2 duration-300">
-                            <form onSubmit={handleSignup}>
-                                <InputField 
-                                    id="signup-first-name"
-                                    label="First Name"
-                                    type="text"
-                                    placeholder="Enter your first name"
-                                    Icon={User}
-                                    onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
-                                    required
-                                />
+                            <form onSubmit={handleSignup} className="space-y-4">
+                                <div className="flex items-center content-center gap-x-3">
+                                    <InputField 
+                                        id="signup-first-name"
+                                        label="First Name"
+                                        type="text"
+                                        placeholder="Enter your first name"
+                                        Icon={User}
+                                        onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
+                                        required 
+                                    />
 
-                                <InputField 
-                                    id="signup-middle-name"
-                                    label="Middle Name"
-                                    type="text"
-                                    placeholder="Enter your middle name"
-                                    Icon={User}
-                                    onChange={(e) => setSignUpData((data) => ({...data, middleName: e.target.value}))}
-                                    required
-                                />
-                            <div className="flex items-center content-center gap-x-3">
-                                <InputField 
-                                    id="signup-first-name"
-                                    label="First Name"
-                                    type="text"
-                                    placeholder="Enter your first name"
-                                    Icon={User}
-                                    onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
-                                    required 
-                                />
-
-                                <InputField 
-                                    id="signup-last-name"
-                                    label="Last Name"
-                                    type="text"
-                                    placeholder="Enter your last name"
-                                    Icon={User}
-                                    onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
-                                    required
-                                />
-                                <InputField 
-                                    id="signup-last-name"
-                                    label="Last Name"
-                                    type="text"
-                                    placeholder="Enter your last name"
-                                    Icon={User}
-                                    onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
-                                    required
-                                />
-                            </div>
+                                    <InputField 
+                                        id="signup-last-name"
+                                        label="Last Name"
+                                        type="text"
+                                        placeholder="Enter your last name"
+                                        Icon={User}
+                                        onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
+                                        required
+                                    />
+                                </div>
 
                                 <InputField 
                                     id="signup-email"
