@@ -23,8 +23,12 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
+  title: "PlateMate",
+  description: "Your collaborative management tool for teams and your best friend. Manage projects, track tasks, and stay organized effciently",
   icons: {
-    icon: "/src/images/PM.png"
+    icon: "/favicon.ico",
+    shortcut: "/favicon-32x32.png",
+    apple: "/apple-touch-icon.png",
   }
 };
 
