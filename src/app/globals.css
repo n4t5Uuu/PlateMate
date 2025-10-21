@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -41,6 +42,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-poppins: var(--font-poppins), sans-serif;
 }
 
 html, body {
@@ -48,6 +50,7 @@ html, body {
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
+  font-family: var(--font-poppins), sans-serif;
 }
 
 :root {
@@ -123,6 +126,12 @@ html, body {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html, body {
+    /*import this here to use imported fonts*/
+    font-family: var(--font-poppins), sans-serif
+  }
+
   body {
     @apply bg-background text-foreground;
   }

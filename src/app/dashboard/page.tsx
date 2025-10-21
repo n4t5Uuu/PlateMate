@@ -9,7 +9,8 @@ import {Button} from "@/components/ui/button";
 import {Plus, Bell, FolderOpen, Clock, CheckCircle, Users, Funnel} from "lucide-react";
 
 export const metadata = {
-    title: "Dashboard"
+    title: "Dashboard",
+    description: "PlateMate Dashboard - Manage and Track Your Projects"
 }
 
 const sampleProjects = [

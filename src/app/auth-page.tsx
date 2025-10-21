@@ -124,7 +124,7 @@ export default function AuthPage() {
             
             <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-md">
                 <CardHeader className="space-y-1 pb-4">
-                    <CardTitle className="text-2xl font-bold text-center text-gray-800">Welcome to PlateMate</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-center text-gray-800 ">Welcome to PlateMate</CardTitle>
                     <CardDescription className="text-center text-gray-500">The personal organizer for Architects</CardDescription>
                 </CardHeader>
 
