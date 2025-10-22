@@ -191,7 +191,7 @@ export default function AuthPage() {
 
                         <TabsContent value="Sign Up" className="space-y-4 animate-in fade-in-50 slide-in-from-right-2 duration-300">
                             <form onSubmit={handleSignup} className="space-y-4">
-                                <div className="flex items-center content-center gap-x-3">
+                                <div className="flex items-center content-center gap-x-2">
                                     <InputField 
                                         id="signup-first-name"
                                         label="First Name"

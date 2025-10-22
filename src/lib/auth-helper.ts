@@ -17,23 +17,33 @@ export const authHelper = {
     //sign up the user
     async signUp(email: string, password: string, fullName: string) {
         try {
-            const data = {
-                email,
-                password, 
-                passwordConfirm: password, //edit toh kasi i think need palitan
-                fullName, //i think break down parin ito to given name and last name
+            //  Check if user already exists
+            const existing = await pb.collection("users").getFirstListItem(`email="${email}"`).catch(() => null);
+            if (existing) {
+                return { success: false, error: "User already exists" };
             }
-            
-            const record = await pb.collection("users").create(data);
 
-            //send verification email
+            // Create new user (PocketBase auto-hashes the password)
+            const record = await pb.collection("users").create({
+                email,
+                password,
+                fullName,
+            });
+
+            // Send verification email
             await pb.collection("users").requestVerification(email);
 
-            console.log("User Data: " ,record)
-            return {success: true, user: record}
-        } catch (error) {
-            return {success: false, error: getErrorMessage(error)}
-        }   
+            console.log("User created:", record);
+            return { success: true, user: record };
+
+        } catch (error: any) {
+            console.error("Signup Error:", error);
+
+            // More reliable error message handling
+            const message = error?.data?.message || error?.message || "Unknown error occurred";
+
+            return { success: false, error: message };
+        }
     },
 
     //log in the user

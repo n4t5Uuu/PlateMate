@@ -1,30 +1,42 @@
-import {NextResponse} from 'next/server';
-import {authHelper} from "@/lib/auth-helper";
+import { NextResponse } from "next/server";
+import { authHelper } from "@/lib/auth-helper";
 
 export async function POST(req: Request) {
-    const {email, password} = await req.json();
+    try {
+        const body = await req.json();
+        const { email, password } = body ?? {};
 
-    const result = await authHelper.login(email, password);
-    
-    if(!result.success || !result.user) {
+        if (!email || !password) {
         return NextResponse.json(
-            {
-                success: false,
-                error: "Invalid Credentials"
-            },
-            {status: 401}
+            { success: false, error: "Fields are missing" },
+            { status: 400 }
+        );
+        }
+
+        const result = await authHelper.login(email, password);
+
+        if (result.success) {
+        return NextResponse.json(
+            { success: true, user: result.user },
+            { status: 200 }
+        );
+        }
+
+        return NextResponse.json(
+        { success: false, error: result.error ?? "Invalid credentials" },
+        { status: 401 }
+        );
+    } catch (err) {
+        const message =
+        typeof err === "string"
+            ? err
+            : err instanceof Error
+            ? err.message
+            : "Unknown error";
+
+        return NextResponse.json(
+        { success: false, error: message },
+        { status: 500 }
         );
     }
-
-    const {id, email: userEmail, fullName, avatar} = result.user;
-
-    return NextResponse.json({
-        success: true,
-        user: {
-            id,
-            email: userEmail,
-            fullName,
-            avatar
-        }
-    });
 }

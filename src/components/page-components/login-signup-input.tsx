@@ -10,7 +10,7 @@ interface InputFieldProps {
     label: string;
     type: "text" | "email" | "password";
     placeholder:  string;
-    className?: string;
+
     required?: boolean;
     Icon: LucideIcon;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -18,7 +18,7 @@ interface InputFieldProps {
 }
 
 export default function InputFields({
-    id, label, type = "text", placeholder, className, required=false, Icon, onChange, error
+    id, label, type = "text", placeholder, required=false, Icon, onChange, error
 }: InputFieldProps) {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -35,7 +35,7 @@ export default function InputFields({
                     //checks if the type is password and if showPassword is true, then it will show the password as text
                     type={type === "password" && showPassword ? "text" : type} 
                     onChange={onChange}
-                    className={`pl-10 h-12 border-gray-200 focus:border-red-500 focus:ring-red-500 ${error ? "border-red-500": ""} ${className}`}
+                    className={`pl-9 h-12 border-gray-200 focus:border-red-500 focus:ring-red-500 placeholder:text-sm ${error ? "border-red-500": ""}`}
                     placeholder={placeholder}
                 />
 
