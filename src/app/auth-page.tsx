@@ -34,6 +34,15 @@ export default function AuthPage() {
         e.preventDefault();
         setIsLoading(true);
 
+        if(!loginData.email.trim() || !loginData.password.trim()) {
+            toast.error("Empty Fields", {
+                description: "Please fill in the empty fields"
+            });
+
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const res = await fetch("api/auth/login", {
                 method: "POST",
@@ -70,6 +79,16 @@ export default function AuthPage() {
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+
+        if(!signUpData.email.trim() || !signUpData.firstName.trim() || !signUpData.lastName.trim() ||
+            !signUpData.password.trim() || !signUpData.confirmPassword.trim()) {
+                toast.error("Empty Fields", {
+                    description: "Please fill in the empty fields"
+                })
+
+                setIsLoading(false);
+                return;
+            }
 
         if (signUpData.password !== signUpData.confirmPassword) {
             toast.error("Passwords mismatch", {
@@ -134,14 +153,16 @@ export default function AuthPage() {
                             <TabsTrigger 
                                 value="Login"
                                 className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
-                                            font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer">
+                                            font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
+                                            data-[state=active]:font-semibold">
                                 Login
                             </TabsTrigger>
 
                             <TabsTrigger 
                                 value="Sign Up" 
                                 className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
-                                            font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer">
+                                            font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
+                                            data-[state=active]:font-semibold">
                                 Sign Up
                             </TabsTrigger>
                         </TabsList>
