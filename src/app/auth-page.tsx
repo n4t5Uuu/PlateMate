@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AuthLogo } from "@/components/page-components/platemate-logo";
-import InputField from "@/components/page-components/login-signup-input";
 import { toast } from "sonner";
+
+import { AuthLogo } from "@/components/page-components/platemate-logo";
+import { signupFormFields, signUpFieldStateMap, loginFormFields, loginFieldStateMap } from "@/data/form-fields";
+import InputField from "@/components/page-components/login-signup-input";
 import useAuth from "@/hooks/use-auth";
 
 export default function AuthPage() {
@@ -169,25 +173,16 @@ export default function AuthPage() {
 
                         <TabsContent value="Login" className="space-y-4 animate-in fade-in-50 slide-in-from-left-2 duration-300">
                             <form onSubmit={handleLogin} className="space-y-4">
-                                <InputField 
-                                    id="login-email"
-                                    label="Email"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    Icon={Mail}
-                                    onChange={(e) => setLoginData((prev) => ({...prev, email: e.target.value}))}
-                                    required
-                                />
-                            
-                                <InputField 
-                                    id="login-password"
-                                    label="Password"
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    Icon={Lock}
-                                    onChange={(e) => setLoginData((prev) => ({...prev, password: e.target.value}))}
-                                    required
-                                />
+                                {loginFormFields.map(field => (
+                                    <InputField
+                                        key={field.id}
+                                        {...field}
+                                        onChange={(e) => setLoginData((prev) => ({
+                                            ...prev,
+                                            [loginFieldStateMap[field.id as keyof typeof loginFieldStateMap]]: e.target.value
+                                        }))}
+                                    />
+                                ))}
 
                                 <div className="flex items-center justify-between text-sm">
                                     <label className="flex items-center space-x-2 cursor-pointer">
@@ -213,56 +208,28 @@ export default function AuthPage() {
                         <TabsContent value="Sign Up" className="space-y-4 animate-in fade-in-50 slide-in-from-right-2 duration-300">
                             <form onSubmit={handleSignup} className="space-y-4">
                                 <div className="flex items-center content-center gap-x-2">
-                                    <InputField 
-                                        id="signup-first-name"
-                                        label="First Name"
-                                        type="text"
-                                        placeholder="Enter your first name"
-                                        Icon={User}
-                                        onChange={(e) => setSignUpData((data) => ({...data, firstName: e.target.value}))}
-                                        required 
-                                    />
-
-                                    <InputField 
-                                        id="signup-last-name"
-                                        label="Last Name"
-                                        type="text"
-                                        placeholder="Enter your last name"
-                                        Icon={User}
-                                        onChange={(e) => setSignUpData((data) => ({...data, lastName: e.target.value}))}
-                                        required
-                                    />
+                                    {signupFormFields.slice(0,2).map(fieldData => (
+                                        <InputField 
+                                            key={fieldData.id}
+                                            {...fieldData}
+                                            onChange={(e) => setSignUpData((prev) => ({
+                                                ...prev,
+                                                [loginFieldStateMap[fieldData.id as keyof typeof loginFieldStateMap]]: e.target.value
+                                            }))}
+                                        />
+                                    ))}
                                 </div>
 
-                                <InputField 
-                                    id="signup-email"
-                                    label="Email"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    Icon={Mail}
-                                    onChange={(e) => setSignUpData((data) => ({...data, email: e.target.value}))}
-                                    required
-                                />
-
-                                <InputField 
-                                    id="signup-password"
-                                    label="Password"
-                                    type="password"
-                                    placeholder="Create a password"
-                                    Icon={Lock}
-                                    onChange={(e) => setSignUpData((data) => ({...data, password: e.target.value}))}
-                                    required
-                                />
-
-                                <InputField 
-                                    id="signup-confirm-password"
-                                    label="Confirm Password"
-                                    type="password"
-                                    placeholder="Confirm your password"
-                                    Icon={Lock}
-                                    onChange={(e) => setSignUpData((data) => ({...data, confirmPassword: e.target.value}))}
-                                    required
-                                />
+                                {signupFormFields.slice(2).map(fieldData => (
+                                    <InputField 
+                                        key={fieldData.id}
+                                        {...fieldData}
+                                        onChange={(e) => setSignUpData((prev) => ({
+                                            ...prev,
+                                            [loginFieldStateMap[fieldData.id as keyof typeof loginFieldStateMap]]: e.target.value
+                                        }))}
+                                    />
+                                ))}
 
                                 <div className="flex items-start space-x-2 text-sm">
                                     <input type="checkbox" className="mt-1 rounded border-gray-300 text-red-500 focus:ring-red-500" />

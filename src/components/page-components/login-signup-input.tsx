@@ -5,13 +5,12 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {useState} from "react";
 
-interface InputFieldProps {
+export interface InputFieldProps {
     id: string;
     label: string;
     type: "text" | "email" | "password";
     placeholder:  string;
-
-    required?: boolean;
+    required: boolean;
     Icon: LucideIcon;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     error?: string;
