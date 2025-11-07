@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -214,7 +213,7 @@ export default function AuthPage() {
                                             {...fieldData}
                                             onChange={(e) => setSignUpData((prev) => ({
                                                 ...prev,
-                                                [loginFieldStateMap[fieldData.id as keyof typeof loginFieldStateMap]]: e.target.value
+                                                [signUpFieldStateMap[fieldData.id as keyof typeof signUpFieldStateMap]]: e.target.value
                                             }))}
                                         />
                                     ))}
@@ -226,7 +225,7 @@ export default function AuthPage() {
                                         {...fieldData}
                                         onChange={(e) => setSignUpData((prev) => ({
                                             ...prev,
-                                            [loginFieldStateMap[fieldData.id as keyof typeof loginFieldStateMap]]: e.target.value
+                                            [signUpFieldStateMap[fieldData.id as keyof typeof signUpFieldStateMap]]: e.target.value
                                         }))}
                                     />
                                 ))}

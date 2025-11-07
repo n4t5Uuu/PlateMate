@@ -26,16 +26,9 @@ import {
 } from "../ui/dialog";
 
 import {Avatar, AvatarFallback, AvatarImage} from "../ui/avatar";
-import {Home, FolderOpen, Pin, Calendar, Cog, GroupIcon, Plus, Trash, CalendarCheck2, LayoutTemplate, LucideIcon} from "lucide-react";
-
 import {SidebarLogo} from "./platemate-logo"
-
-type NavItems = {
-    name: string,
-    url: string,
-    icon: LucideIcon,
-    isActive: boolean
-}
+import { NavItems, generalNavTabs, shortcutNavTabs, samplePinnedProjects, sampleProjects} from "@/data/sidebar-data";
+import { Cog } from "lucide-react";
 
 function renderMenuItem(item: NavItems[]) {
     return item.map((item) => (
@@ -50,92 +43,6 @@ function renderMenuItem(item: NavItems[]) {
     ))
 }
 
-const generalItem:NavItems[] = [
-    {
-        name: "Dasboard",
-        url: "#",
-        icon: Home,
-        isActive: true
-    },
-    {
-        name: "Projects",
-        url: "#",
-        icon: FolderOpen,
-        isActive: false
-    }, 
-    {
-        name: "Calendar",
-        url: "#",
-        icon: Calendar,
-        isActive: false
-    },
-    {
-        name: "Teams", //di pa sure here pero try paren 
-        url: "#",
-        icon: GroupIcon,
-        isActive: false
-        
-    },
-    {
-        name: "Trash", 
-        url: "#",   //placeholder muna toh for now or place it in the footer where the user can access its profile
-        icon: Trash,
-        isActive: false
-    }
-
-]
-
-const shortcutItems: NavItems[] = [
-    {
-        name: "Schedule Meeting",
-        url: "#",
-        icon: CalendarCheck2,
-        isActive: false
-    }, 
-    {
-        name: "Templates (?)",
-        url: "#",
-        icon: LayoutTemplate,
-        isActive: false
-    }
-]
-
-const samplePinnedProjects: NavItems[] = [
-    {
-        name: "Civic Mall",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    }
-]
-
-const sampleWorkspace: NavItems[] =[
-    {
-        name: "Civic Mall",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    },
-    {
-        name: "Al Qasr Mall",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    },
-    {
-        name: "Skyscraper",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    },
-    {
-        name: "Riyadh Park",
-        url: "#",
-        icon: Cog,
-        isActive: false
-    }
-]
-
 export default function AppSideBar({...props} : React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar variant="inset" {...props}>
@@ -148,17 +55,17 @@ export default function AppSideBar({...props} : React.ComponentProps<typeof Side
                     <SidebarGroupLabel className="text-base mb-1.5">General</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {renderMenuItem(generalItem)}
+                            {renderMenuItem(generalNavTabs)}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
 
-                {sampleWorkspace.length > 0 ? (
+                {sampleProjects.length > 0 ? (
                     <SidebarGroup>
                         <SidebarGroupLabel className="text-base mb-1.5">Workspace</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {renderMenuItem(sampleWorkspace)}
+                                {renderMenuItem(sampleProjects)}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
@@ -180,7 +87,7 @@ export default function AppSideBar({...props} : React.ComponentProps<typeof Side
                     <SidebarGroupLabel className="text-base mb-1.5">Quick Actions</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {renderMenuItem(shortcutItems)}
+                            {renderMenuItem(shortcutNavTabs)}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
