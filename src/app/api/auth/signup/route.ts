@@ -4,16 +4,16 @@ import { authHelper } from "@/lib/auth-helper";
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { email, password, fullName } = body ?? {};
+        const { email, password, firstName, lastName } = body ?? {};
 
-        if (!email || !password || !fullName) {
+        if (!email || !password || !firstName || !lastName) {
         return NextResponse.json(
             { success: false, error: "Fields are missing" },
             { status: 400 }
         );
         }
 
-        const result = await authHelper.signUp(email, password, fullName);
+        const result = await authHelper.signUp(email, password, firstName, lastName);
 
         if (result.success) {
         return NextResponse.json(
@@ -23,8 +23,8 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json(
-        { success: false, error: result.error ?? "Signup failed" },
-        { status: 400 }
+            { success: false, error: result.error ?? "Signup failed" },
+            { status: 400 }
         );
     } catch (err) {
         const message =

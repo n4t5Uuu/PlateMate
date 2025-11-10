@@ -16,7 +16,7 @@ export interface InputFieldProps {
     error?: string;
 }
 
-export default function InputFields({
+export default function InputField({
     id, label, type = "text", placeholder, required=false, Icon, onChange, error
 }: InputFieldProps) {
     const [showPassword, setShowPassword] = useState(false);

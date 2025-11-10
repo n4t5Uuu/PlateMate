@@ -13,44 +13,26 @@ export default function useAuth() {
         setLoading(false);
     }, []);
 
-    const login = async(email: string, password: string) => {
+    const login = async (email: string, password: string) => {
         setLoading(true);
         try {
-            const result = await authHelper.login(email, password);
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const result = await res.json();
 
             if (result.success && result.user) {
                 const mappedData: Omit<User, "id" | "updated" | "created"> = {
                     email: result.user.email,
-                    fullName: result.user.fullName,
+                    firstName: result.user.firstName,
+                    lastName: result.user.lastName,
                     avatar: result.user.avatar,
-                    profession: result.user.profession
+                    profession: result.user.profession,
                 };
-                setUser(mappedData);
-            }
-            
-            setLoading(false);
-            return result;
-        } catch (error) {
-            setLoading(false);
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : "An unexpected error occurred"
-            };
-        }
-    };
 
-    const signUp = async(email: string, password: string, fullName: string) => {
-        setLoading(true);
-        try {
-            const result = await authHelper.signUp(email, password, fullName);
-
-            if (result.success && result.user) {
-                const mappedData: Omit<User, "id" | "updated" | "created"> = {
-                    email: result.user.email,
-                    fullName: result.user.fullName,
-                    avatar: result.user.avatar,
-                    profession: result.user.profession
-                };
                 setUser(mappedData);
             }
 
@@ -60,14 +42,57 @@ export default function useAuth() {
             setLoading(false);
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "An unexpected error occurred"
+                error: error instanceof Error ? error.message : "An unexpected error occurred",
             };
         }
     };
 
-    const signOut = () => {
-        authHelper.signOut();
-        setUser(null);
+    const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
+        setLoading(true);
+        try {
+            const res = await fetch("/api/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, firstName, lastName }),
+            });
+
+            const result = await res.json();
+
+            if (result.success && result.user) {
+                const mappedData: Omit<User, "id" | "updated" | "created"> = {
+                    email: result.user.email,
+                    firstName: result.user.firstName,
+                    lastName: result.user.lastName,
+                    avatar: result.user.avatar,
+                    profession: result.user.profession,
+                };
+                setUser(mappedData);
+            }
+
+            setLoading(false);
+            return result;
+        } catch (error) {
+            setLoading(false);
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : "An unexpected error occurred",
+            };
+        }
+    };
+
+    const signOut = async () => {
+        setLoading(true);
+        try {
+            authHelper.signOut();
+            setUser(null);
+            setLoading(false);
+            return {success: true}
+        } catch (error) {
+            return{
+                success: false,
+                error: error instanceof Error ? error.message : "Logout Failed"
+            }
+        }
     };
 
     return {

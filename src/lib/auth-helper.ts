@@ -1,11 +1,10 @@
 import pb from '@/lib/pb';
 import getErrorMessage from './error-message';
-
-//i think iseparate yung first and last name
 export interface User {
     id: string;
     email: string;
-    fullName: string;
+    firstName: string;
+    lastName: string
     avatar?: string; //not sure here
     profession?: string;
     created: string;
@@ -15,7 +14,7 @@ export interface User {
 export const authHelper = {
 
     //sign up the user
-    async signUp(email: string, password: string, fullName: string) {
+    async signUp(email: string, password: string, firstName: string, lastName: string) {
         try {
             //  Check if user already exists
             const existing = await pb.collection("users").getFirstListItem(`email="${email}"`).catch(() => null);
@@ -27,22 +26,22 @@ export const authHelper = {
             const record = await pb.collection("users").create({
                 email,
                 password,
-                fullName,
+                passwordConfirm: password,
+                firstName,
+                lastName
             });
 
             // Send verification email
+            //not yet working
             await pb.collection("users").requestVerification(email);
 
             console.log("User created:", record);
             return { success: true, user: record };
 
-        } catch (error: any) {
+        } catch (error) {
             console.error("Signup Error:", error);
 
-            // More reliable error message handling
-            const message = error?.data?.message || error?.message || "Unknown error occurred";
-
-            return { success: false, error: message };
+            return { success: false, error: getErrorMessage(error) };
         }
     },
 
