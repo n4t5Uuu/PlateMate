@@ -17,6 +17,7 @@ import useAuth from "@/hooks/use-auth";
 export default function AuthPage() {
     const [isLoading, setIsLoading] = useState(false);
     const {loading, login, signUp} = useAuth();
+    const [activeTab, setActiveTab] = useState("Sign Up")
     const router = useRouter();
 
     const [loginData, setLoginData] = useState({
@@ -48,10 +49,10 @@ export default function AuthPage() {
         }
 
         try {
-            const email = loginData.email;
-            const password = loginData.password
-
-            const result = await login(email, password);
+            const result = await login(
+                loginData.email, 
+                loginData.password
+            );
 
             if(result.success) {
                 toast.success("Logged In Successfully", {
@@ -102,12 +103,12 @@ export default function AuthPage() {
         }
 
         try {
-            const email = signUpData.email;
-            const password = signUpData.password;
-            const firstName = signUpData.firstName;
-            const lastName = signUpData.lastName;
-
-            const result = await signUp(email, password, firstName, lastName);
+            const result = await signUp(
+                signUpData.email,
+                signUpData.password,
+                signUpData.firstName,
+                signUpData.lastName
+            );
 
             if(result.success) {
                 toast.success("Account Created Successfully", {
@@ -116,8 +117,17 @@ export default function AuthPage() {
                     duration: 3000
                 });
                 
-                //redirects to auth page to log in again
-                router.push("/");
+                // switches the tab to the Login Tab
+                setActiveTab("Login");
+
+                // clear the fields of the sign up tab
+                setSignUpData({
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
+                })
             } else {
                 toast.error("Signup Failed", {
                     description: result.error || "An error occurred. Please try again.",
@@ -148,22 +158,22 @@ export default function AuthPage() {
                     </CardHeader>
 
                     <CardContent>
-                        <Tabs defaultValue="Login" className="w-full">
+                        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                             <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100 p-1 rounded-xl">
-                                <TabsTrigger 
-                                    value="Login"
-                                    className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
-                                                font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
-                                                data-[state=active]:font-semibold">
-                                    Login
-                                </TabsTrigger>
-
                                 <TabsTrigger 
                                     value="Sign Up" 
                                     className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
                                                 font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
                                                 data-[state=active]:font-semibold">
                                     Sign Up
+                                </TabsTrigger>
+
+                                <TabsTrigger 
+                                    value="Login"
+                                    className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
+                                                font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
+                                                data-[state=active]:font-semibold">
+                                    Login
                                 </TabsTrigger>
                             </TabsList>
 
@@ -181,7 +191,7 @@ export default function AuthPage() {
                                     ))}
 
                                     <div className="flex items-center justify-between text-sm">
-                                        <label className="flex items-center space-x-2 cursor-pointer">
+                                        <label className="flex items-center space-x-2">
                                             <input type="checkbox" className="rounded border-gray-300 text-red-500 focus:ring-red" />
                                             <span className="text-gray-600">Remember me</span>
                                         </label>
