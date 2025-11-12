@@ -1,5 +1,4 @@
 import pb from '@/lib/pb';
-import getErrorMessage from './error-message';
 export interface User {
     id: string;
     email: string;
@@ -40,8 +39,9 @@ export const authHelper = {
 
         } catch (error) {
             console.error("Signup Error:", error);
-
-            return { success: false, error: getErrorMessage(error) };
+            
+            const message = error instanceof Error ? error.message: String(error);
+            return { success: false, error: message || "Unknown error occured" };
         }
     },
 
@@ -53,22 +53,43 @@ export const authHelper = {
             console.log("User Data: " ,authData)
             return {success: true, user: authData.record};
         } catch (error) {
-            return {success: false, error: getErrorMessage(error)}
+            console.error("Login Error:", error)
+
+            const message = error instanceof Error ? error.message: String(error);
+            return {success: false, error: message || "Unknown error occured"}
         }
     },
 
     //sign out the user
     signOut() {
-        return pb.authStore.clear();
+        try {
+            return pb.authStore.clear();
+            return {success: true}
+        } catch (error) {
+            console.error("Sign Out Error:", error);
+
+            const message = error instanceof Error ? error.message : String(error);
+            return{success: false, error: message || "Unknown error occured"}
+        }
     },
 
     //get the current user
     getCurrentUser() {
-        return pb.authStore.model as User | null;
+        try {
+            return pb.authStore.model as User | null;
+        } catch (error) {
+            console.error("Get Current User Error: ", error)
+            return null
+        }
     },
 
     //check if the user is authenticated
     isAuthenticated() {
-        return pb.authStore.isValid;
+        try {
+            return pb.authStore.isValid;
+        } catch (error) {
+            console.error("Auth Check Error", error)
+            return false;
+        }
     }
 }
