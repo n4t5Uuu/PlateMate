@@ -137,19 +137,12 @@
                             <SidebarMenuButton asChild> 
                                 <div className="flex items-center gap-3 p-2">
                                     <Avatar>
+
                                         <AvatarImage />
-<<<<<<< HEAD
-                                        <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">AY</AvatarFallback> 
-                                    </Avatar>
-                                    <div className="flex flex-col text-left">
-                                        <span className="text-sm font-medium">Alessandra Yadao</span>
-                                        <span className="text-xs text-gray-500">Architect</span> 
-=======
                                         <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">{userInitials}</AvatarFallback> 
                                     </Avatar>
                                     <div className="flex flex-col text-left">
                                         <span className="text-sm font-medium">{fullName}</span>
->>>>>>> 2e378e4 (- added some dependencies)
                                     </div>
                                 </div>
                             </SidebarMenuButton>
