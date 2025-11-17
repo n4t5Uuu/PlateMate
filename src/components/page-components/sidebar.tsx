@@ -30,8 +30,11 @@
     import { NavItems, generalNavTabs, shortcutNavTabs, samplePinnedProjects, sampleProjects} from "@/data/sidebar-data";
     import { Cog, LogOut } from "lucide-react";
     import {toast} from "sonner"
+
     import useAuth from "@/hooks/use-auth";
     import { useRouter } from "next/navigation";
+    import useCurrentUser from "@/hooks/use-current-user";
+
 
     function renderMenuItem(item: NavItems[]) {
         return item.map((item) => (
@@ -45,18 +48,30 @@
             </SidebarMenuItem>
         ))
     }
-
     export default function AppSideBar({...props} : React.ComponentProps<typeof Sidebar>) {
         const {signOut} = useAuth();
         const router = useRouter();
 
+        const user = useCurrentUser();
+
+        const userInitials = user ?
+            `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : "";
+
+        const fullName = user ?
+            `${user.firstName.split(" ")[0]} ${user.lastName}` : "";
+        
         const handleLogout = async () => {
             try {
-                await signOut();
-                toast.success("Logged out successfully", {
-                    duration: 3000
-                });
-                router.push("/");
+                const result = await signOut();
+                if(result.success) {
+                    toast.success("Logged out successfully", {
+                        duration: 3000
+                    });
+                    
+                    console.log("Logged out successfully");
+
+                    router.push("/");
+                }
             } catch (error) {
                 toast.error("Failed to Log out", {
                     duration: 3000
@@ -64,6 +79,7 @@
                 console.error(error);
             }
         }
+
 
         return (
             <Sidebar variant="inset" {...props}>
@@ -122,11 +138,18 @@
                                 <div className="flex items-center gap-3 p-2">
                                     <Avatar>
                                         <AvatarImage />
+<<<<<<< HEAD
                                         <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">AY</AvatarFallback> 
                                     </Avatar>
                                     <div className="flex flex-col text-left">
                                         <span className="text-sm font-medium">Alessandra Yadao</span>
                                         <span className="text-xs text-gray-500">Architect</span> 
+=======
+                                        <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">{userInitials}</AvatarFallback> 
+                                    </Avatar>
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-sm font-medium">{fullName}</span>
+>>>>>>> 2e378e4 (- added some dependencies)
                                     </div>
                                 </div>
                             </SidebarMenuButton>

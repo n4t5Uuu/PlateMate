@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 import { AuthLogo } from "@/components/page-components/platemate-logo";
 import { signupFormFields, signUpFieldStateMap, loginFormFields, loginFieldStateMap } from "@/data/form-fields";
+import { authHelper } from "@/lib/auth-helper";
 import InputField from "@/components/page-components/login-signup-input";
 import useAuth from "@/hooks/use-auth";
 
@@ -19,6 +20,16 @@ export default function AuthPage() {
     const {loading, login, signUp} = useAuth();
     const [activeTab, setActiveTab] = useState("Sign Up")
     const router = useRouter();
+
+    //doesnt work yet
+    /*
+        useEffect(() => {
+            if(authHelper.isAuthenticated())
+                //checks if the user has a session and will 
+                //switch the tab to login automatically 
+                setActiveTab("Login")
+        }, [])
+    */
 
     const [loginData, setLoginData] = useState({
         email: "",
