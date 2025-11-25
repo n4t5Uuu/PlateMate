@@ -1,13 +1,22 @@
-import pb from '@/lib/pb';
+import {supabase} from "@/lib/SUPABASE"
 export interface User {
     id: string;
     email: string;
     firstName: string;
     lastName: string
     avatar?: string; //not sure here
-    profession?: string;
     created: string;
-    updated: string;
+}
+
+function mapUser(user): User {
+    return {
+        id: user.id,
+        email: user.email,
+        firstName: user.user_metadata.firstName,
+        lastName: user.user_metadata.lastName,
+        avatar: user.user_metadata.avatar,
+        created: user.created_at
+    }
 }
 
 export const authHelper = {
@@ -15,27 +24,24 @@ export const authHelper = {
     //sign up the user
     async signUp(email: string, password: string, firstName: string, lastName: string) {
         try {
-            //  Check if user already exists
-            const existing = await pb.collection("users").getFirstListItem(`email="${email}"`).catch(() => null);
-            if (existing) {
-                return { success: false, error: "User already exists" };
-            }
-
-            // Create new user (PocketBase auto-hashes the password)
-            const record = await pb.collection("users").create({
+            const {data, error} = await supabase.auth.signUp({
                 email,
-                password,
-                passwordConfirm: password,
-                firstName,
-                lastName
-            });
+                password, 
+                options: {
+                    data: {
+                        firstName,
+                        lastName
+                    }
+                }
+            })
 
-            // Send verification email
-            //not yet working
-            await pb.collection("users").requestVerification(email);
+            if(error)
+                throw error
 
-            console.log("User created:", record);
-            return { success: true, user: record };
+            return {
+                success: true,
+                user: data.user ? mapUser(data.user) : null
+            }
 
         } catch (error) {
             console.error("Signup Error:", error);
@@ -48,10 +54,17 @@ export const authHelper = {
     //log in the user
     async login(email: string, password: string) {
         try {
-            const authData = await pb.collection("users").authWithPassword(email, password);
+            const {data, error} = await supabase.auth.signInWithPassword({
+                email, password
+            })
 
-            console.log("User Data: " ,authData)
-            return {success: true, user: authData.record};
+            if(error)
+                throw error
+            
+            return {
+                sucecss: true,
+                user: data.user ? mapUser(data.user) : null
+            }
         } catch (error) {
             console.error("Login Error:", error)
 
@@ -61,35 +74,15 @@ export const authHelper = {
     },
 
     //sign out the user
-    signOut() {
-        try {
-            return pb.authStore.clear();
-            return {success: true}
-        } catch (error) {
-            console.error("Sign Out Error:", error);
-
-            const message = error instanceof Error ? error.message : String(error);
-            return{success: false, error: message || "Unknown error occured"}
-        }
+    async signOut() {
+        const {error} = await supabase.auth.signOut();
+        if(error)
+            throw error;
     },
 
     //get the current user
-    getCurrentUser() {
-        try {
-            return pb.authStore.model as User | null;
-        } catch (error) {
-            console.error("Get Current User Error: ", error)
-            return null
-        }
-    },
-
-    //check if the user is authenticated
-    isAuthenticated() {
-        try {
-            return pb.authStore.isValid;
-        } catch (error) {
-            console.error("Auth Check Error", error)
-            return false;
-        }
+    async getCurrentUser() {
+        const {data: {user}} = await supabase.auth.getUser();
+        return user ? mapUser(user) : null;
     }
 }
