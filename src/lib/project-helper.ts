@@ -1,80 +1,148 @@
-import {supabase} from "@/lib/SUPABASE"
+import {supabase} from "@/lib/supabase";
 
 export interface Project {
     id: string;
-    name: string;
+    title: string;
     description?: string;
+    client: string
     progress: number
     dueDate: string;
     status: "active" | "review" | "completed" | "delayed";
     priority: "low" | "medium" | "high";
     teamMembers?: string[]; //array of user ids
     owner: string; //user id
-    created: string;
-    updated: string;
+    created_at: string;
+    updated_at: string;
+}
+
+function mapProjects(data): Project {
+    return {
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        client: data.client,
+        progress: data.progress,
+        dueDate: data.due_date,
+        status: data.status,
+        priority: data.priority,
+        teamMembers: data.team_members,
+        owner: data.owner,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+    };
 }
 
 export const projectHelper = {
 
-    async createProject(projectData: Omit<Project, 'id' | 'created' | 'updated'>) {
+    async createProject(projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
         try {
-            const record = await pb.collection("projects").create(projectData);
-            return {success: true, project: record};
+
+            const dbRecord = {
+                title: projectData.title,
+                description: projectData.description,
+                client: projectData.client,
+                progress: projectData.progress,
+                due_date: projectData.dueDate,
+                status: projectData.status,
+                priority: projectData.priority,
+                team_members: projectData.teamMembers,
+                owner: projectData.owner
+            }
+
+            const {data, error} = await supabase.from("projects")
+                .insert(dbRecord)
+                .select()
+                .single();
+            
+            if(error)
+                throw error;
+
+            return {
+                success: true,
+                data: mapProjects(data)
+            }
         } catch (error: unknown) {
-            return {success: false, error: getErrorMessage(error)}
+            console.error("Failed to create project", error)
+
+            const message = error instanceof Error ? error.message: String(error);
+            return {success: false, error: message || "Unknown error occured"}
         }
     },
 
     async getProjects(userId?: string) {
         try {
-            const filter = userId ? `owner="${userId}"` : "";
-            const records = await pb.collection("projects").getFullList<Project>({
-                filter,
-                expand: "teamMembers.owner",
-                sort: "-created"
+            let query = supabase.from("projects").select("*").order("created_at", {
+                ascending: false
             });
-            return {success: true, projects: records};
+
+            if(userId)
+                query = query.eq("owner", userId);
+
+            const {data, error} = await query;
+
+            if(error)
+                throw error;
+
+            return{
+                success: true,
+                data: data.map(mapProjects)
+            }
         } catch (error: unknown) {
-            return {success: false, error: getErrorMessage(error)};
+            console.error("Failed to retrieve projects", error)
+
+            const message = error instanceof Error ? error.message: String(error);
+            return {success: false, error: message || "Unknown error occured"}
         }
     },
 
     async updateProject(id: string, projectData: Partial<Project>) {
         try {
-            const record = await pb.collection("projects").update(id, projectData);
-            return {success: true, data: record}
+            const dbData = {...projectData}
+            if(projectData.dueDate)
+                dbData.dueDate = projectData.dueDate;
+
+            if(projectData.teamMembers)
+                dbData.teamMembers = projectData.teamMembers;
+
+            const {data, error} = await supabase.from("projects")
+                .update(dbData)
+                .eq("id", id)
+                .select()
+                .single();
+
+            if(error)
+                throw error;
+
+            return {
+                success: true,
+                data: mapProjects(data)
+            }
         } catch (error: unknown) {
-            return {success: false, error: getErrorMessage(error)};
+            console.error("Failed to update project", error)
+
+            const message = error instanceof Error ? error.message: String(error);
+            return {success: false, error: message || "Unknown error occured"}
         }
     },
 
-    //decide is here siya or lipat
-    async getDashboardStats(userId: string) {
+    async deleteProject(projectId: string) {
         try {
-            const [projectResult, activitiesResult] = await Promise.all([
-                pb.collection("projects").getFullList({
-                    filter: `owner = "${userId}"`
-                }),
-                pb.collection("activities").getFullList({
-                    filter: `user = "${userId}"`,
-                    sort: "-created"
-                })
-            ])
+            const {error} = await supabase.from("projects")
+                .delete()
+                .eq("id", projectId);
 
-            const projects = projectResult;
-            const activities = activitiesResult;
-            
-            const stats = {
-                activeProjects: projects.filter((p) => p.status === "active").length,
-                totalProjects: projects.length,
-                completedProjects: projects.filter((p) => p.status === "completed").length,
-                pendingTasks: projects.filter((p) => p.status === "pending").length,
-                recentActivities: activities.slice(0, 5)
+            if(error)
+                throw error;
+
+            return {
+                success: true,
+                message: "Project deleted successfully"
             }
+        } catch (error) {
+            console.error("Failed to delete project", error)
 
-            return {success: true, data: stats}
-        } catch (error: unknown) {
-            return {success: false, error: getErrorMessage(error)}
+            const message = error instanceof Error ? error.message: String(error);
+            return {success: false, error: message || "Unknown error occured"}
         }
     }
 }

@@ -1,5 +1,4 @@
-import pb from "@/lib/pb";
-import getErrorMessage from "./error-message";  
+import {supabase} from "@/lib/supabase";
 
 export interface Task {
     id: string

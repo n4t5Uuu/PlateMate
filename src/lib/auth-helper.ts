@@ -1,11 +1,11 @@
-import {supabase} from "@/lib/SUPABASE"
+import {supabase} from "@/lib/supabase";
 export interface User {
     id: string;
     email: string;
     firstName: string;
     lastName: string
     avatar?: string; //not sure here
-    created: string;
+    created_at: string;
 }
 
 function mapUser(user): User {
@@ -15,7 +15,7 @@ function mapUser(user): User {
         firstName: user.user_metadata.firstName,
         lastName: user.user_metadata.lastName,
         avatar: user.user_metadata.avatar,
-        created: user.created_at
+        created_at: user.created_at
     }
 }
 
