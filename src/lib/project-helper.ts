@@ -15,6 +15,7 @@ export interface Project {
     updated_at: string;
 }
 
+// to map the data of the project
 function mapProjects(data): Project {
     return {
         id: data.id,
@@ -34,6 +35,7 @@ function mapProjects(data): Project {
 
 export const projectHelper = {
 
+    // creates a new project and adds it to the projects table
     async createProject(projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
         try {
 
@@ -69,6 +71,7 @@ export const projectHelper = {
         }
     },
 
+    // gets the exisiting projects
     async getProjects(userId?: string) {
         try {
             let query = supabase.from("projects").select("*").order("created_at", {
@@ -95,6 +98,7 @@ export const projectHelper = {
         }
     },
 
+    // updates the details of the existing project
     async updateProject(id: string, projectData: Partial<Project>) {
         try {
             const dbData = {...projectData}
@@ -125,6 +129,7 @@ export const projectHelper = {
         }
     },
 
+    // deletes a project from the projects table
     async deleteProject(projectId: string) {
         try {
             const {error} = await supabase.from("projects")

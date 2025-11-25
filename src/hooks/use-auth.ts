@@ -2,15 +2,36 @@
 
 import { useState, useEffect } from "react";
 import { authHelper, type User } from "@/lib/auth-helper";
+import {supabase} from "@/lib/supabase";
 
 export default function useAuth() {
-    const [user, setUser] = useState<Omit<User, "id" | "created" | "updated"> | null>(null);
+    const [user, setUser] = useState<Omit<User, "id" | "created_at"> | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const currentUser = authHelper.getCurrentUser();
-        setUser(currentUser);
-        setLoading(false);
+        // checks the active session
+        const checkUser = async () => {
+            const currentUser = await authHelper.getCurrentUser();
+            setUser(currentUser)
+            setLoading(false);
+        }
+
+        checkUser();
+
+        // listen to auth changes
+        const {data: {subscription}} = supabase.auth.onAuthStateChange(async (event, session) => {
+            if(session?.user) {
+                const currentUser = await authHelper.getCurrentUser();
+                setUser(currentUser);
+            } else {
+                setUser(null);
+            }
+            setLoading(false);
+        })
+
+        return () => {
+            subscription.unsubscribe();
+        }
     }, []);
 
     const login = async (email: string, password: string) => {
@@ -22,15 +43,17 @@ export default function useAuth() {
                 body: JSON.stringify({ email, password }),
             });
 
+            if(!res.ok)
+                throw new Error(`HTTP error! status: ${res.status}`);
+
             const result = await res.json();
 
             if (result.success && result.user) {
-                const mappedData: Omit<User, "id" | "updated" | "created"> = {
+                const mappedData: Omit<User, "id" | "created_at"> = {
                     email: result.user.email,
                     firstName: result.user.firstName,
                     lastName: result.user.lastName,
                     avatar: result.user.avatar,
-                    profession: result.user.profession,
                 };
 
                 setUser(mappedData);
@@ -56,15 +79,17 @@ export default function useAuth() {
                 body: JSON.stringify({ email, password, firstName, lastName }),
             });
 
+            if(!res.ok)
+                throw new Error(`HTTP error! status: ${res.status}`);
+
             const result = await res.json();
 
             if (result.success && result.user) {
-                const mappedData: Omit<User, "id" | "updated" | "created"> = {
+                const mappedData: Omit<User, "id" | "created_at"> = {
                     email: result.user.email,
                     firstName: result.user.firstName,
                     lastName: result.user.lastName,
                     avatar: result.user.avatar,
-                    profession: result.user.profession,
                 };
                 setUser(mappedData);
             }
@@ -81,18 +106,8 @@ export default function useAuth() {
     };
 
     const signOut = async () => {
-        setLoading(true);
-        try {
-            authHelper.signOut();
-            setUser(null);
-            setLoading(false);
-            return {success: true}
-        } catch (error) {
-            return{
-                success: false,
-                error: error instanceof Error ? error.message : "Logout Failed"
-            }
-        }
+        await authHelper.signOut();
+        setUser(null);
     };
 
     return {
