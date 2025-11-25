@@ -1,4 +1,5 @@
+<<<<<<< HEAD
 #WELCOME TO PLATEMATE
+=======
+>>>>>>> cfacb7e905b9c87483515453d16b4cee53188fb2
 
-PlateMate is an organizer that is tailor suited for those who are in the 
-profession of Architecture
