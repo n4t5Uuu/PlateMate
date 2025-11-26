@@ -106,8 +106,17 @@ export default function useAuth() {
     };
 
     const signOut = async () => {
-        await authHelper.signOut();
-        setUser(null);
+        try {
+            await authHelper.signOut();
+            setUser(null);
+
+            return {success: true}
+        } catch (error) {
+            return {
+                success: false, 
+                error: error instanceof Error ? error.message : "An unexpected error occurred",
+            }
+        }   
     };
 
     return {
