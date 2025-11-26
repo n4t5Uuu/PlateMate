@@ -33,8 +33,6 @@
 
     import useAuth from "@/hooks/use-auth";
     import { useRouter } from "next/navigation";
-    import useCurrentUser from "@/hooks/use-current-user";
-
 
     function renderMenuItem(item: NavItems[]) {
         return item.map((item) => (
@@ -51,14 +49,6 @@
     export default function AppSideBar({...props} : React.ComponentProps<typeof Sidebar>) {
         const {signOut} = useAuth();
         const router = useRouter();
-
-        const user = useCurrentUser();
-
-        const userInitials = user ?
-            `${user.firstName.charAt(0)}${user.lastName.charAt(0)}` : "";
-
-        const fullName = user ?
-            `${user.firstName.split(" ")[0]} ${user.lastName}` : "";
         
         const handleLogout = async () => {
             try {
@@ -139,10 +129,10 @@
                                     <Avatar>
 
                                         <AvatarImage />
-                                        <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">{userInitials}</AvatarFallback> 
+                                        <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">AY</AvatarFallback> 
                                     </Avatar>
                                     <div className="flex flex-col text-left">
-                                        <span className="text-sm font-medium">{fullName}</span>
+                                        <span className="text-sm font-medium">Alessandra Yadao</span>
                                     </div>
                                 </div>
                             </SidebarMenuButton>
