@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { authHelper, type User } from "@/lib/auth-helper";
-import {supabase} from "@/lib/supabase";
+import { browserSupabase } from "@/lib/supabase";
 
 export default function useAuth() {
     const [user, setUser] = useState<Omit<User, "id" | "created_at"> | null>(null);
@@ -11,7 +11,7 @@ export default function useAuth() {
     useEffect(() => {
         // checks the active session
         const checkUser = async () => {
-            const currentUser = await authHelper.getCurrentUser();
+            const currentUser = await authHelper.getCurrentUser(browserSupabase);
             setUser(currentUser)
             setLoading(false);
         }
@@ -19,9 +19,9 @@ export default function useAuth() {
         checkUser();
 
         // listen to auth changes
-        const {data: {subscription}} = supabase.auth.onAuthStateChange(async (event, session) => {
+        const {data: {subscription}} = browserSupabase.auth.onAuthStateChange(async (event, session) => {
             if(session?.user) {
-                const currentUser = await authHelper.getCurrentUser();
+                const currentUser = await authHelper.getCurrentUser(browserSupabase);
                 setUser(currentUser);
             } else {
                 setUser(null);
@@ -107,7 +107,7 @@ export default function useAuth() {
 
     const signOut = async () => {
         try {
-            await authHelper.signOut();
+            await authHelper.signOut(browserSupabase);
             setUser(null);
 
             return {success: true}

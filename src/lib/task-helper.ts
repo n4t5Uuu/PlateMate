@@ -1,4 +1,4 @@
-import {supabase} from "@/lib/supabase";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export interface Task {
     id: string
@@ -8,15 +8,15 @@ export interface Task {
 }
 
 export const taskHelper = {
-    async createTask() {
+    async createTask(supabase: SupabaseClient) {
 
     },
 
-    async updateTask() {
+    async updateTask(supabase: SupabaseClient) {
 
     },
 
-    async deleteTask() {
+    async deleteTask(supabase: SupabaseClient) {
         
     }
 }
