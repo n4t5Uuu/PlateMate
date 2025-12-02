@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { authHelper, type User } from "@/lib/auth-helper";
-import { browserSupabase } from "@/lib/supabase";
+import { browserSupabase } from "@/lib/supabase-browser";
 
 export default function useAuth() {
     const [user, setUser] = useState<Omit<User, "id" | "created_at"> | null>(null);
