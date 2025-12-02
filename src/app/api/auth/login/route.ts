@@ -10,7 +10,7 @@ export async function POST(req: Request) {
         return NextResponse.json(
             { success: false, error: "Fields are missing" },
             { status: 400 }
-        );
+            );
         }
 
         const result = await authHelper.login(email, password);
