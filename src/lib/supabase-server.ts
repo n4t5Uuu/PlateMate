@@ -1,4 +1,4 @@
-import { createServerClient, createBrowserClient } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import {cookies} from "next/headers";
 
 // used for server-side client (for server components, API routes)
@@ -24,9 +24,3 @@ export async function createServerSupabase() {
         }
     )
 }
-
-// client-side client (used for client compnents)
-export const browserSupabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
