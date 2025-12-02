@@ -1,4 +1,4 @@
-import {supabase} from "@/lib/supabase";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export interface Project {
     id: string;
@@ -16,7 +16,7 @@ export interface Project {
 }
 
 // to map the data of the project
-function mapProjects(data): Project {
+function mapProjects(data: any): Project {
     return {
         id: data.id,
         title: data.title,
@@ -36,7 +36,7 @@ function mapProjects(data): Project {
 export const projectHelper = {
 
     // creates a new project and adds it to the projects table
-    async createProject(projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
+    async createProject(supabase: SupabaseClient, projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
         try {
 
             const dbRecord = {
@@ -72,7 +72,7 @@ export const projectHelper = {
     },
 
     // gets the exisiting projects
-    async getProjects(userId?: string) {
+    async getProjects(supabase: SupabaseClient, userId?: string) {
         try {
             let query = supabase.from("projects").select("*").order("created_at", {
                 ascending: false
@@ -99,14 +99,18 @@ export const projectHelper = {
     },
 
     // updates the details of the existing project
-    async updateProject(id: string, projectData: Partial<Project>) {
+    async updateProject(supabase: SupabaseClient, id: string, projectData: Partial<Project>) {
         try {
-            const dbData = {...projectData}
+            const dbData: any = {...projectData}
             if(projectData.dueDate)
-                dbData.dueDate = projectData.dueDate;
+                dbData.due_date = projectData.dueDate;
 
             if(projectData.teamMembers)
-                dbData.teamMembers = projectData.teamMembers;
+                dbData.team_members = projectData.teamMembers;
+            
+            // Remove camelCase keys that were mapped to snake_case
+            delete dbData.dueDate;
+            delete dbData.teamMembers;
 
             const {data, error} = await supabase.from("projects")
                 .update(dbData)
@@ -130,7 +134,7 @@ export const projectHelper = {
     },
 
     // deletes a project from the projects table
-    async deleteProject(projectId: string) {
+    async deleteProject(supabase: SupabaseClient, projectId: string) {
         try {
             const {error} = await supabase.from("projects")
                 .delete()

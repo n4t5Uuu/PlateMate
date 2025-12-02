@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { authHelper } from "@/lib/auth-helper";
+import { createServerSupabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
     try {
@@ -10,16 +11,17 @@ export async function POST(req: Request) {
         return NextResponse.json(
             { success: false, error: "Fields are missing" },
             { status: 400 }
-        );
+            );
         }
 
-        const result = await authHelper.login(email, password);
+        const supabase = await createServerSupabase();
+        const result = await authHelper.login(supabase, email, password);
 
         if (result.success) {
         return NextResponse.json(
             { success: true, user: result.user },
             { status: 200 }
-        );
+            );
         }
 
         return NextResponse.json(

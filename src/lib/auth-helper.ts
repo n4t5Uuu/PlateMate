@@ -1,4 +1,5 @@
-import {supabase} from "@/lib/supabase";
+import { SupabaseClient } from "@supabase/supabase-js";
+
 export interface User {
     id: string;
     email: string;
@@ -8,7 +9,7 @@ export interface User {
     created_at: string;
 }
 
-function mapUser(user): User {
+function mapUser(user: any): User {
     return {
         id: user.id,
         email: user.email,
@@ -22,7 +23,7 @@ function mapUser(user): User {
 export const authHelper = {
 
     //sign up the user
-    async signUp(email: string, password: string, firstName: string, lastName: string) {
+    async signUp(supabase: SupabaseClient, email: string, password: string, firstName: string, lastName: string) {
         try {
             const {data, error} = await supabase.auth.signUp({
                 email,
@@ -52,7 +53,7 @@ export const authHelper = {
     },
 
     //log in the user
-    async login(email: string, password: string) {
+    async login(supabase: SupabaseClient, email: string, password: string) {
         try {
             const {data, error} = await supabase.auth.signInWithPassword({
                 email, password
@@ -74,14 +75,14 @@ export const authHelper = {
     },
 
     //sign out the user
-    async signOut() {
+    async signOut(supabase: SupabaseClient) {
         const {error} = await supabase.auth.signOut();
         if(error)
             throw error;
     },
 
     //get the current user
-    async getCurrentUser() {
+    async getCurrentUser(supabase: SupabaseClient) {
         const {data: {user}} = await supabase.auth.getUser();
         return user ? mapUser(user) : null;
     }
