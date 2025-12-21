@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { authHelper, type User } from "@/lib/auth-helper";
-import { browserSupabase } from "@/lib/supabase-browser";
+import { browserSupabase } from "@/lib/supabase/supabase-browser";
 
 export default function useAuth() {
     const [user, setUser] = useState<Omit<User, "id" | "created_at"> | null>(null);
@@ -11,9 +11,23 @@ export default function useAuth() {
     useEffect(() => {
         // checks the active session
         const checkUser = async () => {
-            const currentUser = await authHelper.getCurrentUser(browserSupabase);
-            setUser(currentUser)
-            setLoading(false);
+            try {
+                const currentUser = await authHelper.getCurrentUser(browserSupabase);
+                setUser(currentUser)
+            } catch (error) {
+                // Check if the error is just "Auth session missing!"
+                const message = error instanceof Error ? error.message : String(error);
+                
+                // Only log the error if it's NOT the expected "missing session" error
+                if (!message.includes("Auth session missing!")) {
+                    console.error("Check user failed: ", error);
+                }
+                
+                setUser(null);
+            } finally {
+                // stops loading even if there was an error
+                setLoading(false);
+            }
         }
 
         checkUser();
@@ -43,10 +57,19 @@ export default function useAuth() {
                 body: JSON.stringify({ email, password }),
             });
 
-            if(!res.ok)
-                throw new Error(`HTTP error! status: ${res.status}`);
-
             const result = await res.json();
+
+            if(!res.ok) {
+                setLoading(false);
+
+                // return the error info from the server
+                return {
+                    success: false,
+                    error: result.error || `HTTP error! status: ${result.status}`,
+                    status: result.status,
+                    code: result.code,
+                }
+            }
 
             if (result.success && result.user) {
                 const mappedData: Omit<User, "id" | "created_at"> = {
@@ -54,8 +77,7 @@ export default function useAuth() {
                     firstName: result.user.firstName,
                     lastName: result.user.lastName,
                     avatar: result.user.avatar,
-                };
-
+                }
                 setUser(mappedData);
             }
 
@@ -79,10 +101,19 @@ export default function useAuth() {
                 body: JSON.stringify({ email, password, firstName, lastName }),
             });
 
-            if(!res.ok)
-                throw new Error(`HTTP error! status: ${res.status}`);
-
             const result = await res.json();
+
+            // If the request failed (like 409 or 400), we still want to return the result
+            // because it contains the specific error message and we can add the status.
+            if (!res.ok) {
+                setLoading(false);
+                
+                return {
+                    success: false,
+                    error: result.error || `HTTP error! status: ${res.status}`,
+                    status: res.status // Pass the status code back!
+                };
+            }
 
             if (result.success && result.user) {
                 const mappedData: Omit<User, "id" | "created_at"> = {
