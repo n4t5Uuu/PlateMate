@@ -11,7 +11,6 @@ import { toast } from "sonner";
 
 import { AuthLogo } from "@/components/page-components/platemate-logo";
 import { signupFormFields, signUpFieldStateMap, loginFormFields, loginFieldStateMap } from "@/data/form-fields";
-import { authHelper } from "@/lib/auth-helper";
 import InputField from "@/components/page-components/login-signup-input";
 import useAuth from "@/hooks/use-auth";
 
@@ -20,16 +19,6 @@ export default function AuthPage() {
     const {loading, login, signUp} = useAuth();
     const [activeTab, setActiveTab] = useState("Sign Up")
     const router = useRouter();
-
-    //doesnt work yet
-    /*
-        useEffect(() => {
-            if(authHelper.isAuthenticated())
-                //checks if the user has a session and will 
-                //switch the tab to login automatically 
-                setActiveTab("Login")
-        }, [])
-    */
 
     const [loginData, setLoginData] = useState({
         email: "",
@@ -64,6 +53,8 @@ export default function AuthPage() {
                 loginData.email, 
                 loginData.password
             );
+
+            console.log("Login Reuslt from auth page: ", result)
 
             if(result.success) {
                 toast.success("Logged In Successfully", {
@@ -139,12 +130,19 @@ export default function AuthPage() {
                     password: "",
                     confirmPassword: ""
                 })
+                //di nag rereflect ng maayos
+            } else if (result.status === 409) {
+                toast.error("User already exists", {
+                    description: "Please use a different email.",
+                    duration: 3000
+                });
             } else {
                 toast.error("Signup Failed", {
                     description: result.error || "An error occurred. Please try again.",
                     duration: 3000
                 });
             }
+            
 
         } catch (err) {
             toast.error("Signup Failed", {
