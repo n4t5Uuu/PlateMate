@@ -5,11 +5,11 @@ export interface User {
     email: string;
     firstName: string;
     lastName: string
-    avatar?: string; //not sure here
+    avatar?: string; 
     created_at: string;
 }
 
-function mapUser(user: any): User {
+export function mapUser(user: any): User {
     return {
         id: user.id,
         email: user.email,
@@ -22,58 +22,6 @@ function mapUser(user: any): User {
 
 export const authHelper = {
 
-    //sign up the user
-    async signUp(supabase: SupabaseClient, email: string, password: string, firstName: string, lastName: string) {
-        try {
-            const {data, error} = await supabase.auth.signUp({
-                email,
-                password, 
-                options: {
-                    data: {
-                        firstName,
-                        lastName
-                    }
-                }
-            })
-
-            if(error)
-                throw error
-
-            return {
-                success: true,
-                user: data.user ? mapUser(data.user) : null
-            }
-
-        } catch (error) {
-            console.error("Signup Error:", error);
-            
-            const message = error instanceof Error ? error.message: String(error);
-            return { success: false, error: message || "Unknown error occured" };
-        }
-    },
-
-    //log in the user
-    async login(supabase: SupabaseClient, email: string, password: string) {
-        try {
-            const {data, error} = await supabase.auth.signInWithPassword({
-                email, password
-            })
-
-            if(error)
-                throw error
-            
-            return {
-                sucecss: true,
-                user: data.user ? mapUser(data.user) : null
-            }
-        } catch (error) {
-            console.error("Login Error:", error)
-
-            const message = error instanceof Error ? error.message: String(error);
-            return {success: false, error: message || "Unknown error occured"}
-        }
-    },
-
     //sign out the user
     async signOut(supabase: SupabaseClient) {
         const {error} = await supabase.auth.signOut();
@@ -83,7 +31,19 @@ export const authHelper = {
 
     //get the current user
     async getCurrentUser(supabase: SupabaseClient) {
-        const {data: {user}} = await supabase.auth.getUser();
+        const {data: {user}, error} = await supabase.auth.getUser();
+        if(error) {
+            // Check if it's the harmless "missing session" error
+            const message = error instanceof Error ? error.message : String(error);
+            
+            // Only log if it's NOT "Auth session missing!"
+            if(!message.includes("Auth session missing!")) {
+                console.error("Get User Error:", error)
+            }
+            
+            return null;
+        }
+
         return user ? mapUser(user) : null;
     }
 }

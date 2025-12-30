@@ -54,6 +54,8 @@ export default function AuthPage() {
                 loginData.password
             );
 
+            console.log("Login Reuslt from auth page: ", result)
+
             if(result.success) {
                 toast.success("Logged In Successfully", {
                     description: `Welcome back, ${result.user.firstName.split(" ")[0] || "User"}!`,
@@ -128,12 +130,19 @@ export default function AuthPage() {
                     password: "",
                     confirmPassword: ""
                 })
+                //di nag rereflect ng maayos
+            } else if (result.status === 409) {
+                toast.error("User already exists", {
+                    description: "Please use a different email.",
+                    duration: 3000
+                });
             } else {
                 toast.error("Signup Failed", {
                     description: result.error || "An error occurred. Please try again.",
                     duration: 3000
                 });
             }
+            
 
         } catch (err) {
             toast.error("Signup Failed", {
