@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
-import { authHelper, type User } from "@/lib/auth-helper";
+import { authHelper, mapUser, type User } from "@/lib/auth-helper";
 import { browserSupabase } from "@/lib/supabase/supabase-browser";
 
 export default function useAuth() {
@@ -18,6 +18,11 @@ export default function useAuth() {
                 // Check if the error is just "Auth session missing!"
                 const message = error instanceof Error ? error.message : String(error);
                 
+                // if the token is bas, force a signout to clear the browser data
+                if(message.includes("Refresh Token Not Found") || message.includes("refresh_token_not_found")) {
+                    await authHelper.signOut(browserSupabase).catch(() => {});
+                }
+
                 // Only log the error if it's NOT the expected "missing session" error
                 if (!message.includes("Auth session missing!")) {
                     console.error("Check user failed: ", error);
@@ -48,46 +53,39 @@ export default function useAuth() {
         }
     }, []);
 
-    const login = async (email: string, password: string) => {
+        const login = async (email: string, password: string) => {
         setLoading(true);
         try {
-            const res = await fetch("/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+            const { data, error } = await browserSupabase.auth.signInWithPassword({
+                email,
+                password
             });
 
-            const result = await res.json();
-
-            if(!res.ok) {
+            if (error) {
                 setLoading(false);
-
-                // return the error info from the server
                 return {
                     success: false,
-                    error: result.error || `HTTP error! status: ${result.status}`,
-                    status: result.status,
-                    code: result.code,
-                }
+                    error: error.message,
+                    status: (error as any).status,
+                    code: (error as any).code
+                };
             }
 
-            if (result.success && result.user) {
-                const mappedData: Omit<User, "id" | "created_at"> = {
-                    email: result.user.email,
-                    firstName: result.user.firstName,
-                    lastName: result.user.lastName,
-                    avatar: result.user.avatar,
-                }
+            if (data.user) {
+                const mappedData = mapUser(data.user);
                 setUser(mappedData);
+                
+                setLoading(false);
+                return { success: true, user: mappedData };
             }
 
             setLoading(false);
-            return result;
+            return { success: false, error: "No user returned" };
         } catch (error) {
             setLoading(false);
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "An unexpected error occurred",
+                error: error instanceof Error ? error.message : "Unexpected error",
             };
         }
     };
@@ -95,43 +93,44 @@ export default function useAuth() {
     const signUp = async (email: string, password: string, firstName: string, lastName: string) => {
         setLoading(true);
         try {
-            const res = await fetch("/api/auth/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, firstName, lastName }),
+            const { data, error } = await browserSupabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        firstName,
+                        lastName
+                    },
+                    // This creates a redirect link like: http://localhost:3000/api/auth/callback
+                    emailRedirectTo: `${window.location.origin}/api/auth/callback` 
+                }
             });
 
-            const result = await res.json();
-
-            // If the request failed (like 409 or 400), we still want to return the result
-            // because it contains the specific error message and we can add the status.
-            if (!res.ok) {
+            if (error) {
                 setLoading(false);
-                
                 return {
                     success: false,
-                    error: result.error || `HTTP error! status: ${res.status}`,
-                    status: res.status // Pass the status code back!
+                    error: error.message,
+                    status: (error as any).status,
+                    code: (error as any).code
                 };
             }
 
-            if (result.success && result.user) {
-                const mappedData: Omit<User, "id" | "created_at"> = {
-                    email: result.user.email,
-                    firstName: result.user.firstName,
-                    lastName: result.user.lastName,
-                    avatar: result.user.avatar,
-                };
+            if (data.user) {
+                const mappedData = mapUser(data.user);
                 setUser(mappedData);
+                
+                setLoading(false);
+                return { success: true, user: mappedData };
             }
 
             setLoading(false);
-            return result;
+            return { success: false, error: "Signup successful but no user returned" };
         } catch (error) {
             setLoading(false);
             return {
                 success: false,
-                error: error instanceof Error ? error.message : "An unexpected error occurred",
+                error: error instanceof Error ? error.message : "Unexpected error",
             };
         }
     };
