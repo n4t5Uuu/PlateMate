@@ -58,7 +58,7 @@ export default function AuthPage() {
 
             if(result.success) {
                 toast.success("Logged In Successfully", {
-                    description: `Welcome back, ${result.user.firstName.split(" ")[0] || "User"}!`,
+                    description: `Welcome back, ${result?.user?.firstName.split(" ")[0] || "User"}!`,
                     duration: 3000
                 });
 

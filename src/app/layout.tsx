@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import {Toaster} from "@/components/ui/sonner";
 import {ThemeProvider} from "@/components/theme-provider";
+import {AuthProvider} from "@/components/providers/auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,9 +43,11 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/**lagay here yung code for dark mode pero nagkakaproblema sya rn */}
-        {children}
-        <Toaster richColors position="top-center"/>
+        <AuthProvider>
+          {/**lagay here yung code for dark mode pero nagkakaproblema sya rn */}
+          {children}
+          <Toaster richColors position="top-center"/>
+        </AuthProvider>
       </body>
     </html>
   );

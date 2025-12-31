@@ -1,13 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-
-export interface User {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string
-    avatar?: string; 
-    created_at: string;
-}
+import User from "@/types/user";
 
 export function mapUser(user: any): User {
     return {
@@ -21,14 +13,6 @@ export function mapUser(user: any): User {
 }
 
 export const authHelper = {
-
-    //sign out the user
-    async signOut(supabase: SupabaseClient) {
-        const {error} = await supabase.auth.signOut();
-        if(error)
-            throw error;
-    },
-
     //get the current user
     async getCurrentUser(supabase: SupabaseClient) {
         const {data: {user}, error} = await supabase.auth.getUser();
