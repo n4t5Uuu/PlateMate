@@ -130,7 +130,9 @@
                                 <div className="flex items-center gap-3 p-2">
                                     <Avatar>
                                         <AvatarImage src={user?.avatar}/>
-                                        <AvatarFallback className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold">
+                                        <AvatarFallback 
+                                            className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold"
+                                        >
                                             {user ? (user.firstName[0] + user.lastName[0]).toUpperCase() : "?" }
                                         </AvatarFallback> 
                                     </Avatar>

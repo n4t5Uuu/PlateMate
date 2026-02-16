@@ -34,7 +34,7 @@ export function AuthProvider({children}: {children:React.ReactNode}) {
         checkUser();
 
         // listn for real-time changes (login/logout)
-        const{data: {subscription}} = browserSupabase.auth.onAuthStateChange((event, session) => {
+        const {data: {subscription}} = browserSupabase.auth.onAuthStateChange((event, session) => {
             if(session?.user)
                 setUser(mapUser(session.user));
             else

@@ -9,15 +9,16 @@ interface HeaderProps {
 }
 
 export default function Header() {
-    <header className="flex items-center h-20 shrink-0 gap-2 border-b bg-white px-6">
-        <SidebarTrigger className="ml-01 cursor-pointer"/>
-        <div className="flex flex-1 items-center justify-between">
-            <div>
-                <h1 className="font-bold text-xl mb-0.5">Dashboard</h1>
-                <p className="text-gray-500 text-sm">Welcome back, User!</p> {/**ilalagay here yung first name ng user  */}
-            </div>
+    return (
+        <header className="flex items-center h-20 shrink-0 gap-2 border-b bg-white px-6">
+            <SidebarTrigger className="ml-01 cursor-pointer"/>
+            <div className="flex flex-1 items-center justify-between">
+                <div>
+                    <h1 className="font-bold text-xl mb-0.5">Dashboard</h1>
+                    <p className="text-gray-500 text-sm">Welcome back, User!</p> {/**ilalagay here yung first name ng user  */}
+                </div>
                 
-            <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4">
                 <SearchBar />
 
                 {/*in here the notifs bar, when the user clicks on it
@@ -35,4 +36,5 @@ export default function Header() {
             </div>
         </div>
     </header>
+    );
 }

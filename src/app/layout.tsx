@@ -4,6 +4,7 @@ import "./globals.css";
 import {Toaster} from "@/components/ui/sonner";
 import {ThemeProvider} from "@/components/theme-provider";
 import {AuthProvider} from "@/components/providers/auth-provider";
+import LayoutWrap from "@/components/page-components/layout-wrap";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +46,9 @@ export default function RootLayout({
       >
         <AuthProvider>
           {/**lagay here yung code for dark mode pero nagkakaproblema sya rn */}
-          {children}
+          <LayoutWrap>
+            {children}
+          </LayoutWrap>
           <Toaster richColors position="top-center"/>
         </AuthProvider>
       </body>

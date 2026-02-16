@@ -10,32 +10,32 @@ export type NavItems = {
 export const generalNavTabs: NavItems[] = [
     {
         name: "Dasboard",
-        url: "#",
+        url: "/dashboard",
         icon: Home,
         isActive: true
     },
     {
         name: "Projects",
-        url: "#",
+        url: "/projects",
         icon: FolderOpen,
         isActive: false
     }, 
     {
         name: "Calendar",
-        url: "#",
+        url: "/calendar",
         icon: Calendar,
         isActive: false
     },
     {
         name: "Teams", //di pa sure here pero try paren 
-        url: "#",
+        url: "/teams",
         icon: GroupIcon,
         isActive: false
         
     },
     {
         name: "Trash", 
-        url: "#",   //placeholder muna toh for now or place it in the footer where the user can access its profile
+        url: "/trash",   //placeholder muna toh for now or place it in the footer where the user can access its profile
         icon: Trash,
         isActive: false
     }
