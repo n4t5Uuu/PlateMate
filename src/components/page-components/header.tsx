@@ -2,6 +2,7 @@ import { SidebarTrigger } from "../ui/sidebar";
 import SearchBar from "./search-bar";
 import { Button } from "../ui/button";
 import {Plus, Bell} from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
     headerTitle: string
@@ -9,12 +10,18 @@ interface HeaderProps {
 }
 
 export default function Header() {
+    const pathname = usePathname();
+
+    // Gets the  pathname and capitalizes the first letter
+    // And it will be used for the header title depending on which page will be redirected
+    const headerTitle = pathname.slice(1).charAt(0).toUpperCase() + pathname.slice(2)
+
     return (
         <header className="flex items-center h-20 shrink-0 gap-2 border-b bg-white px-6">
             <SidebarTrigger className="ml-01 cursor-pointer"/>
             <div className="flex flex-1 items-center justify-between">
                 <div>
-                    <h1 className="font-bold text-xl mb-0.5">Dashboard</h1>
+                    <h1 className="font-bold text-xl mb-0.5">{headerTitle}</h1>
                     <p className="text-gray-500 text-sm">Welcome back, User!</p> {/**ilalagay here yung first name ng user  */}
                 </div>
                 

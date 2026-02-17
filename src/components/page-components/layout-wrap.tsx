@@ -3,6 +3,7 @@
 import {usePathname} from "next/navigation"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/page-components/sidebar";
+import Header from "@/components/page-components/header";
 import { Separator } from "@/components/ui/separator";
 
 export default function LayoutWrap({children}: {children: React.ReactNode}) {
@@ -18,10 +19,11 @@ export default function LayoutWrap({children}: {children: React.ReactNode}) {
     return (
         <SidebarProvider>
             <AppSidebar />
-            <Separator />
             <SidebarInset>
-                <SidebarTrigger />
-                {children}
+                <Header />
+                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                    {children}
+                </div>
             </SidebarInset>
         </SidebarProvider>
     );
