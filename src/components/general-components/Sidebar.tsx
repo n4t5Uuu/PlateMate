@@ -26,7 +26,7 @@
     } from "../ui/dialog";
 
     import {Avatar, AvatarFallback, AvatarImage} from "../ui/avatar";
-    import {SidebarLogo} from "./platemate-logo"
+    import {SidebarLogo} from "./PlateMateLogo"
     import { NavItems, generalNavTabs, shortcutNavTabs, samplePinnedProjects, sampleProjects} from "@/data/sidebar-data";
     import { Cog, LogOut } from "lucide-react";
     import {toast} from "sonner"

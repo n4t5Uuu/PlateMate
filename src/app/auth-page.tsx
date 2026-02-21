@@ -9,9 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
-import { AuthLogo } from "@/components/page-components/platemate-logo";
+import { AuthLogo } from "@/components/general-components/PlateMateLogo";
 import { signupFormFields, signUpFieldStateMap, loginFormFields, loginFieldStateMap } from "@/data/form-fields";
-import InputField from "@/components/page-components/login-signup-input";
+import InputField from "@/components/general-components/LoginSignupInput";
 import useAuth from "@/hooks/use-auth";
 
 export default function AuthPage() {

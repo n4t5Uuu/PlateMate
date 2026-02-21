@@ -1,13 +1,8 @@
 import { SidebarTrigger } from "../ui/sidebar";
-import SearchBar from "./search-bar";
+import SearchBar from "./SearchBar";
 import { Button } from "../ui/button";
 import {Plus, Bell} from "lucide-react";
 import { usePathname } from "next/navigation";
-
-interface HeaderProps {
-    headerTitle: string
-    function: string //placeholder for now but this accepts a function
-}
 
 export default function Header() {
     const pathname = usePathname();

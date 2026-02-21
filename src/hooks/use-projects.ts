@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from "react";
 import {projectHelper, type Project} from "@/lib/project-helper";
+import { browserSupabase } from "@/lib/supabase/supabase-browser";
 
 export function useProject(userId?: string) {
     const [project, setProject] = useState<Project[]>([]);
@@ -12,10 +13,10 @@ export function useProject(userId?: string) {
         setLoading(true);   
         setError(null);
 
-        const result = await projectHelper.getProjects();
+        const result = await projectHelper.getProjects(browserSupabase, userId);
 
         if(result.success){
-            setProject(result?.projects as Project[])
+            setProject(result?.data as Project[])
         } else {
             setError(result.error);
         }
@@ -28,8 +29,8 @@ export function useProject(userId?: string) {
             fetchProjects();
     }, [userId])
 
-    const createProject = async (projectData: Omit<Project, "id" | "created" | "updated">) => {
-        const result = await projectHelper.createProject(projectData);
+    const createProject = async (projectData: Omit<Project, "id" | "created_at" | "updated_at">) => {
+        const result = await projectHelper.createProject(browserSupabase, projectData);
 
         if(result.success) {
             await fetchProjects();
@@ -39,7 +40,7 @@ export function useProject(userId?: string) {
     }
 
     const updateProject = async (id: string, projectData: Partial<Project>) => {
-        const result = await projectHelper.updateProject(id, projectData);
+        const result = await projectHelper.updateProject(browserSupabase, id, projectData);
 
         if(result.success) {
             await fetchProjects();

@@ -1,4 +1,4 @@
-import { InputFieldProps } from "@/components/page-components/login-signup-input";
+import { InputFieldProps } from "@/components/general-components/LoginSignupInput";
 import { User, Lock, Mail} from "lucide-react";
 
 export const signupFormFields: InputFieldProps[] = [
