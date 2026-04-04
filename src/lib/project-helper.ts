@@ -15,7 +15,13 @@ export interface Project {
     updated_at: string;
 }
 
-// to map the data of the project
+/**
+ * Maps a database project record to the frontend Project interface.
+ * This ensures consistent property names (camelCase) throughout the application.
+ * 
+ * @param data - The raw data from the database.
+ * @returns A formatted Project object.
+ */
 function mapProjects(data: any): Project {
     return {
         id: data.id,
@@ -33,9 +39,19 @@ function mapProjects(data: any): Project {
     };
 }
 
+/**
+ * Helper object containing core database operations for Projects.
+ * Handles insertion, retrieval, updates, and deletion.
+ */
 export const projectHelper = {
 
-    // creates a new project and adds it to the projects table
+    /**
+     * Creates a new project in the database.
+     * 
+     * @param supabase - The Supabase client instance.
+     * @param projectData - The project data to insert (excluding generated fields).
+     * @returns A promise resolving to the created project on success.
+     */
     async createProject(supabase: SupabaseClient, projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
         try {
 
@@ -71,7 +87,13 @@ export const projectHelper = {
         }
     },
 
-    // gets the exisiting projects
+    /**
+     * Retrieves projects from the database, optionally filtered by user ID.
+     * 
+     * @param supabase - The Supabase client instance.
+     * @param userId - Optional user ID to filter by owner.
+     * @returns A promise resolving to an array of projects on success.
+     */
     async getProjects(supabase: SupabaseClient, userId?: string) {
         try {
             let query = supabase.from("projects").select("*").order("created_at", {
@@ -98,7 +120,14 @@ export const projectHelper = {
         }
     },
 
-    // updates the details of the existing project
+    /**
+     * Updates an existing project in the database.
+     * 
+     * @param supabase - The Supabase client instance.
+     * @param id - The ID of the project to update.
+     * @param projectData - Partial project data to apply.
+     * @returns A promise resolving to the updated project on success.
+     */
     async updateProject(supabase: SupabaseClient, id: string, projectData: Partial<Project>) {
         try {
             const dbData: any = {...projectData}
@@ -133,7 +162,13 @@ export const projectHelper = {
         }
     },
 
-    // deletes a project from the projects table
+    /**
+     * Deletes a project from the projects table.
+     * 
+     * @param supabase - The Supabase client instance.
+     * @param projectId - The ID of the project to delete.
+     * @returns A promise resolving to a success flag and message/error.
+     */
     async deleteProject(supabase: SupabaseClient, projectId: string) {
         try {
             const {error} = await supabase.from("projects")
