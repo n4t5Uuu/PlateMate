@@ -2,7 +2,7 @@
 
 import {useState, useEffect} from "react";
 import {projectHelper, type Project} from "@/lib/project-helper";
-import { browserSupabase } from "@/lib/supabase/supabase-browser";
+import { browserSupabase } from "@/lib/supabase/browser";
 import { useAuth } from "@/components/providers/auth-provider";
 
 /**

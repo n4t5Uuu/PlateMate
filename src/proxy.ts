@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 
 /**
  * Next.js 16 Proxy layer (formerly Middleware).
  * Clarifies the network boundary and handles cross-cutting concerns like security headers.
  */
-export function proxy(request: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+export async function proxy(request: NextRequest) {
+  const nonce = btoa(crypto.randomUUID());
   
   // Define Supabase domain
   const supabaseUrl = 'rfosepwadgtjzncslnul.supabase.co';
@@ -29,11 +30,36 @@ export function proxy(request: NextRequest) {
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set('Content-Security-Policy', cspHeader);
 
-  const response = NextResponse.next({
+  let response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   });
+
+  // Initialize Supabase client
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          response = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // Refresh session if expired
+  await supabase.auth.getUser()
 
   response.headers.set('Content-Security-Policy', cspHeader);
 

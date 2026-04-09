@@ -3,7 +3,7 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {mapUser} from "@/lib/auth-helper";
 import User from "@/types/user";
-import {browserSupabase} from "@/lib/supabase/supabase-browser";
+import {browserSupabase} from "@/lib/supabase/browser";
 
 /**
  * Shape of the authentication context data.
