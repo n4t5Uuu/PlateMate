@@ -1,12 +1,16 @@
 import { NextResponse, type NextRequest } from 'next/server';
-export function middleware(request: NextRequest) {
+
+/**
+ * Next.js 16 Proxy layer (formerly Middleware).
+ * Clarifies the network boundary and handles cross-cutting concerns like security headers.
+ */
+export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   
   // Define Supabase domain
   const supabaseUrl = 'rfosepwadgtjzncslnul.supabase.co';
 
   // Define the CSP policy
-  // Standard strict CSP for Next.js applications
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''};
@@ -38,13 +42,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     {
       source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
       missing: [

@@ -3,7 +3,7 @@
 import {usePathname} from "next/navigation"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/general-components/Sidebar";
-import Header from "@/components/general-components/Header";
+import Header from "@/components/general-components/header";
 
 export default function LayoutWrap({children}: {children: React.ReactNode}) {
     const pathname = usePathname();
