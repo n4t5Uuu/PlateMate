@@ -1,4 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { sanitizeInput } from "./security";
 
 export interface Project {
     id: string;
@@ -56,8 +57,8 @@ export const projectHelper = {
         try {
 
             const dbRecord = {
-                title: projectData.title,
-                description: projectData.description,
+                title: sanitizeInput(projectData.title),
+                description: projectData.description ? sanitizeInput(projectData.description) : undefined,
                 client: projectData.client,
                 progress: projectData.progress,
                 due_date: projectData.dueDate,
@@ -131,6 +132,10 @@ export const projectHelper = {
     async updateProject(supabase: SupabaseClient, id: string, projectData: Partial<Project>) {
         try {
             const dbData: any = {...projectData}
+            
+            if (dbData.title) dbData.title = sanitizeInput(dbData.title);
+            if (dbData.description) dbData.description = sanitizeInput(dbData.description);
+
             if(projectData.dueDate)
                 dbData.due_date = projectData.dueDate;
 
