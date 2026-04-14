@@ -2,7 +2,7 @@
 
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {mapUser} from "@/lib/auth-helper";
-import User from "@/types/user";
+import User from "@/types/user.types";
 import {browserSupabase} from "@/lib/supabase/browser";
 
 /**

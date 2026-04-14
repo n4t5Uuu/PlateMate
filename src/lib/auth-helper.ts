@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import User from "@/types/user";
+import User from "@/types/user.types";
 
 export function mapUser(user: any): User {
     return {
