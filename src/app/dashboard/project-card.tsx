@@ -51,7 +51,7 @@ export default function ProjectCard({projectTitle, clientName, progress, dueDate
                     <div>
                         <div className="flex items-center justify-between mb-2">
                             <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60">Progress</p>
-                            <p className="font-jetbrains-mono text-sm font-bold text-primary">{progress}%</p>
+                            <p className="font-jetbrains-mono text-sm font-bold text-foreground">{progress}%</p>
                         </div>
                         <div className="relative h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
                             <div 

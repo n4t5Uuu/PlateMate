@@ -81,7 +81,7 @@
 
                 <SidebarContent className="px-2 mt-2 custom-scrollbar">
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">General</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">General</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {renderMenuItem(generalNavTabs)}
@@ -91,7 +91,7 @@
 
                     {sampleProjects.length > 0 ? (
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">Workspace</SidebarGroupLabel>
+                            <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Workspace</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     {renderMenuItem(sampleProjects)}
@@ -102,7 +102,7 @@
 
                     {samplePinnedProjects.length > 0 ?(
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">Pinned</SidebarGroupLabel>
+                            <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Pinned</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     {renderMenuItem(samplePinnedProjects)}
@@ -112,7 +112,7 @@
                     ) : null}
 
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">Quick Actions</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Quick Actions</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {renderMenuItem(shortcutNavTabs)}

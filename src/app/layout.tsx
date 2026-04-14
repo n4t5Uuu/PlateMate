@@ -4,6 +4,7 @@ import {Toaster} from "@/components/ui/sonner";
 import {ThemeProvider} from "@/components/theme-provider";
 import {AuthProvider} from "@/components/providers/auth-provider";
 import LayoutWrap from "@/components/general-components/LayoutWrap";
+import {Metadata} from "next";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -37,7 +38,7 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

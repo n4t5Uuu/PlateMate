@@ -3,6 +3,7 @@ import SearchBar from "./SearchBar";
 import { Button } from "../ui/button";
 import {Plus, Bell} from "lucide-react";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 
 export default function Header() {
     const pathname = usePathname();
@@ -24,7 +25,9 @@ export default function Header() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="icon" className="cursor-pointer h-10 w-10 border-border/50 hover:border-primary/50 transition-all bg-transparent">
+                        <ThemeToggle />
+                        
+                        <Button variant="outline" size="icon" className="cursor-pointer h-10 w-10 border-border/80 hover:border-primary/50 transition-all bg-transparent shadow-sm">
                             <Bell className="h-4 w-4"/>
                         </Button>
 

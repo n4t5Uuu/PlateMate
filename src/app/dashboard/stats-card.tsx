@@ -18,15 +18,15 @@ export default function StatsCard({title, value, change, changeType, Icon}: Stat
     }
 
     return (
-        <Card className="glass-morphism group hover:border-primary/40 transition-all duration-300 overflow-hidden relative border-none">
+        <Card className="glass-morphism group hover:border-primary/40 transition-all duration-300 overflow-hidden relative border-none shadow-md">
             {/* Background Decorative Icon */}
-            <div className="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
+            <div className="absolute -bottom-6 -right-6 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity pointer-events-none">
                 <Icon size={120} strokeWidth={1}/>
             </div>
 
             <CardHeader className="flex flex-row items-center space-y-0 justify-between pb-2">
                 <CardTitle className="text-muted-foreground font-semibold text-[11px] uppercase tracking-[0.2em]">{title}</CardTitle>
-                <div className="w-8 h-8 rounded-full border border-primary/20 bg-primary/5 flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/40 transition-all shadow-lg shadow-primary/5">
+                <div className="w-8 h-8 rounded-full border border-primary/30 bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/50 transition-all shadow-md shadow-primary/10">
                     <Icon className="text-primary w-4 h-4"/>
                 </div>
             </CardHeader>
