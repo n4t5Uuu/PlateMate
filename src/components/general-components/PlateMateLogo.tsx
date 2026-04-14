@@ -1,10 +1,9 @@
-//TODO: change the font style here
 export function AuthLogo() {
     return  (
         <div className="flex items-center justify-center mb-8 mt-8">
-            <h1 className="text-4xl font-bold tracking-light tracking-normal">
-                <span className="text-red-500 font-extrabold ">Plate</span>
-                <span className="text-black font-extrabold ">Mate</span>
+            <h1 className="text-4xl font-bold tracking-tight">
+                <span className="text-primary font-extrabold ">Plate</span>
+                <span className="text-foreground font-extrabold ">Mate</span>
             </h1>
         </div>
     )
@@ -14,10 +13,10 @@ export function AuthLogo() {
 //TODO: change the font style here
 export function SidebarLogo() {
     return  (
-        <div className="flex items-center justify-center mb-4 mt-4">
-            <h1 className="text-4xl font-bold tracking-light tracking-normal">
-                <span className="text-red-500 font-extrabold ">Plate</span>
-                <span className="text-black font-extrabold ">Mate</span>
+        <div className="flex items-center justify-center p-2 mb-1 mt-2 w-full">
+            <h1 className="text-4xl font-bold tracking-tight">
+                <span className="text-primary font-extrabold ">Plate</span>
+                <span className="text-foreground font-extrabold ">Mate</span>
             </h1>
         </div>
     )

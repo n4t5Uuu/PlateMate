@@ -74,14 +74,14 @@
 
 
         return (
-            <Sidebar variant="inset" {...props}>
-                <SidebarHeader>
+            <Sidebar variant="inset" className="glass-morphism border-r-0 !bg-sidebar/40" {...props}>
+                <SidebarHeader className="pt-4 px-4 pb-0">
                     <SidebarLogo />
                 </SidebarHeader>
 
-                <SidebarContent>
+                <SidebarContent className="px-2 mt-2 custom-scrollbar">
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-base mb-1.5">General</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">General</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {renderMenuItem(generalNavTabs)}
@@ -91,7 +91,7 @@
 
                     {sampleProjects.length > 0 ? (
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-base mb-1.5">Workspace</SidebarGroupLabel>
+                            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">Workspace</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     {renderMenuItem(sampleProjects)}
@@ -100,10 +100,9 @@
                         </SidebarGroup>
                     ) : null}
 
-                    {/**placeholder for now */}
                     {samplePinnedProjects.length > 0 ?(
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-base mb-1.5">Pinned Projects</SidebarGroupLabel>
+                            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">Pinned</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     {renderMenuItem(samplePinnedProjects)}
@@ -113,7 +112,7 @@
                     ) : null}
 
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-base mb-1.5">Quick Actions</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 mb-1 px-4">Quick Actions</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {renderMenuItem(shortcutNavTabs)}
@@ -123,44 +122,46 @@
                 </SidebarContent>
                 
                 
-                <SidebarFooter>
+                <SidebarFooter className="p-3 border-t border-border/50 bg-sidebar/20">
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton asChild> 
-                                <div className="flex items-center gap-3 p-2">
-                                    <Avatar>
+                            <SidebarMenuButton size="lg" asChild className="hover:bg-accent/50 transition-colors"> 
+                                <div className="flex items-center gap-3 w-full">
+                                    <Avatar className="h-8 w-8 border border-border/50 shadow-sm">
                                         <AvatarImage src={user?.avatar}/>
                                         <AvatarFallback 
-                                            className="bg-gradient-to-tr from-blue-300 to-red-400 border-2 border-black font-semibold"
+                                            className="bg-gradient-to-tr from-primary to-orange-600 border-none font-bold text-white text-[10px]"
                                         >
                                             {user ? (user.firstName[0] + user.lastName[0]).toUpperCase() : "?" }
                                         </AvatarFallback> 
                                     </Avatar>
-                                    <div className="flex flex-col text-left">
-                                        <span className="text-sm font-medium">
+                                    <div className="flex flex-col text-left overflow-hidden">
+                                        <span className="text-sm font-semibold truncate leading-tight">
                                             {user ? `${user?.firstName.split(" ")[0]} ${user?.lastName}` : "Loading..." }
                                         </span>
+                                        <span className="text-[11px] text-muted-foreground truncate">Architect</span>
                                     </div>
                                 </div>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
 
-                        {/**Find a way to map these two */}
-                        <SidebarMenuItem className="mt-1">
-                            <SidebarMenuButton asChild>
-                                <a href="#" className= ""> {/**edit this */}
-                                    <Cog />
-                                    <span>Settings</span>
-                                </a>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
+                        <div className="flex flex-col gap-1 mt-2">
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild className="h-9 border border-border/40 hover:border-primary/50 transition-all bg-background/20">
+                                    <a href="#" className="flex items-center gap-3">
+                                        <Cog className="w-4 h-4 text-muted-foreground" />
+                                        <span className="text-xs font-semibold">Settings</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
 
-                        <SidebarMenuItem className="mt-1">
-                            <SidebarMenuButton onClick={handleLogout} className="cursor-pointer">
-                                <LogOut />
-                                <span>Logout</span>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton onClick={handleLogout} className="h-9 cursor-pointer border border-border/40 hover:border-destructive/50 hover:bg-destructive/10 transition-all bg-background/20 flex items-center gap-3">
+                                    <LogOut className="w-4 h-4 text-muted-foreground" />
+                                    <span className="text-xs font-semibold">Logout</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </div>
                     </SidebarMenu>
                 </SidebarFooter>
 

@@ -39,34 +39,35 @@ const sampleActivities = [
 
 export default function RecentActivity() {
     return (
-        <Card className="mb-4">
-            <CardHeader>
-                <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
+        <Card className="glass-morphism border-none shadow-lg mb-6">
+            <CardHeader className="pb-4">
+                <CardTitle className="text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground/50">Recent Activity</CardTitle>
             </CardHeader>
 
             <CardContent>
-                {sampleActivities.map((activity) => (
-                    <div className="flex items-start space-x-3 mb-3" key={activity.id}>
-                        <Avatar className="w-8 h-8">
-                            <AvatarImage />
-                            <AvatarFallback className="text-sm border-2 border-black 
-                            font-semibold text-center p-2">{activity.avatar}</AvatarFallback>
-                        </Avatar>
+                <div className="relative space-y-6 before:absolute before:inset-y-0 before:left-[15px] before:w-[2px] before:bg-muted/30">
+                    {sampleActivities.map((activity) => (
+                        <div className="relative flex items-start gap-4 pl-0 group" key={activity.id}>
+                            <Avatar className="w-8 h-8 rounded-full border-2 border-background ring-2 ring-primary/20 z-10 bg-background overflow-hidden shadow-sm group-hover:ring-primary/40 transition-all">
+                                <AvatarImage />
+                                <AvatarFallback className="text-[10px] font-bold bg-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors">{activity.avatar}</AvatarFallback>
+                            </Avatar>
 
-                        <div className="flex-1 space-y-1">
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium">{activity.name}</span>
-                                <span className="text-sm text-gray-600">{activity.action}</span>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <Badge variant="outline" className="text-xs">
-                                    {activity.project}
-                                </Badge>
-                                <span className="text-sm text-gray-600">{activity.time}</span>
+                            <div className="flex-1 space-y-1 pb-1">
+                                <div className="flex items-center justify-between">
+                                    <p className="text-sm font-bold leading-none group-hover:text-primary transition-colors">{activity.name}</p>
+                                    <span className="text-[10px] font-bold text-muted-foreground/40">{activity.time}</span>
+                                </div>
+                                <p className="text-xs text-muted-foreground font-medium">{activity.action}</p>
+                                <div className="pt-1">
+                                    <Badge variant="outline" className="text-[9px] font-bold border-border/50 bg-background/50 hover:border-primary/30 transition-all opacity-80">
+                                        {activity.project}
+                                    </Badge>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </CardContent>
         </Card>
     )

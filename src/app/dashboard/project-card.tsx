@@ -18,65 +18,74 @@ interface ProjectCardProps {
 export default function ProjectCard({projectTitle, clientName, progress, dueDate, status, 
     teamMembers, priority}: ProjectCardProps) {
     const priorityColors = {
-        high: "bg-red-100 text-red-800 text-sm rounded-xl",
-        medium: "bg-yellow-100 text-yellow-800 text-sm rounded-xl",
-        low: "bg-green-100 text-green-800 text-sm rounded-xl"
+        high: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+        medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+        low: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
     }
 
     const statusColors = {
-        Active: "bg-blue-600",
-        Review: "bg-purple-600",
-        Completed: "bg-green-600",
-        Delayed: "bg-red-600"
+        Active: "bg-blue-500",
+        Review: "bg-violet-500",
+        Completed: "bg-emerald-500",
+        Delayed: "bg-rose-500"
     }
 
-    //siguro limited yung list of projects na makikita ni user here sa dashboard, pag naexceed yung size limit
-    //irerender lang yung kaya nya or irender lang yung pinaka recent projects
     return (
-        <Card className="cursor-pointer hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle className="text-lg font-bold">{projectTitle}</CardTitle>
-                        {/**add an option where the user can edit the icon of their project */}
-                        <p className="text-gray-500 text-sm mt-1">{clientName}</p>
+        <Card className="glass-morphism group hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden border-none shadow-lg">
+            <CardHeader className="pb-4">
+                <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                        <CardTitle className="text-lg font-bold tracking-tight group-hover:text-primary transition-colors">{projectTitle}</CardTitle>
+                        <p className="text-muted-foreground text-xs font-medium opacity-60">
+                            {clientName}
+                        </p>
                     </div>
-                    <Badge className={`${priorityColors[priority]} self-start`} variant="secondary">
+                    <Badge className={`${priorityColors[priority]} text-[10px] py-0.5 px-2 font-bold uppercase tracking-widest border shadow-none`} variant="outline">
                         {priority}
                     </Badge>
                 </div>
             </CardHeader>
             
-            <CardContent className="-mt-4">
-                <div>
-                    <div className="flex items-center justify-between">
-                        <p className="text-gray-500">Progress</p>
-                        <p className="font-semibold">{progress}%</p>
-                    </div>
-                    <Progress value={progress} className="h-2 rounded-full mt-1 mb-4"/>
-                    <div className="flex space-y-3 mt-2 flex-col">
-
-                        <div className="w-full flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                                <Clipboard className="w-4 h-4 text-gray-500"/>
-                                <p className="text-sm text-gray-500">{dueDate}</p>
-                            </div>
-                            
-                            <div className="flex items-center gap-1">
-                                <Users className="w-4 h-4 text-gray-500"/>
-                                <p className="text-sm text-gray-500">{teamMembers} members</p>
-                            </div>
+            <CardContent>
+                <div className="space-y-6">
+                    <div>
+                        <div className="flex items-center justify-between mb-2">
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60">Progress</p>
+                            <p className="font-jetbrains-mono text-sm font-bold text-primary">{progress}%</p>
                         </div>
+                        <div className="relative h-1.5 w-full bg-primary/10 rounded-full overflow-hidden">
+                            <div 
+                                className={`absolute inset-y-0 left-0 ${statusColors[status]} transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(var(--primary),0.3)]`}
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
+                    </div>
 
-                        <div className="w-full flex items-center justify-between">
-                            <div className={`w-3 h-3 rounded-full ${statusColors[status]}`} />
-                            <div className="flex -space-x-2">
-                                {[1,2,3].map((i) => (
-                                    <Avatar key={i} className="w-6 h-6">
-                                        <AvatarImage/> {/**dont forget the image of the members who are part of the project */}
-                                        <AvatarFallback className="text-xs border-2 border-black"></AvatarFallback> 
-                                    </Avatar>
-                                ))}
+                    <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-background/40 border border-border/30">
+                            <Clipboard className="w-3.5 h-3.5 text-muted-foreground/60"/>
+                            <p className="text-[11px] font-semibold truncate">{dueDate}</p>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-background/40 border border-border/30">
+                            <Users className="w-3.5 h-3.5 text-muted-foreground/60"/>
+                            <p className="text-[11px] font-semibold truncate">{teamMembers} Members</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${statusColors[status]} animate-pulse shadow-[0_0_8px_var(--primary)]`} />
+                            <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground/70">{status}</span>
+                        </div>
+                        <div className="flex -space-x-2 isolate">
+                            {[1,2,3].map((i) => (
+                                <Avatar key={i} className="w-7 h-7 border-2 border-background ring-1 ring-border shadow-sm">
+                                    <AvatarFallback className="text-[9px] font-bold bg-muted">U{i}</AvatarFallback> 
+                                </Avatar>
+                            ))}
+                            <div className="w-7 h-7 rounded-full bg-primary/10 border-2 border-background ring-1 ring-border flex items-center justify-center text-[9px] font-bold text-primary">
+                                +{teamMembers ? teamMembers - 3 : 0}
                             </div>
                         </div>
                     </div>
@@ -84,4 +93,4 @@ export default function ProjectCard({projectTitle, clientName, progress, dueDate
             </CardContent>
         </Card>
     )
-}
+}

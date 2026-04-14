@@ -1,27 +1,18 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import { Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import {Toaster} from "@/components/ui/sonner";
 import {ThemeProvider} from "@/components/theme-provider";
 import {AuthProvider} from "@/components/providers/auth-provider";
 import LayoutWrap from "@/components/general-components/LayoutWrap";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: [
-    "100", "200", "300", "400", "500", "600", "700", "800", "900"
-  ]
 });
 
 export const metadata: Metadata = {
@@ -40,17 +31,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        <AuthProvider>
-          {/**lagay here yung code for dark mode pero nagkakaproblema sya rn */}
-          <LayoutWrap>
-            {children}
-          </LayoutWrap>
-          <Toaster richColors position="top-center"/>
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <LayoutWrap>
+              {children}
+            </LayoutWrap>
+            <Toaster richColors position="top-center"/>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

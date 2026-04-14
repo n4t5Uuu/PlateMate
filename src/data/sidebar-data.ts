@@ -53,7 +53,8 @@ export const shortcutNavTabs: NavItems[] = [
         url: "#",
         icon: LayoutTemplate,
         isActive: false
-    }
+    },
+    
 ]
 
 export const samplePinnedProjects: NavItems[] = [

@@ -82,8 +82,8 @@ const statsCardData = [
 
 export default function Dashboard() {
     return (
-        <div className="flex-1 space-y-6 pt-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex-1 space-y-8 pt-8 pb-12">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {statsCardData.map((data) => (
                     <StatsCard 
                         key={data.title}
@@ -96,24 +96,25 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2 space-y-4">
+            <div className="grid gap-8 lg:grid-cols-3">
+                <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h2 className="font-bold text-lg text-gray-900">Active Projects</h2>
-                        <div className="flex items-center justify-center gap-2">
-                            <Button variant="outline" className="cursor-pointer">
-                                <Funnel className="w-4 h-4"/>
+                        <div className="space-y-1">
+                            <h2 className="font-bold text-2xl tracking-tight">Active Projects</h2>
+                            <p className="text-muted-foreground text-xs font-medium opacity-70">Manage your ongoing architectural designs</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Button variant="outline" className="cursor-pointer border-border/50 hover:border-primary/50 transition-all font-semibold glass-morphism !bg-transparent h-10">
+                                <Funnel className="w-4 h-4 mr-2"/>
                                 Filter
                             </Button>
-                            <Button variant="outline" className="cursor-pointer">
+                            <Button variant="outline" className="cursor-pointer border-border/50 hover:border-primary/50 transition-all font-semibold glass-morphism !bg-transparent h-10">
                                 View All
                             </Button>
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-4 ">
-                        {/**placeholder yung key rn siguro and yung key is yung
-                        id ng projects a database */}
+                    <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6 ">
                         {sampleProjects.map((items) => (
                             <ProjectCard 
                                 key={items.projectName} 
@@ -129,44 +130,47 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 space-y-8">
                     <RecentActivity />
 
-                    <div className="space-y-2">
-                        <h3 className="text-lg font-semibold text-gray-900">This Week</h3>
-                        <div className="space-y-3">
-                            <div className="flex items-start justify-between p-3 rounded-lg bg-green-50">
-                                <div className="flex flex-col">
-                                    <p className="text-green-800 font-semibold">Completed Tasks</p>
-                                    <p className="text-sm text-green-600">5 tasks</p>
+                    <div className="glass-morphism rounded-xl p-6 border-none shadow-lg space-y-6">
+                        <div className="space-y-1">
+                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50">Project Pulse</h3>
+                            <p className="text-lg font-bold tracking-tight">Weekly Overview</p>
+                        </div>
+
+                        <div className="grid gap-3">
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 group hover:bg-emerald-500/10 transition-all">
+                                <div className="space-y-1">
+                                    <p className="text-emerald-500 text-[10px] font-bold uppercase tracking-widest">Completed</p>
+                                    <p className="text-sm font-bold opacity-70">5 Tasks</p>
                                 </div>
-                                <h3 className="text-3xl text-green-800 font-semibold self-center">5</h3>
+                                <span className="text-3xl font-jetbrains-mono font-bold text-emerald-500">5</span>
                             </div>
 
-                            <div className="flex items-start justify-between p-3 rounded-lg bg-yellow-50">
-                                <div className="flex flex-col">
-                                    <p className="text-yellow-800 font-semibold">Due Today</p>
-                                    <p className="text-sm text-yellow-600">3 tasks</p>
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 group hover:bg-amber-500/10 transition-all">
+                                <div className="space-y-1">
+                                    <p className="text-amber-500 text-[10px] font-bold uppercase tracking-widest">Due Today</p>
+                                    <p className="text-sm font-bold opacity-70">3 Tasks</p>
                                 </div>
-                                <h3 className="text-3xl text-yellow-800 font-semibold self-center">3</h3>
+                                <span className="text-3xl font-jetbrains-mono font-bold text-amber-500">3</span>
                             </div>
 
-                            <div className="flex items-start justify-between p-3 rounded-lg bg-blue-50">
-                                <div className="flex flex-col">
-                                    <p className="text-blue-800 font-semibold">Meetings</p>
-                                    <p className="text-sm text-blue-600">3 scheduled</p>
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-sky-500/5 border border-sky-500/10 group hover:bg-sky-500/10 transition-all">
+                                <div className="space-y-1">
+                                    <p className="text-sky-500 text-[10px] font-bold uppercase tracking-widest">Meetings</p>
+                                    <p className="text-sm font-bold opacity-70">3 Scheduled</p>
                                 </div>
-                                <h3 className="text-3xl text-blue-800 font-semibold self-center">3</h3>
+                                <span className="text-3xl font-jetbrains-mono font-bold text-sky-500">3</span>
                             </div>
 
-                            <div className="flex items-start justify-between p-3 rounded-lg bg-red-50">
-                                <div className="flex flex-col">
-                                    <p className="text-red-800 font-semibold">Overdue Tasks</p>
-                                    <p className="text-sm text-red-600">2 tasks</p>
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/5 border border-rose-500/10 group hover:bg-rose-500/10 transition-all">
+                                <div className="space-y-1">
+                                    <p className="text-rose-500 text-[10px] font-bold uppercase tracking-widest">Overdue</p>
+                                    <p className="text-sm font-bold opacity-70">2 Tasks</p>
                                 </div>
-                                <h3 className="text-3xl text-red-800 font-semibold self-center">2</h3>
+                                <span className="text-3xl font-jetbrains-mono font-bold text-rose-500">2</span>
                             </div>
-
                         </div>
                     </div>
                 </div>
