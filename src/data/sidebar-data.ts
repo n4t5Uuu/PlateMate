@@ -4,7 +4,6 @@ export type NavItems = {
     name: string,
     url: string,
     icon: LucideIcon,
-    isActive: boolean
 }
 
 export const generalNavTabs: NavItems[] = [
@@ -12,32 +11,27 @@ export const generalNavTabs: NavItems[] = [
         name: "Dasboard",
         url: "/dashboard",
         icon: Home,
-        isActive: true
     },
     {
         name: "Projects",
         url: "/projects",
         icon: FolderOpen,
-        isActive: false
     }, 
     {
         name: "Calendar",
         url: "/calendar",
         icon: Calendar,
-        isActive: false
     },
     {
         name: "Teams", //di pa sure here pero try paren 
         url: "/teams",
         icon: GroupIcon,
-        isActive: false
         
     },
     {
         name: "Trash", 
         url: "/trash",   //placeholder muna toh for now or place it in the footer where the user can access its profile
         icon: Trash,
-        isActive: false
     }
 ]
 
@@ -46,13 +40,11 @@ export const shortcutNavTabs: NavItems[] = [
         name: "Schedule Meeting",
         url: "#",
         icon: CalendarCheck2,
-        isActive: false
     }, 
     {
         name: "Templates (?)",
         url: "#",
         icon: LayoutTemplate,
-        isActive: false
     },
     
 ]
@@ -62,7 +54,6 @@ export const samplePinnedProjects: NavItems[] = [
         name: "Civic Mall",
         url: "#",
         icon: Cog,
-        isActive: false
     }
 ]
 
@@ -71,24 +62,20 @@ export const sampleProjects: NavItems[] =[
         name: "Civic Mall",
         url: "#",
         icon: Cog,
-        isActive: false
     },
     {
         name: "Al Qasr Mall",
         url: "#",
         icon: Cog,
-        isActive: false
     },
     {
         name: "Skyscraper",
         url: "#",
         icon: Cog,
-        isActive: false
     },
     {
         name: "Riyadh Park",
         url: "#",
         icon: Cog,
-        isActive: false
     }
 ]

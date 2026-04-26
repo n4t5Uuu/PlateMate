@@ -155,23 +155,22 @@ export default function AuthPage() {
     }
     
     return (
-        <div className="w-screen min-h-screen border-4 flex flex-col items-center justify-center bg-gradient-to-br
-                            from-red-50 via-white to-gray-50">
+        <div className="w-screen min-h-screen flex flex-col items-center justify-center bg-background transition-colors duration-300">
             <div className="w-full max-w-md">
                 <AuthLogo />
                 
-                <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-md">
+                <Card className="shadow-2xl border border-border/50 bg-card/80 backdrop-blur-md">
                     <CardHeader className="space-y-1 pb-4">
-                        <CardTitle className="text-2xl font-bold text-center text-gray-800 ">Welcome to PlateMate</CardTitle>
+                        <CardTitle className="text-2xl font-bold text-center text-foreground">Welcome to PlateMate</CardTitle>
                         <CardDescription className="text-center text-gray-500">The personal organizer for Architects</CardDescription>
                     </CardHeader>
 
                     <CardContent>
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                            <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-100 p-1 rounded-xl">
+                            <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50 border border-border/50 p-1 rounded-xl shadow-inner">
                                 <TabsTrigger 
                                     value="Sign Up" 
-                                    className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md
                                                 font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
                                                 data-[state=active]:font-semibold">
                                     Sign Up
@@ -179,7 +178,7 @@ export default function AuthPage() {
 
                                 <TabsTrigger 
                                     value="Login"
-                                    className="data-[state=active]:bg-red-400 data-[state=active]:text-gray-900 data-[state=active]:shadow-md
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md
                                                 font-medium transition-all duration-300 ease-in-out data-[state=active]:scale-[0.98] rounded-md cursor-pointer
                                                 data-[state=active]:font-semibold">
                                     Login
@@ -201,10 +200,10 @@ export default function AuthPage() {
 
                                     <div className="flex items-center justify-between text-sm">
                                         <label className="flex items-center space-x-2">
-                                            <input type="checkbox" className="rounded border-gray-300 text-red-500 focus:ring-red" />
-                                            <span className="text-gray-600">Remember me</span>
+                                            <input type="checkbox" className="rounded border-border bg-background text-primary focus:ring-primary" />
+                                            <span className="text-muted-foreground">Remember me</span>
                                         </label>
-                                        <button className="text-red-500 hover:text-red-600 font-medium">Forget password?</button>
+                                        <button className="text-primary hover:text-primary/80 font-medium transition-colors">Forget password?</button>
                                     </div>
 
                                     <Button 
@@ -272,16 +271,16 @@ export default function AuthPage() {
                         <div className="mt-6 text-center">
                             <div className="relative">
                                 <div className="absolute inset-0 flex items-center">
-                                    <div className="w-full border-t border-gray-200"></div>
+                                    <div className="w-full border-t border-border"></div>
                                 </div>
                                 <div className="relative flex justify-center text-sm">
-                                    <span className="px-4 bg-white text-gray-500">Or continue with</span>
+                                    <span className="px-4 bg-card text-muted-foreground">Or continue with</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="mt-4 grid grid-cols-2 gap-3">
-                            <Button className="h-12 border-gray-200 hover:bg-gray-50 bg-transparent cursor-pointer" variant="outline">
+                            <Button className="h-12 border-border hover:bg-accent bg-card text-foreground shadow-sm cursor-pointer" variant="outline">
                                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                                     <path
                                         fill="currentColor"
@@ -303,7 +302,7 @@ export default function AuthPage() {
                                 Google
                             </Button>
 
-                            <Button className="h-12 border-gray-200 hover:bg-gray-50 bg-transparent cursor-pointer" variant="outline">
+                            <Button className="h-12 border-border hover:bg-accent bg-card text-foreground shadow-sm cursor-pointer" variant="outline">
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                                 </svg>
@@ -312,7 +311,7 @@ export default function AuthPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <p className="text-center text-sm text-gray-500 mt-6 mb-6">Organize your projects, simplify your making</p>
+                <p className="text-center text-sm text-muted-foreground mt-6 mb-6">Organize your projects, simplify your making</p>
             </div>
         </div>
     )

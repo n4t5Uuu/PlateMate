@@ -33,24 +33,31 @@
 
     import useAuth from "@/hooks/use-auth";
     import { useRouter } from "next/navigation";
+    import { usePathname } from "next/navigation";
 
-    function renderMenuItem(item: NavItems[]) {
-        return item.map((item) => (
-            <SidebarMenuItem key={item.name} >
-                <SidebarMenuButton asChild >
-                    <a href={item.url} className={item.isActive ? "active w-full" : "w-full"}>
-                        <item.icon />
-                        <span>{item.name}</span>
-                    </a>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        ))
+    function renderMenuItem(items: NavItems[], currentPath: string) {
+        return items.map((item) => {
+            // Compare current URL with item URL
+            const isActive = currentPath === item.url;
+            return (
+                <SidebarMenuItem key={item.name}>
+                    {/*adds the isActive prop*/}
+                    <SidebarMenuButton asChild isActive={isActive}>
+                        <a href={item.url}>
+                            <item.icon />
+                            <span>{item.name}</span>
+                        </a>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            );
+        });
     }
+
     export default function AppSideBar({...props} : React.ComponentProps<typeof Sidebar>) {
+        const pathname = usePathname();
         const {user, signOut, loading} = useAuth();
         const router = useRouter();
         
-
         console.log("SIDEBAR DEBUG: ", {user, loading})
         const handleLogout = async () => {
             try {
@@ -84,7 +91,7 @@
                         <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">General</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {renderMenuItem(generalNavTabs)}
+                                {renderMenuItem(generalNavTabs, pathname)}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
@@ -94,7 +101,7 @@
                             <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Workspace</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
-                                    {renderMenuItem(sampleProjects)}
+                                    {renderMenuItem(sampleProjects, pathname)}
                                 </SidebarMenu>
                             </SidebarGroupContent>
                         </SidebarGroup>
@@ -105,7 +112,7 @@
                             <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Pinned</SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
-                                    {renderMenuItem(samplePinnedProjects)}
+                                    {renderMenuItem(samplePinnedProjects, pathname)}
                                 </SidebarMenu>
                             </SidebarGroupContent>
                         </SidebarGroup>
@@ -115,7 +122,7 @@
                         <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Quick Actions</SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {renderMenuItem(shortcutNavTabs)}
+                                {renderMenuItem(shortcutNavTabs, pathname)}
                             </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
