@@ -1,9 +1,12 @@
+"use client"
+
 import { SidebarTrigger } from "../ui/sidebar";
 import SearchBar from "./SearchBar";
 import { Button } from "../ui/button";
-import {Plus, Bell} from "lucide-react";
+import { Plus, Bell } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
+import { NewProjectDialog } from "@/components/dialogs/NewProject";
 
 export default function Header() {
     const pathname = usePathname();
@@ -31,10 +34,15 @@ export default function Header() {
                             <Bell className="h-4 w-4"/>
                         </Button>
 
-                        <Button variant="default" className="accent-gradient h-10 px-6 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all border-none">
-                            <Plus className="w-4 h-4 mr-2"/>
-                            New Project
-                        </Button>
+                        <NewProjectDialog
+                            workspaceId="PLACEHOLDER"
+                            trigger={
+                                <Button variant="default" className="accent-gradient h-10 px-6 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all border-none">
+                                    <Plus className="w-4 h-4 mr-2"/>
+                                    New Project
+                                </Button>
+                            }
+                        />
                     </div>
                 </div>
             </div>

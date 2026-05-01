@@ -1,20 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { sanitizeInput } from "./security";
-
-export interface Project {
-    id: string;
-    title: string;
-    description?: string;
-    client: string
-    progress: number
-    dueDate: string;
-    status: "active" | "review" | "completed" | "delayed";
-    priority: "low" | "medium" | "high";
-    teamMembers?: string[]; //array of user ids
-    owner: string; //user id
-    created_at: string;
-    updated_at: string;
-}
+import { Project } from "@/types/project.types"
 
 /**
  * Maps a database project record to the frontend Project interface.
@@ -26,15 +12,15 @@ export interface Project {
 function mapProjects(data: any): Project {
     return {
         id: data.id,
-        title: data.title,
+        title: data.name,
         description: data.description,
-        client: data.client,
+        client: data.client_name,
+        workspaceId: data.workspace_id,
+        owner: data.owner_id,
         progress: data.progress,
         dueDate: data.due_date,
         status: data.status,
         priority: data.priority,
-        teamMembers: data.team_members,
-        owner: data.owner,
         created_at: data.created_at,
         updated_at: data.updated_at
     };
@@ -56,16 +42,17 @@ export const projectHelper = {
     async createProject(supabase: SupabaseClient, projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
         try {
 
+            // maps out the details before inserting in the database
             const dbRecord = {
-                title: sanitizeInput(projectData.title),
+                name: sanitizeInput(projectData.title),
                 description: projectData.description ? sanitizeInput(projectData.description) : undefined,
-                client: projectData.client,
+                client_name: projectData.client,
+                workspace_id: projectData.workspaceId,
+                owner_id: projectData.owner,
                 progress: projectData.progress,
                 due_date: projectData.dueDate,
                 status: projectData.status,
                 priority: projectData.priority,
-                team_members: projectData.teamMembers,
-                owner: projectData.owner
             }
 
             const {data, error} = await supabase.from("projects")
@@ -102,7 +89,7 @@ export const projectHelper = {
             });
 
             if(userId)
-                query = query.eq("owner", userId);
+                query = query.eq("owner_id", userId);
 
             const {data, error} = await query;
 
@@ -133,18 +120,30 @@ export const projectHelper = {
         try {
             const dbData: any = {...projectData}
             
-            if (dbData.title) dbData.title = sanitizeInput(dbData.title);
-            if (dbData.description) dbData.description = sanitizeInput(dbData.description);
+            if (dbData.title) {
+                dbData.name = sanitizeInput(dbData.title);
+                delete dbData.title;
+            }
 
-            if(projectData.dueDate)
-                dbData.due_date = projectData.dueDate;
+            if (dbData.client) {
+                dbData.client_name = dbData.client;
+                delete dbData.client;
+            }
 
-            if(projectData.teamMembers)
-                dbData.team_members = projectData.teamMembers;
-            
-            // Remove camelCase keys that were mapped to snake_case
-            delete dbData.dueDate;
-            delete dbData.teamMembers;
+            if (dbData.workspaceId) {
+                dbData.workspace_id = dbData.workspaceId;
+                delete dbData.workspaceId;
+            }
+
+            if (dbData.owner) {
+                dbData.owner_id = dbData.owner;
+                delete dbData.owner;
+            }
+
+            if (dbData.dueDate) {
+                dbData.due_date = dbData.dueDate;
+                delete dbData.dueDate;
+            }
 
             const {data, error} = await supabase.from("projects")
                 .update(dbData)

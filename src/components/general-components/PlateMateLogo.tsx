@@ -9,8 +9,6 @@ export function AuthLogo() {
     )
 }
 
-//TODO: fix this so that the logo won't be centered
-//TODO: change the font style here
 export function SidebarLogo() {
     return  (
         <div className="flex items-center justify-center p-2 mb-1 mt-2 w-full">

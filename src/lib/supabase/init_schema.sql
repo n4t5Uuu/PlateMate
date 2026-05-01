@@ -84,6 +84,7 @@ CREATE TABLE tbl_projects (
   workspace_id  UUID NOT NULL REFERENCES tbl_workspaces(id) ON DELETE CASCADE,
   owner_id      UUID NOT NULL REFERENCES tbl_users(id) ON DELETE SET NULL,
   name          TEXT NOT NULL,
+  description   TEXT,
   client_name   TEXT,
   priority      TEXT DEFAULT 'medium',
   status        TEXT DEFAULT 'active',
@@ -472,7 +473,13 @@ CREATE POLICY "workspace_members: owner can delete"
 
 CREATE POLICY "projects: members can view"
   ON tbl_projects FOR SELECT
-  USING (is_workspace_member(workspace_id));
+  USING (
+    owner_id = auth.uid()
+    OR id IN (
+      SELECT project_id FROM tbl_project_members
+      WHERE user_id = auth.uid()
+    )
+  );
 
 CREATE POLICY "projects: members can insert"
   ON tbl_projects FOR INSERT
@@ -489,8 +496,8 @@ CREATE POLICY "projects: owner can delete"
 
 -- ------------------------------------------------------------
 -- tbl_project_members
--- Workspace members can view project members.
--- Only workspace owner can add/remove.
+-- Project members can view the member list.
+-- Workspace owner OR project owner can add/remove members.
 -- ------------------------------------------------------------
 
 CREATE POLICY "project_members: members can view"
@@ -498,7 +505,11 @@ CREATE POLICY "project_members: members can view"
   USING (
     project_id IN (
       SELECT id FROM tbl_projects
-      WHERE is_workspace_member(workspace_id)
+      WHERE owner_id = auth.uid()
+        OR id IN (
+          SELECT project_id FROM tbl_project_members
+          WHERE user_id = auth.uid()
+        )
     )
   );
 
@@ -508,6 +519,7 @@ CREATE POLICY "project_members: owner can insert"
     project_id IN (
       SELECT id FROM tbl_projects
       WHERE is_workspace_owner(workspace_id)
+         OR owner_id = auth.uid()
     )
   );
 
@@ -517,6 +529,7 @@ CREATE POLICY "project_members: owner can delete"
     project_id IN (
       SELECT id FROM tbl_projects
       WHERE is_workspace_owner(workspace_id)
+         OR owner_id = auth.uid()
     )
   );
 
