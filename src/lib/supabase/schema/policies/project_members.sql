@@ -1,0 +1,43 @@
+-- ============================================================
+-- RLS Policies: tbl_project_members
+-- Project members can view the member list for their project.
+-- Workspace owner OR project owner can add/remove members.
+-- ============================================================
+
+ALTER TABLE tbl_project_members ENABLE ROW LEVEL SECURITY;
+
+-- Allow project members to view other members on the same project
+CREATE POLICY "project_members: members can view"
+  ON tbl_project_members FOR SELECT
+  USING (
+    project_id IN (
+      SELECT id FROM tbl_projects
+      WHERE owner_id = auth.uid()
+        OR id IN (
+          SELECT project_id FROM tbl_project_members
+          WHERE user_id = auth.uid()
+        )
+    )
+  );
+
+-- Allow workspace owner or project owner to add members
+CREATE POLICY "project_members: owner can insert"
+  ON tbl_project_members FOR INSERT
+  WITH CHECK (
+    project_id IN (
+      SELECT id FROM tbl_projects
+      WHERE is_workspace_owner(workspace_id)
+         OR owner_id = auth.uid()
+    )
+  );
+
+-- Allow workspace owner or project owner to remove members
+CREATE POLICY "project_members: owner can delete"
+  ON tbl_project_members FOR DELETE
+  USING (
+    project_id IN (
+      SELECT id FROM tbl_projects
+      WHERE is_workspace_owner(workspace_id)
+         OR owner_id = auth.uid()
+    )
+  );
