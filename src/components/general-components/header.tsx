@@ -7,10 +7,15 @@ import { Plus, Bell } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { NewProjectDialog } from "@/components/dialogs/NewProject";
+import {useWorkspaces} from "@/hooks/use-workspaces"
 
 export default function Header() {
     const pathname = usePathname();
+    const {workspaces} = useWorkspaces()
 
+    // for the header title whenever the user switches pages, the name of the page will be displayed in the header 
+    // For example, if the user is on the "/projects" page, the header will display "Projects". If the user is on the "/settings" page, 
+    // the header will display "Settings". If the user is on the "/" page, the header will display "Home".
     const headerTitle = pathname.slice(1).charAt(0).toUpperCase() + pathname.slice(2)
 
     return (
@@ -35,7 +40,7 @@ export default function Header() {
                         </Button>
 
                         <NewProjectDialog
-                            workspaceId="PLACEHOLDER"
+                            workspaceId={workspaces[0]?.id ?? ""}
                             trigger={
                                 <Button variant="default" className="accent-gradient h-10 px-6 font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all border-none">
                                     <Plus className="w-4 h-4 mr-2"/>

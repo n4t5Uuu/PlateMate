@@ -52,6 +52,7 @@ export function NewProjectDialog({ workspaceId, trigger }: NewProjectDialogProps
         }
 
         setIsSubmitting(true)
+        
         try {
             const result = await createProject({
                 title: projectName,

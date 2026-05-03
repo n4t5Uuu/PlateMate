@@ -37,3 +37,15 @@ FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER on_user_created_create_workspace
 AFTER INSERT ON tbl_users
 FOR EACH ROW EXECUTE PROCEDURE create_workspace_for_new_user();
+
+-- ------------------------------------------------------------
+-- Sync auth.users to tbl_users on signup
+-- Fires after Supabase creates a user in auth.users.
+-- Copies id, email, first_name, and last_name into tbl_users,
+-- which then triggers on_user_created_create_workspace above.
+-- ------------------------------------------------------------
+
+-- Copies auth.users data into tbl_users on every new signup
+CREATE TRIGGER on_auth_user_created
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE PROCEDURE handle_new_auth_user();

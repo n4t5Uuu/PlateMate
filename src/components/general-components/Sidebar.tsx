@@ -1,7 +1,7 @@
     "use client"
 
     import type * as React from "react";
-    import { 
+    import {
         Sidebar,
         SidebarContent,
         SidebarFooter,
@@ -12,7 +12,7 @@
         SidebarMenu,
         SidebarMenuButton,
         SidebarMenuItem,
-        SidebarRail, 
+        SidebarRail,
     } from "../ui/sidebar";
 
     //use dialog for the profile of the user??
@@ -28,12 +28,15 @@
     import {Avatar, AvatarFallback, AvatarImage} from "../ui/avatar";
     import {SidebarLogo} from "./PlateMateLogo"
     import { NavItems, generalNavTabs, shortcutNavTabs, samplePinnedProjects, sampleProjects} from "@/data/sidebar-data";
-    import { Cog, LogOut } from "lucide-react";
+    import { Building2, Cog, LogOut, Plus, LayoutGrid, Pin, Zap } from "lucide-react";
     import {toast} from "sonner"
 
     import useAuth from "@/hooks/use-auth";
     import { useRouter } from "next/navigation";
     import { usePathname } from "next/navigation";
+    import { useWorkspaces } from "@/hooks/use-workspaces";
+    import { NewWorkspaceDialog } from "@/components/dialogs/NewWorkspaces";
+    import { NewProjectDialog } from "@/components/dialogs/NewProject";
 
     function renderMenuItem(items: NavItems[], currentPath: string) {
         return items.map((item) => {
@@ -57,6 +60,8 @@
         const pathname = usePathname();
         const {user, signOut, loading} = useAuth();
         const router = useRouter();
+        const { workspaces } = useWorkspaces();
+        const activeWorkspace = workspaces[0];
         
         console.log("SIDEBAR DEBUG: ", {user, loading})
         const handleLogout = async () => {
@@ -88,7 +93,10 @@
 
                 <SidebarContent className="px-2 mt-2 custom-scrollbar">
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">General</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2 flex items-center gap-1.5">
+                                <LayoutGrid className="w-3 h-3" />
+                                General
+                            </SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {renderMenuItem(generalNavTabs, pathname)}
@@ -96,20 +104,44 @@
                         </SidebarGroupContent>
                     </SidebarGroup>
 
-                    {sampleProjects.length > 0 ? (
-                        <SidebarGroup>
-                            <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Workspace</SidebarGroupLabel>
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    {renderMenuItem(sampleProjects, pathname)}
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    ) : null}
+                    <SidebarGroup>
+                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2 flex items-center justify-between gap-1.5">
+                            <span className="flex items-center gap-1.5">
+                                <Building2 className="w-3 h-3" />
+                                {activeWorkspace?.name ?? "Workspace"}
+                            </span>
+                            <NewWorkspaceDialog
+                                trigger={
+                                    <button className="p-0.5 rounded hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground">
+                                        <Plus className="w-3.5 h-3.5" />
+                                    </button>
+                                }
+                            />
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {renderMenuItem(sampleProjects, pathname)}
+                                <SidebarMenuItem>
+                                    <NewProjectDialog
+                                        workspaceId={activeWorkspace?.id ?? ""}
+                                        trigger={
+                                            <SidebarMenuButton className="gap-2 text-muted-foreground hover:text-foreground">
+                                                <Plus className="w-4 h-4" />
+                                                <span>New Project</span>
+                                            </SidebarMenuButton>
+                                        }
+                                    />
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
 
                     {samplePinnedProjects.length > 0 ?(
                         <SidebarGroup>
-                            <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Pinned</SidebarGroupLabel>
+                            <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2 flex items-center gap-1.5">
+                                    <Pin className="w-3 h-3" />
+                                    Pinned
+                                </SidebarGroupLabel>
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     {renderMenuItem(samplePinnedProjects, pathname)}
@@ -119,7 +151,10 @@
                     ) : null}
 
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2">Quick Actions</SidebarGroupLabel>
+                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2 flex items-center gap-1.5">
+                                <Zap className="w-3 h-3" />
+                                Quick Actions
+                            </SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {renderMenuItem(shortcutNavTabs, pathname)}
