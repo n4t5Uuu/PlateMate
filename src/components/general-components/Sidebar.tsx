@@ -27,7 +27,7 @@
 
     import {Avatar, AvatarFallback, AvatarImage} from "../ui/avatar";
     import {SidebarLogo} from "./PlateMateLogo"
-    import { NavItems, generalNavTabs, shortcutNavTabs, samplePinnedProjects, sampleProjects} from "@/data/sidebar-data";
+    import { NavItems, generalNavTabs, shortcutNavTabs, samplePinnedProjects } from "@/data/sidebar-data";
     import { Building2, Cog, LogOut, Plus, LayoutGrid, Pin, Zap } from "lucide-react";
     import {toast} from "sonner"
 
@@ -36,7 +36,6 @@
     import { usePathname } from "next/navigation";
     import { useWorkspaces } from "@/hooks/use-workspaces";
     import { NewWorkspaceDialog } from "@/components/dialogs/NewWorkspaces";
-    import { NewProjectDialog } from "@/components/dialogs/NewProject";
 
     function renderMenuItem(items: NavItems[], currentPath: string) {
         return items.map((item) => {
@@ -105,29 +104,19 @@
                     </SidebarGroup>
 
                     <SidebarGroup>
-                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2 flex items-center justify-between gap-1.5">
-                            <span className="flex items-center gap-1.5">
-                                <Building2 className="w-3 h-3" />
-                                {activeWorkspace?.name ?? "Workspace"}
-                            </span>
-                            <NewWorkspaceDialog
-                                trigger={
-                                    <button className="p-0.5 rounded hover:bg-accent/50 transition-colors text-muted-foreground hover:text-foreground">
-                                        <Plus className="w-3.5 h-3.5" />
-                                    </button>
-                                }
-                            />
+                        <SidebarGroupLabel className="text-xs uppercase tracking-[0.2em] font-bold text-muted-foreground/50 mb-1 pl-2 flex items-center gap-1.5">
+                            <Building2 className="w-3 h-3" />
+                            Workspace
                         </SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {renderMenuItem(sampleProjects, pathname)}
+                                {renderMenuItem([], pathname)}
                                 <SidebarMenuItem>
-                                    <NewProjectDialog
-                                        workspaceId={activeWorkspace?.id ?? ""}
+                                    <NewWorkspaceDialog
                                         trigger={
                                             <SidebarMenuButton className="gap-2 text-muted-foreground hover:text-foreground">
                                                 <Plus className="w-4 h-4" />
-                                                <span>New Project</span>
+                                                <span>New Workspace</span>
                                             </SidebarMenuButton>
                                         }
                                     />

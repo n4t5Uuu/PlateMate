@@ -13,12 +13,12 @@ DECLARE
     new_workspace_id UUID;
 BEGIN
     -- Create the workspace named after the user
-    INSERT INTO tbl_workspaces (name)
-    VALUES (NEW.first_name || '''s Workspace')
+    INSERT INTO public.tbl_workspaces (name)
+    VALUES (SPLIT_PART(NEW.first_name, ' ', 1) || '''s Workspace')
     RETURNING id INTO new_workspace_id;
 
     -- Assign the user as the owner of their new workspace
-    INSERT INTO tbl_workspace_members (workspace_id, user_id, role)
+    INSERT INTO public.tbl_workspace_members (workspace_id, user_id, role)
     VALUES (new_workspace_id, NEW.id, 'owner');
 
     RETURN NEW;

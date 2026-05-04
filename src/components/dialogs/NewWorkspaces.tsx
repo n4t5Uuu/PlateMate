@@ -38,8 +38,11 @@ export function NewWorkspaceDialog({trigger} : NewWorkspaceDialogProps) {
             toast.success("Workspace created successfully")
             setName("")
             setOpen(false)
-        } else
-            toast.error(result.error || "Failed to create workspace")
+        } else {
+            toast.error("Failed to create workspace", {
+                description: "Something went wrong. Please try again."
+            })
+        }
 
         setIsSubmitting(false)
     }

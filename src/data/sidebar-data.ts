@@ -56,26 +56,3 @@ export const samplePinnedProjects: NavItems[] = [
         icon: Cog,
     }
 ]
-
-export const sampleProjects: NavItems[] =[
-    {
-        name: "Civic Mall",
-        url: "#",
-        icon: Cog,
-    },
-    {
-        name: "Al Qasr Mall",
-        url: "#",
-        icon: Cog,
-    },
-    {
-        name: "Skyscraper",
-        url: "#",
-        icon: Cog,
-    },
-    {
-        name: "Riyadh Park",
-        url: "#",
-        icon: Cog,
-    }
-]

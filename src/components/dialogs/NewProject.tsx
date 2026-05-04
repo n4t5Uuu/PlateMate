@@ -52,7 +52,7 @@ export function NewProjectDialog({ workspaceId, trigger }: NewProjectDialogProps
         }
 
         setIsSubmitting(true)
-        
+
         try {
             const result = await createProject({
                 title: projectName,
@@ -65,8 +65,27 @@ export function NewProjectDialog({ workspaceId, trigger }: NewProjectDialogProps
                 workspaceId: workspaceId,
                 owner: user?.id ?? "",
             })
-        } catch (error) {
 
+            if (result?.success) {
+                toast.success("Project created successfully")
+                setProjectName("")
+                setProjectDescription("")
+                setClientName("")
+                setPriority("medium")
+                setDueDate("")
+                setOpen(false)
+            } else {
+                toast.error("Failed to create project", {
+                    description: "Something went wrong. Please try again."
+                })
+            }
+        } catch (error) {
+            console.error("[NewProjectDialog]", error)
+            toast.error("Failed to create project", {
+                description: "An unexpected error occurred. Please try again."
+            })
+        } finally {
+            setIsSubmitting(false)
         }
     }
 

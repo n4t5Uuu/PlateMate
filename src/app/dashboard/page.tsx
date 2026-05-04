@@ -149,15 +149,14 @@ export default function Dashboard() {
                 </div>
 
                 {/* Right Sidebar */}
-                <div className="lg:col-span-1">
-                    <div className="glass-morphism rounded-xl border-none shadow-lg flex flex-col max-h-[calc(100vh-16rem)] overflow-y-auto">
+                <div className="lg:col-span-1 flex flex-col gap-4">
 
-                        {/* Pulse */}
+                    {/* Weekly Pulse */}
+                    <div className="glass-morphism rounded-xl border-none shadow-lg flex flex-col">
                         <div className="px-5 sm:px-6 pt-6 pb-3">
                             <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70">Weekly Pulse</h3>
                         </div>
-
-                        <div className="px-4 sm:px-5 pb-4 space-y-1">
+                        <div className="px-4 sm:px-5 pb-5 space-y-1">
                             <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-emerald-500/5 transition-all group/row">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
@@ -165,7 +164,6 @@ export default function Dashboard() {
                                 </div>
                                 <span className="text-sm font-bold font-jetbrains-mono text-emerald-500">5 tasks</span>
                             </div>
-
                             <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-amber-500/5 transition-all group/row">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
@@ -173,7 +171,6 @@ export default function Dashboard() {
                                 </div>
                                 <span className="text-sm font-bold font-jetbrains-mono text-amber-500">3 tasks</span>
                             </div>
-
                             <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-sky-500/5 transition-all group/row">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
@@ -181,7 +178,6 @@ export default function Dashboard() {
                                 </div>
                                 <span className="text-sm font-bold font-jetbrains-mono text-sky-500">3 scheduled</span>
                             </div>
-
                             <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-rose-500/5 transition-all group/row">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
@@ -190,19 +186,19 @@ export default function Dashboard() {
                                 <span className="text-sm font-bold font-jetbrains-mono text-rose-500">2 tasks</span>
                             </div>
                         </div>
-
-                        <div className="h-px bg-border mx-5 sm:mx-6" />
-
-                        {/* Activity */}
-                        <div className="px-5 sm:px-6 pt-5 pb-6">
-                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70 mb-5">Recent Activity</p>
-                            <RecentActivity />
-                        </div>
-
                     </div>
+
+                    {/* Recent Activity */}
+                    <div className="glass-morphism rounded-xl border-none shadow-lg px-5 sm:px-6 pt-5 pb-6">
+                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70 mb-5">Recent Activity</p>
+                        <RecentActivity layout="list" />
+                    </div>
+
                 </div>
 
             </div>
+
+
         </div>
     )
 }
