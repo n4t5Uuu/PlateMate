@@ -1,9 +1,9 @@
 import StatsCard from "./stats-card";
-import ProjectCard from "./project-card";
+import ProjectRow from "./project-row";
 import RecentActivity from "./recent-activity";
 
-import {Button} from "@/components/ui/button";
-import {FolderOpen, Clock, CheckCircle, Users, Funnel} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FolderOpen, Clock, CheckCircle, Users, SlidersHorizontal, ArrowRight } from "lucide-react";
 
 export const metadata = {
     title: "Dashboard",
@@ -12,7 +12,7 @@ export const metadata = {
 
 const sampleProjects = [
     {
-        projectName: "Downtom Office Complex",
+        projectName: "Downtown Office Complex",
         client: "Wyvern Corp",
         progress: 75,
         dueDate: "Dec 15, 2026",
@@ -82,10 +82,12 @@ const statsCardData = [
 
 export default function Dashboard() {
     return (
-        <div className="flex-1 space-y-8 pt-8 pb-12">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex-1 space-y-6 pt-8 pb-12">
+
+            {/* Stats Row */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {statsCardData.map((data) => (
-                    <StatsCard 
+                    <StatsCard
                         key={data.title}
                         title={data.title}
                         value={data.value}
@@ -96,84 +98,110 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-3">
-                <div className="lg:col-span-2 space-y-6">
+            {/* Main Content */}
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+
+                {/* Projects List */}
+                <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                            <h2 className="font-bold text-2xl tracking-tight">Active Projects</h2>
-                            <p className="text-muted-foreground text-xs font-medium opacity-70">Manage your ongoing architectural designs</p>
+                        <div>
+                            <h2 className="font-bold text-xl tracking-tight">Active Projects</h2>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{sampleProjects.length} projects</p>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <Button variant="outline" className="cursor-pointer border-border/50 hover:border-primary/50 transition-all font-semibold glass-morphism !bg-transparent h-10">
-                                <Funnel className="w-4 h-4 mr-2"/>
+                        <div className="flex items-center gap-2">
+                            <Button variant="outline" size="sm" className="cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs">
+                                <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
                                 Filter
                             </Button>
-                            <Button variant="outline" className="cursor-pointer border-border/50 hover:border-primary/50 transition-all font-semibold glass-morphism !bg-transparent h-10">
+                            <Button variant="outline" size="sm" className="cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs">
                                 View All
+                                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                             </Button>
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-6 ">
-                        {sampleProjects.map((items) => (
-                            <ProjectCard 
-                                key={items.projectName} 
-                                projectTitle={items.projectName}
-                                clientName={items.client}
-                                progress={items.progress}
-                                dueDate={items.dueDate}
-                                teamMembers={items.teamMembers}
-                                status={items.status}
-                                priority={items.priority}
+                    {/* Column headers */}
+                    <div className="hidden lg:flex items-center gap-5 px-5 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                        <div className="w-2 shrink-0" />
+                        <div className="flex-1">Project</div>
+                        <div className="w-14 shrink-0">Status</div>
+                        <div className="w-14 shrink-0">Priority</div>
+                        <div className="w-36 shrink-0">Progress</div>
+                        <div className="w-24 shrink-0">Due Date</div>
+                        <div className="w-8 shrink-0">Team</div>
+                        <div className="w-4 shrink-0" />
+                    </div>
+
+                    <div className="space-y-2">
+                        {sampleProjects.map((item) => (
+                            <ProjectRow
+                                key={item.projectName}
+                                projectTitle={item.projectName}
+                                clientName={item.client}
+                                progress={item.progress}
+                                dueDate={item.dueDate}
+                                teamMembers={item.teamMembers}
+                                status={item.status}
+                                priority={item.priority}
                             />
                         ))}
                     </div>
                 </div>
 
-                <div className="lg:col-span-1 space-y-8">
-                    <RecentActivity />
+                {/* Right Sidebar */}
+                <div className="lg:col-span-1">
+                    <div className="glass-morphism rounded-xl border-none shadow-lg flex flex-col max-h-[calc(100vh-16rem)] overflow-y-auto">
 
-                    <div className="glass-morphism rounded-xl p-6 border-none shadow-lg space-y-6">
-                        <div className="space-y-1">
-                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/50">Project Pulse</h3>
-                            <p className="text-lg font-bold tracking-tight">Weekly Overview</p>
+                        {/* Pulse */}
+                        <div className="px-5 sm:px-6 pt-6 pb-3">
+                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70">Weekly Pulse</h3>
                         </div>
 
-                        <div className="grid gap-3">
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 group hover:bg-emerald-500/10 transition-all">
-                                <div className="space-y-1">
-                                    <p className="text-emerald-500 text-[10px] font-bold uppercase tracking-widest">Completed</p>
-                                    <p className="text-sm font-bold opacity-70">5 Tasks</p>
+                        <div className="px-4 sm:px-5 pb-4 space-y-1">
+                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-emerald-500/5 transition-all group/row">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Completed</span>
                                 </div>
-                                <span className="text-3xl font-jetbrains-mono font-bold text-emerald-500">5</span>
+                                <span className="text-sm font-bold font-jetbrains-mono text-emerald-500">5 tasks</span>
                             </div>
 
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 group hover:bg-amber-500/10 transition-all">
-                                <div className="space-y-1">
-                                    <p className="text-amber-500 text-[10px] font-bold uppercase tracking-widest">Due Today</p>
-                                    <p className="text-sm font-bold opacity-70">3 Tasks</p>
+                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-amber-500/5 transition-all group/row">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Due Today</span>
                                 </div>
-                                <span className="text-3xl font-jetbrains-mono font-bold text-amber-500">3</span>
+                                <span className="text-sm font-bold font-jetbrains-mono text-amber-500">3 tasks</span>
                             </div>
 
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-sky-500/5 border border-sky-500/10 group hover:bg-sky-500/10 transition-all">
-                                <div className="space-y-1">
-                                    <p className="text-sky-500 text-[10px] font-bold uppercase tracking-widest">Meetings</p>
-                                    <p className="text-sm font-bold opacity-70">3 Scheduled</p>
+                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-sky-500/5 transition-all group/row">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
+                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Meetings</span>
                                 </div>
-                                <span className="text-3xl font-jetbrains-mono font-bold text-sky-500">3</span>
+                                <span className="text-sm font-bold font-jetbrains-mono text-sky-500">3 scheduled</span>
                             </div>
 
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-rose-500/5 border border-rose-500/10 group hover:bg-rose-500/10 transition-all">
-                                <div className="space-y-1">
-                                    <p className="text-rose-500 text-[10px] font-bold uppercase tracking-widest">Overdue</p>
-                                    <p className="text-sm font-bold opacity-70">2 Tasks</p>
+                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-rose-500/5 transition-all group/row">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
+                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Overdue</span>
                                 </div>
-                                <span className="text-3xl font-jetbrains-mono font-bold text-rose-500">2</span>
+                                <span className="text-sm font-bold font-jetbrains-mono text-rose-500">2 tasks</span>
                             </div>
                         </div>
+
+                        <div className="h-px bg-border mx-5 sm:mx-6" />
+
+                        {/* Activity */}
+                        <div className="px-5 sm:px-6 pt-5 pb-6">
+                            <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70 mb-5">Recent Activity</p>
+                            <RecentActivity />
+                        </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     )
