@@ -38,24 +38,15 @@ export const workspaceHelper = {
         }
     },
 
-    async createWorkspace(supabase: SupabaseClient, userId: string, workspaceName: string) {
+    async createWorkspace(supabase: SupabaseClient, _userId: string, workspaceName: string) {
         try {
-            const {data, error} = await supabase.from("tbl_workspaces")
-                .insert({name: sanitizeInput(workspaceName)})
-                .select()
-                .single()
+            const { data, error } = await supabase.rpc("create_workspace_with_owner", {
+                workspace_name: sanitizeInput(workspaceName)
+            })
 
             if (error) throw error
 
-            const {error: memberError} = await supabase.from("tbl_workspace_members")
-                .insert({ user_id: userId, workspace_id: data.id, role: "owner" })
-
-            if (memberError) throw memberError
-
-            return {
-                success: true,
-                data: mapWorkspace(data)
-            }
+            return { success: true, data: { id: data } }
         } catch (error) {
             console.error("[createWorkspace]", error)
             return { success: false, error: extractMessage(error) }

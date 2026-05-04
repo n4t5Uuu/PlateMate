@@ -5,6 +5,7 @@ $files = @(
     "$schema/functions/update_updated_at_column.sql",
     "$schema/functions/handle_new_auth_user.sql",
     "$schema/functions/create_workspace_for_new_user.sql",
+    "$schema/functions/create_workspace_with_owner.sql",
     # Tables must exist before sql-language functions that reference them
     "$schema/create_tables.sql",
     "$schema/indexes.sql",

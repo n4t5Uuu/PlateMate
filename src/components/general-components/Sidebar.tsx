@@ -110,7 +110,16 @@
                         </SidebarGroupLabel>
                         <SidebarGroupContent>
                             <SidebarMenu>
-                                {renderMenuItem([], pathname)}
+                                {workspaces.map((workspace) => (
+                                    <SidebarMenuItem key={workspace.id}>
+                                        <SidebarMenuButton asChild isActive={pathname === `/workspace/${workspace.id}`}>
+                                            <a href={`/workspace/${workspace.id}`}>
+                                                <Building2 className="w-4 h-4" />
+                                                <span>{workspace.name}</span>
+                                            </a>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
                                 <SidebarMenuItem>
                                     <NewWorkspaceDialog
                                         trigger={
