@@ -44,3 +44,7 @@ next-env.d.ts
 # but can be used locally for tracking tasks
 /checklist
 
+# private local claude notes
+CLAUDE.local.md
+.claude/settings.local.json
+

@@ -1,0 +1,16 @@
+---
+description: Rules for how the AI interacts with the user when writing or modifying code.
+paths:
+  - "**/*"
+---
+
+# Interaction & Code Writing Rules
+
+## Code Modification Constraint
+
+- **Show, Don't Write**: Every time the user asks you to write, modify, or add code, you must **show the code blocks or diffs in the chat response** instead of directly writing or modifying the workspace files. This is so the user can write it down themselves to better understand the code.
+- **Strict File Writing Block**: Do NOT use `replace_file_content`, `multi_replace_file_content`, `write_to_file`, or any other tool to write code to the filesystem, unless the exception below applies.
+
+## Exception
+
+- **Explicit Request**: You may write or modify files directly **only if** the user explicitly asks you to write/apply the code directly (e.g., "please write this file directly" or "apply the changes for me"). This exception is single-use and only applies to that specific request.
