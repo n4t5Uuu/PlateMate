@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -14,10 +14,14 @@ import { signupFormFields, signUpFieldStateMap, loginFormFields, loginFieldState
 import InputField from "@/components/general-components/LoginSignupInput";
 import useAuth from "@/hooks/use-auth";
 
-export default function AuthPage() {
+interface AuthPageProps {
+    defaultTab?: string
+}
+
+export default function AuthPage({defaultTab = "Sign Up"}: AuthPageProps) {
     const [isLoading, setIsLoading] = useState(false);
     const {loading, login, signUp} = useAuth();
-    const [activeTab, setActiveTab] = useState("Sign Up")
+    const [activeTab, setActiveTab] = useState(defaultTab)
     const router = useRouter();
 
     const [loginData, setLoginData] = useState({
@@ -57,6 +61,10 @@ export default function AuthPage() {
             console.log("Login Reuslt from auth page: ", result)
 
             if(result.success) {
+
+                // saves the cookie in the browser so the server sees it when they navigate back
+                document.cookie = "has_account=true; path=/; max-age=31536000; SameSite=Lax"
+
                 toast.success("Logged In Successfully", {
                     description: `Welcome back, ${result?.user?.firstName.split(" ")[0] || "User"}!`,
                     duration: 3000
@@ -113,6 +121,10 @@ export default function AuthPage() {
             );
 
             if(result.success) {
+
+                // save the cookie so that the server sees it when they navigate back
+                document.cookie = "has_account=true; path=/; max-age=31536000; SameSite=Lax";
+
                 toast.success("Account Created Successfully", {
                     //sending of email would be handled by pocketbase
                     description: "Please verify your email, then log in to continue.",
