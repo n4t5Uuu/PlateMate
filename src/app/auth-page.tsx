@@ -1,171 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-import { Button } from "@/components/ui/button";
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { toast } from "sonner";
-
 import { AuthLogo } from "@/components/general-components/PlateMateLogo";
-import { signupFormFields, signUpFieldStateMap, loginFormFields, loginFieldStateMap } from "@/data/form-fields";
-import InputField from "@/components/general-components/LoginSignupInput";
-import useAuth from "@/hooks/use-auth";
+import { LoginForm } from "@/components/general-components/LoginForm";
+import { SignUpForm } from "@/components/general-components/SignUpForm";
 
 interface AuthPageProps {
-    defaultTab?: string
+    defaultTab?: string;
 }
 
-export default function AuthPage({defaultTab = "Sign Up"}: AuthPageProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const {loading, login, signUp} = useAuth();
-    const [activeTab, setActiveTab] = useState(defaultTab)
-    const router = useRouter();
+export default function AuthPage({ defaultTab = "Sign Up" }: AuthPageProps) {
+    const [activeTab, setActiveTab] = useState(defaultTab);
 
-    const [loginData, setLoginData] = useState({
-        email: "",
-        password: ""
-    });
-
-    //login form state
-    const [signUpData, setSignUpData] = useState({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
-
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        if(!loginData.email.trim() || !loginData.password.trim()) {
-            toast.error("Empty Fields", {
-                description: "Please fill in the empty fields",
-                duration: 3000
-            });
-
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const result = await login(
-                loginData.email, 
-                loginData.password
-            );
-
-            console.log("Login Reuslt from auth page: ", result)
-
-            if(result.success) {
-
-                // saves the cookie in the browser so the server sees it when they navigate back
-                document.cookie = "has_account=true; path=/; max-age=31536000; SameSite=Lax"
-
-                toast.success("Logged In Successfully", {
-                    description: `Welcome back, ${result?.user?.firstName.split(" ")[0] || "User"}!`,
-                    duration: 3000
-                });
-
-                router.push("/dashboard");
-            } else {
-                toast.error("Login Failed", {
-                    description: result.error || "Please check your credentials and try again.",
-                    duration: 3000
-                });
-            }
-        } catch (err) {
-            toast.error("Login Failed", {
-                description: "An unexpected error occurred. Please try again.",
-                duration: 3000
-            });
-            console.error(err);
-        }
-
-        setIsLoading(false);
-    }
-
-    const handleSignup = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        if(!signUpData.email.trim() || !signUpData.firstName.trim() || !signUpData.lastName.trim() ||
-            !signUpData.password.trim() || !signUpData.confirmPassword.trim()) {
-                toast.error("Empty Fields", {
-                    description: "Please fill in the empty fields",
-                    duration: 3000
-                })
-
-                setIsLoading(false);
-                return;
-            }
-
-        if (signUpData.password !== signUpData.confirmPassword) {
-            toast.error("Passwords mismatch", {
-                description: "Passwords do not match. Please try again.",
-                duration: 3000
-            });
-            setIsLoading(false);
-            return;
-        }
-
-        try {
-            const result = await signUp(
-                signUpData.email,
-                signUpData.password,
-                signUpData.firstName,
-                signUpData.lastName
-            );
-
-            if(result.success) {
-
-                // save the cookie so that the server sees it when they navigate back
-                document.cookie = "has_account=true; path=/; max-age=31536000; SameSite=Lax";
-
-                toast.success("Account Created Successfully", {
-                    //sending of email would be handled by pocketbase
-                    description: "Please verify your email, then log in to continue.",
-                    duration: 3000
-                });
-                
-                // switches the tab to the Login Tab
-                setActiveTab("Login");
-
-                // clear the fields of the sign up tab
-                setSignUpData({
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: ""
-                })
-                //di nag rereflect ng maayos
-            } else if (result.status === 409) {
-                toast.error("User already exists", {
-                    description: "Please use a different email.",
-                    duration: 3000
-                });
-            } else {
-                toast.error("Signup Failed", {
-                    description: result.error || "An error occurred. Please try again.",
-                    duration: 3000
-                });
-            }
-            
-
-        } catch (err) {
-            toast.error("Signup Failed", {
-                description: "Server or Network error. Please try again later."
-            });
-            console.error(err);
-        }
-
-        setIsLoading(false);
-    }
-    
     return (
         <div className="w-screen min-h-screen flex flex-col items-center justify-center bg-background transition-colors duration-300">
             <div className="w-full max-w-md">
@@ -198,85 +46,11 @@ export default function AuthPage({defaultTab = "Sign Up"}: AuthPageProps) {
                             </TabsList>
 
                             <TabsContent value="Login" className="space-y-4 animate-in fade-in-50 slide-in-from-left-2 duration-300">
-                                <form onSubmit={handleLogin} className="space-y-4">
-                                    {loginFormFields.map(field => (
-                                        <InputField
-                                            key={field.id}
-                                            {...field}
-                                            onChange={(e) => setLoginData((prev) => ({
-                                                ...prev,
-                                                [loginFieldStateMap[field.id as keyof typeof loginFieldStateMap]]: e.target.value
-                                            }))}
-                                        />
-                                    ))}
-
-                                    <div className="flex items-center justify-between text-sm">
-                                        <label className="flex items-center space-x-2">
-                                            <input type="checkbox" className="rounded border-border bg-background text-primary focus:ring-primary" />
-                                            <span className="text-muted-foreground">Remember me</span>
-                                        </label>
-                                        <button className="text-primary hover:text-primary/80 font-medium transition-colors">Forget password?</button>
-                                    </div>
-
-                                    <Button 
-                                        className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
-                                        to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
-                                        text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
-                                        transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
-                                        type="submit"
-                                        disabled={isLoading || loading}>
-                                            
-                                        {isLoading ? "Logging In..." : "Log In"}
-                                    </Button>
-                                </form>
+                                <LoginForm />
                             </TabsContent>
 
                             <TabsContent value="Sign Up" className="space-y-4 animate-in fade-in-50 slide-in-from-right-2 duration-300">
-                                <form onSubmit={handleSignup} className="space-y-4">
-                                    <div className="flex items-center content-center gap-x-2">
-                                        {signupFormFields.slice(0,2).map(fieldData => (
-                                            <InputField 
-                                                key={fieldData.id}
-                                                {...fieldData}
-                                                onChange={(e) => setSignUpData((prev) => ({
-                                                    ...prev,
-                                                    [signUpFieldStateMap[fieldData.id as keyof typeof signUpFieldStateMap]]: e.target.value
-                                                }))}
-                                            />
-                                        ))}
-                                    </div>
-
-                                    {signupFormFields.slice(2).map(fieldData => (
-                                        <InputField 
-                                            key={fieldData.id}
-                                            {...fieldData}
-                                            onChange={(e) => setSignUpData((prev) => ({
-                                                ...prev,
-                                                [signUpFieldStateMap[fieldData.id as keyof typeof signUpFieldStateMap]]: e.target.value
-                                            }))}
-                                        />
-                                    ))}
-
-                                    <div className="flex items-start space-x-2 text-sm">
-                                        <input type="checkbox" className="mt-1 rounded border-gray-300 text-red-500 focus:ring-red-500" />
-                                        <span className="text-gray-600 leading-relaxed">
-                                            I agree to the {" "}
-                                            <button className="text-red-500 hover:text-red-600 font-medium cursor-pointer">Terms of Services</button> and {" "}
-                                            <button className="text-red-500 hover:text-red-600 font-medium cursor-pointer">Privacy Policy</button>
-                                        </span>
-                                    </div>
-
-                                    <Button 
-                                        className="w-full h-12 bg-gradient-to-r from-red-400 via-red-500 
-                                        to-red-600 hover:from-red-500 hover:via-red-600 hover:to-red-700 
-                                        text-white font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 
-                                        transform hover:scale-[1.02] bg-[length:200%_100%] hover:bg-[position:100%_0%] cursor-pointer"
-                                        type="submit"
-                                        disabled={isLoading || loading}>
-
-                                        {isLoading ? "Creating Account..." : "Create Account"}
-                                    </Button>
-                                </form>
+                                <SignUpForm onSuccess={() => setActiveTab("Login")} />
                             </TabsContent>
                         </Tabs>
 
@@ -292,7 +66,7 @@ export default function AuthPage({defaultTab = "Sign Up"}: AuthPageProps) {
                         </div>
 
                         <div className="mt-4 grid grid-cols-2 gap-3">
-                            <Button className="h-12 border-border hover:bg-accent bg-card text-foreground shadow-sm cursor-pointer" variant="outline">
+                            <button className="h-12 border-border hover:bg-accent bg-card text-foreground shadow-sm cursor-pointer border rounded-md inline-flex items-center justify-center px-4" type="button">
                                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                                     <path
                                         fill="currentColor"
@@ -312,19 +86,19 @@ export default function AuthPage({defaultTab = "Sign Up"}: AuthPageProps) {
                                     />
                                 </svg>
                                 Google
-                            </Button>
+                            </button>
 
-                            <Button className="h-12 border-border hover:bg-accent bg-card text-foreground shadow-sm cursor-pointer" variant="outline">
+                            <button className="h-12 border-border hover:bg-accent bg-card text-foreground shadow-sm cursor-pointer border rounded-md inline-flex items-center justify-center px-4" type="button">
                                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                                 </svg>
                                 Facebook
-                            </Button>
+                            </button>
                         </div>
                     </CardContent>
                 </Card>
                 <p className="text-center text-sm text-muted-foreground mt-6 mb-6">Organize your projects, simplify your making</p>
             </div>
         </div>
-    )
+    );
 }

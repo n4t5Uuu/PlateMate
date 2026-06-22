@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
-import {cookies} from "next/headers";
-import { createServerClient, type CookieOptions} from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 export async function GET(req: Request) {
-    const {searchParams, origin} = new URL(req.url);
+    const { searchParams, origin } = new URL(req.url);
     const code = searchParams.get("code");
-
-    //if "next" is inparam, use it as the redirect URL
+    
+    // If "next" is in the param, use it as the redirect URL
     const next = searchParams.get("next") ?? "/";
 
-    if(code) {
+    if (code) {
         const cookieStore = await cookies();
+        const response = NextResponse.redirect(`${origin}${next}`); // Create the redirect response first
+        
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -19,24 +21,24 @@ export async function GET(req: Request) {
                     get(name: string) {
                         return cookieStore.get(name)?.value;
                     },
+                    // Mutate the outgoing redirect response cookies instead of the global server store
                     set(name: string, value: string, options: CookieOptions) {
-                        cookieStore.set({name, value, ...options});
+                        response.cookies.set({ name, value, ...options });
                     },
                     remove(name: string, options: CookieOptions) {
-                        cookieStore.delete({name, ...options});
+                        response.cookies.delete({ name, ...options });
                     }
                 }
             }
         );
 
-        // exchanges the code for a session
-        const {error} = await supabase.auth.exchangeCodeForSession(code);
+        // Exchange the code for a session
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-        if(!error) {
-            return NextResponse.redirect(`${origin}${next}`)
+        if (!error) {
+            return response; // Return the response with the session cookies attached
         }
     }
 
     return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-
 }
