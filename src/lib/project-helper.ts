@@ -192,5 +192,67 @@ export const projectHelper = {
             const message = error instanceof Error ? error.message: String(error);
             return {success: false, error: message || "Unknown error occured"}
         }
+    },
+
+    /**
+     * Retrieves the version history for a project.
+     */
+    async getPlateVersions(supabase: SupabaseClient, projectId: string) {
+        try {
+            const { data, error } = await supabase
+                .from("tbl_versions")
+                .select("*")
+                .eq("project_id", projectId)
+                .order("version_number", { ascending: true });
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error: unknown) {
+            console.error("Failed to retrieve plate versions", error);
+            return { success: false, error: error instanceof Error ? error.message : String(error) };
+        }
+    },
+
+    /**
+     * Retrieves annotations for a specific version.
+     */
+    async getVersionAnnotations(supabase: SupabaseClient, versionId: string) {
+        try {
+            const { data, error } = await supabase
+                .from("tbl_version_annotations")
+                .select("*")
+                .eq("version_id", versionId);
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error: unknown) {
+            console.error("Failed to retrieve annotations", error);
+            return { success: false, error: error instanceof Error ? error.message : String(error) };
+        }
+    },
+
+    /**
+     * Creates a new feedback annotation pin.
+     */
+    async createAnnotation(supabase: SupabaseClient, annotationData: { versionId: string; x: number; y: number; content: string; createdBy: string }) {
+        try {
+            const { data, error } = await supabase
+                .from("tbl_version_annotations")
+                .insert({
+                    version_id: annotationData.versionId,
+                    pos_x: annotationData.x,
+                    pos_y: annotationData.y,
+                    content: annotationData.content,
+                    created_by: annotationData.createdBy
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error: unknown) {
+            console.error("Failed to create annotation", error);
+            return { success: false, error: error instanceof Error ? error.message : String(error) };
+        }
     }
 }

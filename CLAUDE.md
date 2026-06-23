@@ -40,6 +40,7 @@ src/
     use-auth.ts               # access AuthProvider context
     use-workspaces.ts         # fetch + create workspaces
     use-projects.ts           # fetch + create projects
+    use-project-details.ts    # fetch details, versions, annotations, checklists, crits, moodboard
   lib/
     supabase/
       browser.ts              # browser-side Supabase client
@@ -100,5 +101,6 @@ combine-schema.ps1            # PowerShell script to combine SQL files
 ## Interaction Style
 
 - **Code Modification Rule**: Every time the user asks you to write, modify, or add code, show the code blocks/diffs in the chat response so the user can type/write it down to better understand it. Do NOT write directly to the filesystem or edit files using code writing tools.
+- **Show Minimal Revisions**: When presenting code snippets for the user to copy, show only the specific lines of code that need modification, clearly indicating where the revisions start and end (using line numbers, context lines, or clear comments) instead of outputting the full file contents.
 - **Exception**: Only modify/write files directly if the user explicitly asks you to do so for that specific instance.
 

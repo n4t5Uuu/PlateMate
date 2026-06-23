@@ -105,3 +105,10 @@ const handleSubmit = async (e: React.FormEvent) => {
     </SidebarMenuButton>
 </SidebarMenuItem>
 ```
+
+## Form Inputs
+
+- **Icons inside inputs**: Place contextual Lucide icons inside inputs (e.g. `FolderKanban`, `Building2`, `Calendar`, etc.) using absolute positioning (`absolute left-3 top-3.5`) and offset the text with a left padding `pl-10`.
+- **Visible borders**: Inputs should always have visible boundaries when not selected. Use the plain `border-border` class (which maps to a subtle but fully opaque grey border) instead of semi-transparent classes like `border-border/50`.
+- **Custom Dropdowns**: When using `<Select>`, style options with circular status pills (matching priority or activity badges) and configure triggers to follow the same size, height, and border styles as text inputs.
+
