@@ -6,6 +6,7 @@
 ALTER TABLE tbl_subtasks ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view subtasks under their tasks
+DROP POLICY IF EXISTS "subtasks: members can view" ON tbl_subtasks;
 CREATE POLICY "subtasks: members can view"
   ON tbl_subtasks FOR SELECT
   USING (
@@ -17,6 +18,7 @@ CREATE POLICY "subtasks: members can view"
   );
 
 -- Allow project members to create subtasks under their tasks
+DROP POLICY IF EXISTS "subtasks: members can insert" ON tbl_subtasks;
 CREATE POLICY "subtasks: members can insert"
   ON tbl_subtasks FOR INSERT
   WITH CHECK (
@@ -28,6 +30,7 @@ CREATE POLICY "subtasks: members can insert"
   );
 
 -- Allow project members to update subtasks under their tasks
+DROP POLICY IF EXISTS "subtasks: members can update" ON tbl_subtasks;
 CREATE POLICY "subtasks: members can update"
   ON tbl_subtasks FOR UPDATE
   USING (
@@ -39,6 +42,7 @@ CREATE POLICY "subtasks: members can update"
   );
 
 -- Allow project members to delete subtasks under their tasks
+DROP POLICY IF EXISTS "subtasks: members can delete" ON tbl_subtasks;
 CREATE POLICY "subtasks: members can delete"
   ON tbl_subtasks FOR DELETE
   USING (

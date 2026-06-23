@@ -6,6 +6,7 @@
 ALTER TABLE tbl_versions ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view versions
+DROP POLICY IF EXISTS "versions: members can view" ON tbl_versions;
 CREATE POLICY "versions: members can view"
   ON tbl_versions FOR SELECT
   USING (
@@ -16,6 +17,7 @@ CREATE POLICY "versions: members can view"
   );
 
 -- Allow project members to upload new versions
+DROP POLICY IF EXISTS "versions: members can insert" ON tbl_versions;
 CREATE POLICY "versions: members can insert"
   ON tbl_versions FOR INSERT
   WITH CHECK (
@@ -26,6 +28,7 @@ CREATE POLICY "versions: members can insert"
   );
 
 -- Allow project members to update version details
+DROP POLICY IF EXISTS "versions: members can update" ON tbl_versions;
 CREATE POLICY "versions: members can update"
   ON tbl_versions FOR UPDATE
   USING (
@@ -36,6 +39,7 @@ CREATE POLICY "versions: members can update"
   );
 
 -- Allow project members to delete versions
+DROP POLICY IF EXISTS "versions: members can delete" ON tbl_versions;
 CREATE POLICY "versions: members can delete"
   ON tbl_versions FOR DELETE
   USING (

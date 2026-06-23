@@ -7,6 +7,7 @@
 ALTER TABLE tbl_crit_sessions ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view crit sessions
+DROP POLICY IF EXISTS "crit_sessions: members can view" ON tbl_crit_sessions;
 CREATE POLICY "crit_sessions: members can view"
   ON tbl_crit_sessions FOR SELECT
   USING (
@@ -17,6 +18,7 @@ CREATE POLICY "crit_sessions: members can view"
   );
 
 -- Allow project members to start a new crit session
+DROP POLICY IF EXISTS "crit_sessions: members can insert" ON tbl_crit_sessions;
 CREATE POLICY "crit_sessions: members can insert"
   ON tbl_crit_sessions FOR INSERT
   WITH CHECK (
@@ -27,6 +29,7 @@ CREATE POLICY "crit_sessions: members can insert"
   );
 
 -- Allow project members to update a crit session (e.g. set ended_at)
+DROP POLICY IF EXISTS "crit_sessions: members can update" ON tbl_crit_sessions;
 CREATE POLICY "crit_sessions: members can update"
   ON tbl_crit_sessions FOR UPDATE
   USING (
@@ -37,6 +40,7 @@ CREATE POLICY "crit_sessions: members can update"
   );
 
 -- Only the creator of the session can delete it
+DROP POLICY IF EXISTS "crit_sessions: creator can delete" ON tbl_crit_sessions;
 CREATE POLICY "crit_sessions: creator can delete"
   ON tbl_crit_sessions FOR DELETE
   USING (created_by = auth.uid());

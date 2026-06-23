@@ -1,4 +1,4 @@
-CREATE TABLE tbl_users (
+CREATE TABLE IF NOT EXISTS tbl_users (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   first_name    TEXT NOT NULL,
@@ -7,13 +7,13 @@ CREATE TABLE tbl_users (
   avatar_url    TEXT
 );
 
-CREATE TABLE tbl_workspaces (
+CREATE TABLE IF NOT EXISTS tbl_workspaces (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   name          TEXT NOT NULL
 );
 
-CREATE TABLE tbl_workspace_members (
+CREATE TABLE IF NOT EXISTS tbl_workspace_members (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   joined_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
   workspace_id  UUID NOT NULL REFERENCES tbl_workspaces(id) ON DELETE CASCADE,
@@ -21,7 +21,7 @@ CREATE TABLE tbl_workspace_members (
   role          TEXT NOT NULL DEFAULT 'member'
 );
 
-CREATE TABLE tbl_projects (
+CREATE TABLE IF NOT EXISTS tbl_projects (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   workspace_id  UUID NOT NULL REFERENCES tbl_workspaces(id) ON DELETE CASCADE,
@@ -36,7 +36,7 @@ CREATE TABLE tbl_projects (
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE tbl_project_members (
+CREATE TABLE IF NOT EXISTS tbl_project_members (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   assigned_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id    UUID NOT NULL REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -45,7 +45,7 @@ CREATE TABLE tbl_project_members (
   UNIQUE (project_id, user_id)
 );
 
-CREATE TABLE tbl_pinned_projects (
+CREATE TABLE IF NOT EXISTS tbl_pinned_projects (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pinned_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
   user_id       UUID NOT NULL REFERENCES tbl_users(id) ON DELETE CASCADE,
@@ -53,7 +53,7 @@ CREATE TABLE tbl_pinned_projects (
   UNIQUE (user_id, project_id)
 );
 
-CREATE TABLE tbl_tasks (
+CREATE TABLE IF NOT EXISTS tbl_tasks (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id    UUID NOT NULL REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -67,7 +67,7 @@ CREATE TABLE tbl_tasks (
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE tbl_subtasks (
+CREATE TABLE IF NOT EXISTS tbl_subtasks (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   task_id       UUID NOT NULL REFERENCES tbl_tasks(id) ON DELETE CASCADE,
@@ -75,7 +75,7 @@ CREATE TABLE tbl_subtasks (
   is_completed  BOOLEAN DEFAULT false
 );
 
-CREATE TABLE tbl_activity_logs (
+CREATE TABLE IF NOT EXISTS tbl_activity_logs (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id    UUID NOT NULL REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -85,7 +85,7 @@ CREATE TABLE tbl_activity_logs (
   target_id     UUID
 );
 
-CREATE TABLE tbl_versions (
+CREATE TABLE IF NOT EXISTS tbl_versions (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id        UUID NOT NULL REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -101,13 +101,7 @@ CREATE TABLE tbl_versions (
   UNIQUE (project_id, version_number)
 );
 
-ALTER TABLE tbl_versions
-  ADD CONSTRAINT fk_versions_parent
-  FOREIGN KEY (parent_version_id)
-  REFERENCES tbl_versions(id)
-  ON DELETE SET NULL;
-
-CREATE TABLE tbl_version_annotations (
+CREATE TABLE IF NOT EXISTS tbl_version_annotations (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   version_id    UUID NOT NULL REFERENCES tbl_versions(id) ON DELETE CASCADE,
@@ -119,7 +113,7 @@ CREATE TABLE tbl_version_annotations (
   status        TEXT DEFAULT 'open'
 );
 
-CREATE TABLE tbl_version_revision_notes (
+CREATE TABLE IF NOT EXISTS tbl_version_revision_notes (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   version_id    UUID NOT NULL REFERENCES tbl_versions(id) ON DELETE CASCADE,
@@ -129,7 +123,7 @@ CREATE TABLE tbl_version_revision_notes (
   is_resolved   BOOLEAN DEFAULT false
 );
 
-CREATE TABLE tbl_moodboard_items (
+CREATE TABLE IF NOT EXISTS tbl_moodboard_items (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id    UUID NOT NULL REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -148,7 +142,7 @@ CREATE TABLE tbl_moodboard_items (
   z_index       INT DEFAULT 1
 );
 
-CREATE TABLE tbl_project_briefs (
+CREATE TABLE IF NOT EXISTS tbl_project_briefs (
   id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at           TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id           UUID NOT NULL UNIQUE REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -160,7 +154,7 @@ CREATE TABLE tbl_project_briefs (
   updated_at           TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE tbl_submission_checklists (
+CREATE TABLE IF NOT EXISTS tbl_submission_checklists (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id    UUID NOT NULL REFERENCES tbl_projects(id) ON DELETE CASCADE,
@@ -169,7 +163,7 @@ CREATE TABLE tbl_submission_checklists (
   due_date      DATE
 );
 
-CREATE TABLE tbl_checklist_items (
+CREATE TABLE IF NOT EXISTS tbl_checklist_items (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   checklist_id  UUID NOT NULL REFERENCES tbl_submission_checklists(id) ON DELETE CASCADE,
   sheet_type    TEXT NOT NULL,
@@ -180,7 +174,7 @@ CREATE TABLE tbl_checklist_items (
   completed_at  TIMESTAMPTZ
 );
 
-CREATE TABLE tbl_crit_sessions (
+CREATE TABLE IF NOT EXISTS tbl_crit_sessions (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   started_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
   ended_at         TIMESTAMPTZ,
@@ -191,7 +185,7 @@ CREATE TABLE tbl_crit_sessions (
   title            TEXT
 );
 
-CREATE TABLE tbl_crit_notes (
+CREATE TABLE IF NOT EXISTS tbl_crit_notes (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   session_id    UUID NOT NULL REFERENCES tbl_crit_sessions(id) ON DELETE CASCADE,
@@ -202,7 +196,7 @@ CREATE TABLE tbl_crit_notes (
   is_actioned   BOOLEAN DEFAULT false
 );
 
-CREATE TABLE tbl_ai_conversations (
+CREATE TABLE IF NOT EXISTS tbl_ai_conversations (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
   project_id       UUID REFERENCES tbl_projects(id) ON DELETE CASCADE,

@@ -6,6 +6,7 @@
 ALTER TABLE tbl_checklist_items ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view checklist items
+DROP POLICY IF EXISTS "checklist_items: members can view" ON tbl_checklist_items;
 CREATE POLICY "checklist_items: members can view"
   ON tbl_checklist_items FOR SELECT
   USING (
@@ -17,6 +18,7 @@ CREATE POLICY "checklist_items: members can view"
   );
 
 -- Allow project members to add checklist items
+DROP POLICY IF EXISTS "checklist_items: members can insert" ON tbl_checklist_items;
 CREATE POLICY "checklist_items: members can insert"
   ON tbl_checklist_items FOR INSERT
   WITH CHECK (
@@ -28,6 +30,7 @@ CREATE POLICY "checklist_items: members can insert"
   );
 
 -- Allow project members to update checklist items (e.g. mark complete)
+DROP POLICY IF EXISTS "checklist_items: members can update" ON tbl_checklist_items;
 CREATE POLICY "checklist_items: members can update"
   ON tbl_checklist_items FOR UPDATE
   USING (
@@ -39,6 +42,7 @@ CREATE POLICY "checklist_items: members can update"
   );
 
 -- Allow project members to delete checklist items
+DROP POLICY IF EXISTS "checklist_items: members can delete" ON tbl_checklist_items;
 CREATE POLICY "checklist_items: members can delete"
   ON tbl_checklist_items FOR DELETE
   USING (

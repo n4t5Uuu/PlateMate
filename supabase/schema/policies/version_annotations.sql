@@ -6,6 +6,7 @@
 ALTER TABLE tbl_version_annotations ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view annotations on their versions
+DROP POLICY IF EXISTS "version_annotations: members can view" ON tbl_version_annotations;
 CREATE POLICY "version_annotations: members can view"
   ON tbl_version_annotations FOR SELECT
   USING (
@@ -17,6 +18,7 @@ CREATE POLICY "version_annotations: members can view"
   );
 
 -- Allow project members to add annotations
+DROP POLICY IF EXISTS "version_annotations: members can insert" ON tbl_version_annotations;
 CREATE POLICY "version_annotations: members can insert"
   ON tbl_version_annotations FOR INSERT
   WITH CHECK (
@@ -28,6 +30,7 @@ CREATE POLICY "version_annotations: members can insert"
   );
 
 -- Allow project members to update annotations
+DROP POLICY IF EXISTS "version_annotations: members can update" ON tbl_version_annotations;
 CREATE POLICY "version_annotations: members can update"
   ON tbl_version_annotations FOR UPDATE
   USING (
@@ -39,6 +42,7 @@ CREATE POLICY "version_annotations: members can update"
   );
 
 -- Allow project members to delete annotations
+DROP POLICY IF EXISTS "version_annotations: members can delete" ON tbl_version_annotations;
 CREATE POLICY "version_annotations: members can delete"
   ON tbl_version_annotations FOR DELETE
   USING (

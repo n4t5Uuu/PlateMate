@@ -7,6 +7,7 @@
 ALTER TABLE tbl_tasks ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view tasks in their projects
+DROP POLICY IF EXISTS "tasks: members can view" ON tbl_tasks;
 CREATE POLICY "tasks: members can view"
   ON tbl_tasks FOR SELECT
   USING (
@@ -17,6 +18,7 @@ CREATE POLICY "tasks: members can view"
   );
 
 -- Allow project members to create tasks in their projects
+DROP POLICY IF EXISTS "tasks: members can insert" ON tbl_tasks;
 CREATE POLICY "tasks: members can insert"
   ON tbl_tasks FOR INSERT
   WITH CHECK (
@@ -27,6 +29,7 @@ CREATE POLICY "tasks: members can insert"
   );
 
 -- Allow project members to update tasks in their projects
+DROP POLICY IF EXISTS "tasks: members can update" ON tbl_tasks;
 CREATE POLICY "tasks: members can update"
   ON tbl_tasks FOR UPDATE
   USING (
@@ -37,6 +40,7 @@ CREATE POLICY "tasks: members can update"
   );
 
 -- Allow project members to delete tasks in their projects
+DROP POLICY IF EXISTS "tasks: members can delete" ON tbl_tasks;
 CREATE POLICY "tasks: members can delete"
   ON tbl_tasks FOR DELETE
   USING (

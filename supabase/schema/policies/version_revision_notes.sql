@@ -7,6 +7,7 @@
 ALTER TABLE tbl_version_revision_notes ENABLE ROW LEVEL SECURITY;
 
 -- Allow project members to view revision notes
+DROP POLICY IF EXISTS "revision_notes: members can view" ON tbl_version_revision_notes;
 CREATE POLICY "revision_notes: members can view"
   ON tbl_version_revision_notes FOR SELECT
   USING (
@@ -18,6 +19,7 @@ CREATE POLICY "revision_notes: members can view"
   );
 
 -- Allow project members to add revision notes
+DROP POLICY IF EXISTS "revision_notes: members can insert" ON tbl_version_revision_notes;
 CREATE POLICY "revision_notes: members can insert"
   ON tbl_version_revision_notes FOR INSERT
   WITH CHECK (
@@ -29,6 +31,7 @@ CREATE POLICY "revision_notes: members can insert"
   );
 
 -- Allow project members to update revision notes
+DROP POLICY IF EXISTS "revision_notes: members can update" ON tbl_version_revision_notes;
 CREATE POLICY "revision_notes: members can update"
   ON tbl_version_revision_notes FOR UPDATE
   USING (
@@ -40,6 +43,7 @@ CREATE POLICY "revision_notes: members can update"
   );
 
 -- Only the author of a note can delete it
+DROP POLICY IF EXISTS "revision_notes: author can delete" ON tbl_version_revision_notes;
 CREATE POLICY "revision_notes: author can delete"
   ON tbl_version_revision_notes FOR DELETE
   USING (author_id = auth.uid());

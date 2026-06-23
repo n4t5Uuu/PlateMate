@@ -45,7 +45,6 @@ src/
     supabase/
       browser.ts              # browser-side Supabase client
       server.ts               # server-side Supabase client (SSR)
-      schema/                 # all SQL files (tables, functions, triggers, policies)
     workspace-helper.ts       # Supabase workspace CRUD
     auth-helper.ts            # maps Supabase user → app User type
     security.ts               # sanitizeInput helper
@@ -54,6 +53,10 @@ src/
   types/                      # TypeScript type definitions
 middleware.ts                 # session refresh + route protection
 combine-schema.ps1            # PowerShell script to combine SQL files
+
+supabase/
+  migrations/                 # timestamped SQL migration files (local state / remote sync)
+  schema/                     # human-readable SQL blueprints (tables, functions, triggers, policies)
 ```
 
 ## Key Patterns
@@ -74,7 +77,7 @@ combine-schema.ps1            # PowerShell script to combine SQL files
 - All such functions use fully-qualified table names: `public.tbl_workspaces`, not just `tbl_workspaces`
 
 ### SQL Schema
-- All schema lives in `src/lib/supabase/schema/`
+- All schema lives in `supabase/schema/`
 - Run `.\combine-schema.ps1` to concatenate files in the correct order and copy to clipboard
 - Order matters: plpgsql functions → tables → sql-language functions → triggers → policies
 - `LANGUAGE sql` functions validate table existence at creation time — they must come after `create_tables.sql`
