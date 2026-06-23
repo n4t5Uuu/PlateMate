@@ -2,6 +2,13 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { sanitizeInput } from "./security";
 import { Project } from "@/types/project.types"
 
+function extractMessage(error: unknown): string {
+    if (error instanceof Error) return error.message;
+    if (typeof error === "object" && error !== null && "message" in error)
+        return String((error as any).message);
+    return "An unexpected error occurred";
+}
+
 /**
  * Maps a database project record to the frontend Project interface.
  * This ensures consistent property names (camelCase) throughout the application.
@@ -55,7 +62,7 @@ export const projectHelper = {
                 priority: projectData.priority,
             }
 
-            const {data, error} = await supabase.from("projects")
+            const {data, error} = await supabase.from("tbl_projects")
                 .insert(dbRecord)
                 .select()
                 .single();
@@ -69,9 +76,7 @@ export const projectHelper = {
             }
         } catch (error: unknown) {
             console.error("Failed to create project", error)
-
-            const message = error instanceof Error ? error.message: String(error);
-            return {success: false, error: message || "Unknown error occured"}
+            return {success: false, error: extractMessage(error)}
         }
     },
 
@@ -84,7 +89,7 @@ export const projectHelper = {
      */
     async getProjects(supabase: SupabaseClient, userId?: string) {
         try {
-            let query = supabase.from("projects").select("*").order("created_at", {
+            let query = supabase.from("tbl_projects").select("*").order("created_at", {
                 ascending: false
             });
 
@@ -102,9 +107,7 @@ export const projectHelper = {
             }
         } catch (error: unknown) {
             console.error("Failed to retrieve projects", error)
-
-            const message = error instanceof Error ? error.message: String(error);
-            return {success: false, error: message || "Unknown error occured"}
+            return {success: false, error: extractMessage(error)}
         }
     },
 
@@ -145,7 +148,7 @@ export const projectHelper = {
                 delete dbData.dueDate;
             }
 
-            const {data, error} = await supabase.from("projects")
+            const {data, error} = await supabase.from("tbl_projects")
                 .update(dbData)
                 .eq("id", id)
                 .select()
@@ -160,9 +163,7 @@ export const projectHelper = {
             }
         } catch (error: unknown) {
             console.error("Failed to update project", error)
-
-            const message = error instanceof Error ? error.message: String(error);
-            return {success: false, error: message || "Unknown error occured"}
+            return {success: false, error: extractMessage(error)}
         }
     },
 
@@ -175,7 +176,7 @@ export const projectHelper = {
      */
     async deleteProject(supabase: SupabaseClient, projectId: string) {
         try {
-            const {error} = await supabase.from("projects")
+            const {error} = await supabase.from("tbl_projects")
                 .delete()
                 .eq("id", projectId);
 
@@ -188,9 +189,7 @@ export const projectHelper = {
             }
         } catch (error) {
             console.error("Failed to delete project", error)
-
-            const message = error instanceof Error ? error.message: String(error);
-            return {success: false, error: message || "Unknown error occured"}
+            return {success: false, error: extractMessage(error)}
         }
     },
 

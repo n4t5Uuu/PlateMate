@@ -178,7 +178,7 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
     };
 
     return (
-        <div className="flex flex-col gap-6 p-4 max-w-7xl mx-auto animate-in fade-in duration-300">
+        <div className="w-full max-w-7xl mx-auto flex flex-col gap-6 p-4 animate-in fade-in duration-300">
             {/* Header Navigation */}
             <div className="flex items-center justify-between">
                 <Button 

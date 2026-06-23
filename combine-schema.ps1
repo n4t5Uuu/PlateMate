@@ -12,6 +12,7 @@ $files = @(
     # sql-language functions — validated at creation, need tables to exist first
     "$schema/functions/is_workspace_member.sql",
     "$schema/functions/is_workspace_owner.sql",
+    "$schema/functions/is_project_member.sql",
     "$schema/triggers.sql",
     "$schema/policies/users.sql",
     "$schema/policies/workspaces.sql",

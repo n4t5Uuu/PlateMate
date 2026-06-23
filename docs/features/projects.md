@@ -36,15 +36,12 @@ The dashboard shows project cards in a grid. Each card has:
 
 ## Current State
 
-The dashboard currently displays sample/hardcoded project data. Real DB integration for projects is the next major milestone.
-
-What needs to happen:
-1. `project-helper.ts` — `getProjects(workspaceId)` + `createProject()`
-2. `use-projects.ts` — hook that calls the helper
-3. Wire dashboard `page.tsx` to fetch real projects
-4. Wire `NewProjectDialog` to actually create DB records
-5. Build `/projects` list page
-6. Build `/projects/[id]` detail page
+All core milestones for database-driven project management have been implemented:
+1.  **DB Helpers Layer**: Added CRUD operations inside [project-helper.ts](file:///C:/Users/Alden%20Olmedo/Documents/VSCode/plate-mate/src/lib/project-helper.ts).
+2.  **State Hook Layer**: Implemented project fetch, update, and delete hooks inside [use-projects.ts](file:///C:/Users/Alden%20Olmedo/Documents/VSCode/plate-mate/src/hooks/use-projects.ts).
+3.  **Creation Dialog**: Fully wired the workspace project creation trigger inside [NewProject.tsx](file:///C:/Users/Alden%20Olmedo/Documents/VSCode/plate-mate/src/components/dialogs/NewProject.tsx) with automatic dynamic routing redirects.
+4.  **Projects Directory Page**: Built the interactive search, sorting, filtering, and grid/list toggling layout inside [page.tsx](file:///C:/Users/Alden%20Olmedo/Documents/VSCode/plate-mate/src/app/projects/page.tsx).
+5.  **Projects Detail Canvas Page**: Completed the relative drawing annotation, checklists, moodboard, and jury crit session features inside [page.tsx](file:///C:/Users/Alden%20Olmedo/Documents/VSCode/plate-mate/src/app/projects/%5Bid%5D/page.tsx).
 
 ## Sub-features (planned)
 

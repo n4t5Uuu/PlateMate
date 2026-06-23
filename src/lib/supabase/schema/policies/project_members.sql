@@ -9,16 +9,7 @@ ALTER TABLE tbl_project_members ENABLE ROW LEVEL SECURITY;
 -- Allow project members to view other members on the same project
 CREATE POLICY "project_members: members can view"
   ON tbl_project_members FOR SELECT
-  USING (
-    project_id IN (
-      SELECT id FROM tbl_projects
-      WHERE owner_id = auth.uid()
-        OR id IN (
-          SELECT project_id FROM tbl_project_members
-          WHERE user_id = auth.uid()
-        )
-    )
-  );
+  USING (is_project_member(project_id));
 
 -- Allow workspace owner or project owner to add members
 CREATE POLICY "project_members: owner can insert"

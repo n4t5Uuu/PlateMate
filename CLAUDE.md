@@ -59,8 +59,8 @@ combine-schema.ps1            # PowerShell script to combine SQL files
 ## Key Patterns
 
 ### Error Handling
-- **Frontend toasts**: always show user-friendly messages, never raw DB errors
-- **Backend**: always `console.error("[functionName]", error)` in catch blocks
+- **Frontend Presentation**: Always display clean, user-friendly error messages (e.g., user-friendly banners, toasts) in the UI; never show raw DB errors, sql identifiers, or diagnostic instructions.
+- **Backend Logging**: Always log raw database and internal errors using `console.error("[functionName]", error)` in helper layers.
 - Use `extractMessage(error)` in helpers to safely get a string from any error type (handles Supabase `PostgrestError` which is not a native JS `Error`)
 
 ### Supabase Clients
@@ -84,6 +84,7 @@ combine-schema.ps1            # PowerShell script to combine SQL files
 - Use `text-muted-foreground` without heavy opacity for readable light-mode text
 - Hover states: `hover:bg-primary/5 hover:border-primary/50 hover:-translate-y-0.5`
 - Responsive: always consider 75% browser zoom
+- **Whitespace / Spacing**: Always design UI layouts to stretch and fill the available screen space (e.g. using `w-full` on main page containers, and sidebars/grids to span the full viewport), avoiding narrow page containers that leave awkward empty whitespace.
 
 ## Auth Flow
 
