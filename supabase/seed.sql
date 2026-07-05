@@ -28,8 +28,8 @@ VALUES (
   'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
   'authenticated',
   'authenticated',
-  'olmedalden4@gmail.com', -- Requested login email
-  crypt('123456', gen_salt('bf')), -- Requested login password
+  'olmedalden4@gmail.com', -- Login Email
+  crypt('123456', gen_salt('bf')), -- Login Password: '123456'
   now(),
   '{"provider": "email", "providers": ["email"]}',
   '{"firstName": "Alden", "lastName": "Olmedo"}',
@@ -95,6 +95,50 @@ VALUES (
   now()
 )
 ON CONFLICT (id) DO NOTHING;
+
+
+-- 1.5. Insert matching identities into auth.identities
+-- Supabase Auth requires an identity row to map the login email to the user record
+INSERT INTO auth.identities (
+  id,
+  user_id,
+  provider_id,
+  identity_data,
+  provider,
+  last_sign_in_at,
+  created_at,
+  updated_at
+)
+VALUES (
+  'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+  'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+  'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+  '{"sub":"a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d","email":"olmedalden4@gmail.com"}'::jsonb,
+  'email',
+  now(),
+  now(),
+  now()
+),
+(
+  'f6e5d4c3-b2a1-0f9e-8d7c-6b5a4f3e2d1c',
+  'f6e5d4c3-b2a1-0f9e-8d7c-6b5a4f3e2d1c',
+  'f6e5d4c3-b2a1-0f9e-8d7c-6b5a4f3e2d1c',
+  '{"sub":"f6e5d4c3-b2a1-0f9e-8d7c-6b5a4f3e2d1c","email":"jane.smith@example.com"}'::jsonb,
+  'email',
+  now(),
+  now(),
+  now()
+),
+(
+  'e2d1c0b9-a8f7-6e5d-4c3b-2a1f0e9d8c7b',
+  'e2d1c0b9-a8f7-6e5d-4c3b-2a1f0e9d8c7b',
+  'e2d1c0b9-a8f7-6e5d-4c3b-2a1f0e9d8c7b',
+  '{"sub":"e2d1c0b9-a8f7-6e5d-4c3b-2a1f0e9d8c7b","email":"mark.johnson@example.com"}'::jsonb,
+  'email',
+  now(),
+  now(),
+  now()
+);
 
 
 -- 2. Insert Mock Projects under Alden Olmedo's Workspace

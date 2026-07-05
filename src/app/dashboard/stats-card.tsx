@@ -1,6 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 import {LucideIcon} from "lucide-react";
+import {useProjects} from "@/hooks/use-projects"
 
 interface StatsCardProps {
     title: string
@@ -35,12 +36,12 @@ export default function StatsCard({title, value, change, changeType, Icon}: Stat
                 <div className="flex flex-col gap-1">
                     <div className="font-bold text-3xl tracking-tight font-jetbrains-mono">{value}</div>
                     <div className="flex items-center gap-1.5 mt-1">
-                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${changeColors[changeType]}`}>
-                             {change.split("from")[0]}
-                         </span>
-                         <span className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
-                             from {change.split("from")[1] || "previous"}
-                         </span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${changeColors[changeType]}`}>
+                            {change.split("from")[0]}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground/60 whitespace-nowrap">
+                            from {change.split("from")[1] || "previous"}
+                        </span>
                     </div>
                 </div>
             </CardContent>

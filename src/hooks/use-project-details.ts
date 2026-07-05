@@ -98,6 +98,7 @@ export function useProjectDetails(projectId: string) {
                     });
                 } else {
                     // Local fallback project
+                    //TODO: to change when the project is created from the front end instead of fetching from the database
                     setProject({
                         id: projectId,
                         title: "BGC Modern Villa",
