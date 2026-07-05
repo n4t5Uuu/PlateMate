@@ -1,7 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Clipboard, Users, ChevronRight } from "lucide-react";
+import Link from "next/link"
 
 interface ProjectRowProps {
+    id: string
     projectTitle: string
     clientName: string
     progress: number
@@ -11,7 +13,7 @@ interface ProjectRowProps {
     priority: "high" | "medium" | "low"
 }
 
-export default function ProjectRow({ projectTitle, clientName, progress, dueDate, status, teamMembers, priority }: ProjectRowProps) {
+export default function ProjectRow({ id, projectTitle, clientName, progress, dueDate, status, teamMembers, priority }: ProjectRowProps) {
     const priorityColors = {
         high: "bg-rose-500/10 text-rose-500 border-rose-500/20",
         medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
@@ -33,7 +35,10 @@ export default function ProjectRow({ projectTitle, clientName, progress, dueDate
     }
 
     return (
-        <div className="flex items-center gap-3 sm:gap-5 px-3 sm:px-5 py-3 sm:py-4 rounded-xl border border-border bg-background/10 hover:bg-primary/5 hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer group">
+        <Link 
+            className="flex items-center gap-3 sm:gap-5 px-3 sm:px-5 py-3 sm:py-4 rounded-xl border border-border bg-background/10 hover:bg-primary/5 hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer group"
+            href={`/projects/${id}`}
+        >
             <div className={`w-2 h-2 rounded-full shrink-0 ${statusColors[status]}`} />
 
             <div className="flex-1 min-w-0">
@@ -67,6 +72,6 @@ export default function ProjectRow({ projectTitle, clientName, progress, dueDate
             </div>
 
             <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary/50 transition-colors shrink-0" />
-        </div>
+        </Link>
     )
 }

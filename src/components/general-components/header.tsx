@@ -13,10 +13,16 @@ export default function Header() {
     const pathname = usePathname();
     const {workspaces} = useWorkspaces()
 
-    // for the header title whenever the user switches pages, the name of the page will be displayed in the header 
-    // For example, if the user is on the "/projects" page, the header will display "Projects". If the user is on the "/settings" page, 
-    // the header will display "Settings". If the user is on the "/" page, the header will display "Home".
-    const headerTitle = pathname.slice(1).charAt(0).toUpperCase() + pathname.slice(2)
+    // Helper method to determine the header title based on the current path
+    const getHeaderTitle = () => {
+        if(pathname === "/") return "None"
+        if(pathname.startsWith("/projects/")) return "Projects"
+
+        const firstSegment = pathname.split('/')[1] || ""
+        return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
+    }
+
+    const headerTitle = getHeaderTitle()
 
     return (
         <header className="flex items-center h-20 shrink-0 gap-4 border-b border-border/50 bg-background/60 backdrop-blur-md sticky top-0 z-10 px-8 transition-all">

@@ -162,6 +162,7 @@ export default function Dashboard() {
                             {projects.slice(0, 4).map((item) => (
                                 <ProjectRow
                                     key={item.id}
+                                    id={item.id}
                                     projectTitle={item.title}
                                     clientName={item.client || "No client"}
                                     progress={item.progress || 0}
