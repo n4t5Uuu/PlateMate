@@ -49,17 +49,32 @@ export function LoginForm() {
 
                 router.push("/dashboard");
             } else {
+                // Log the technical database/backend error to the developer console
+                console.error("Login backend error:", result.error);
+
+                // Convert technical jargon to professional, user-friendly notifications
+                let userFriendlyDescription = "Please check your credentials and try again.";
+                const errorLower = (result.error || "").toLowerCase();
+                
+                if (errorLower.includes("querying schema") || errorLower.includes("database error") || errorLower.includes("schema")) {
+                    userFriendlyDescription = "We are experiencing technical difficulties. Please try again in a few moments.";
+                } else if (errorLower.includes("invalid login credentials") || errorLower.includes("invalid_credentials")) {
+                    userFriendlyDescription = "The email or password you entered is incorrect.";
+                }
+
                 toast.error("Login Failed", {
-                    description: result.error || "Please check your credentials and try again.",
-                    duration: 3000
+                    description: userFriendlyDescription,
+                    duration: 4000
                 });
             }
         } catch (err) {
+            // Log code/connection exceptions to the console
+            console.error("Login client exception:", err);
+
             toast.error("Login Failed", {
-                description: "An unexpected error occurred. Please try again.",
-                duration: 3000
+                description: "Something went wrong. Please try again later.",
+                duration: 4000
             });
-            console.error(err);
         } finally {
             setIsLoading(false);
         }

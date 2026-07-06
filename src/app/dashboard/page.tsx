@@ -19,6 +19,11 @@ export default function Dashboard() {
 
     const {loading, projects, error} = useProjects()
 
+    /*
+        * Converts a lowercase status string from the database (e.g., "active")
+        * into a capitalized string matching the exact type the ProjectRow component expects.
+        * Defaults to "Active" if no status is provided or found in the dictionary.
+     */
     const capitalizeStatus = (status: string) => {
         if(!status) return "Active"
         const mapped: Record<string, "Active" | "Review" | "Completed" | "Delayed"> = {
@@ -31,6 +36,7 @@ export default function Dashboard() {
         return mapped[status.toLowerCase()] || "Active"
     }
 
+    // Method to format database ISO date strings
     const formatDate = (dateStr?: string) => {
         if(!dateStr) return "No due date"
         try {
@@ -62,9 +68,11 @@ export default function Dashboard() {
         )
     }
 
+    // Counts the projects based on status and will be displayed on the status cards
     const activeProjectsCount = projects.filter(p => p.status?.toLowerCase() === "active").length
     const completedProjectsCount = projects.filter(p => p.status?.toLowerCase() === "completed").length
-    // to change here and dapat yung subtasks under nung icocount dito
+
+    // to edit once subtasks has been implemented on the project
     const pendingProjectsCount = projects.filter(p => p.status?.toLowerCase() === "review" || p.status?.toLowerCase() === "delayed" || p.status?.toLowerCase() === "active").length
 
     const statsCardData = [
@@ -213,6 +221,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
+
                     {/* Recent Activity */}
                     <div className="glass-morphism rounded-xl border-none shadow-lg px-5 sm:px-6 pt-5 pb-6">
                         <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70 mb-5">Recent Activity</p>

@@ -190,9 +190,6 @@ export default function ProjectPage({ params }: { params: Promise<{ id: string }
                     <ArrowLeft className="w-4 h-4" />
                     <span>Back to Dashboard</span>
                 </Button>
-                <div className="text-xs text-muted-foreground font-mono">
-                    ID: {project.id}
-                </div>
             </div>
 
             {/* Project Cover Details */}

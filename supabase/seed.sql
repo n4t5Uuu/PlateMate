@@ -21,20 +21,36 @@ INSERT INTO auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
+  updated_at,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change_token_current,
+  email_change,
+  phone_change,
+  phone_change_token,
+  reauthentication_token
 )
 VALUES (
   '00000000-0000-0000-0000-000000000000',
   'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
   'authenticated',
   'authenticated',
-  'olmedalden4@gmail.com', -- Login Email
+  'olmedoalden4@gmail.com', -- Login Email
   crypt('123456', gen_salt('bf')), -- Login Password: '123456'
   now(),
   '{"provider": "email", "providers": ["email"]}',
   '{"firstName": "Alden", "lastName": "Olmedo"}',
   now(),
-  now()
+  now(),
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  ''
 )
 ON CONFLICT (id) DO NOTHING;
 
@@ -50,7 +66,15 @@ INSERT INTO auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
+  updated_at,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change_token_current,
+  email_change,
+  phone_change,
+  phone_change_token,
+  reauthentication_token
 )
 VALUES (
   '00000000-0000-0000-0000-000000000000',
@@ -63,7 +87,15 @@ VALUES (
   '{"provider": "email", "providers": ["email"]}',
   '{"firstName": "Jane", "lastName": "Smith"}',
   now(),
-  now()
+  now(),
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  ''
 )
 ON CONFLICT (id) DO NOTHING;
 
@@ -79,7 +111,15 @@ INSERT INTO auth.users (
   raw_app_meta_data,
   raw_user_meta_data,
   created_at,
-  updated_at
+  updated_at,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change_token_current,
+  email_change,
+  phone_change,
+  phone_change_token,
+  reauthentication_token
 )
 VALUES (
   '00000000-0000-0000-0000-000000000000',
@@ -92,7 +132,15 @@ VALUES (
   '{"provider": "email", "providers": ["email"]}',
   '{"firstName": "Mark", "lastName": "Johnson"}',
   now(),
-  now()
+  now(),
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  '',
+  ''
 )
 ON CONFLICT (id) DO NOTHING;
 
@@ -113,7 +161,7 @@ VALUES (
   'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
   'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
   'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
-  '{"sub":"a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d","email":"olmedalden4@gmail.com"}'::jsonb,
+  '{"sub":"a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d","email":"olmedoalden4@gmail.com"}'::jsonb,
   'email',
   now(),
   now(),

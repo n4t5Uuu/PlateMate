@@ -63,21 +63,37 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
                 // Notify parent to switch tabs
                 onSuccess();
             } else if (result.status === 409) {
-                toast.error("User already exists", {
-                    description: "Please use a different email.",
-                    duration: 3000
+                toast.error("Signup Failed", {
+                    description: "An account with this email address already exists.",
+                    duration: 4000
                 });
             } else {
+                // Log the technical database/backend error to the developer console
+                console.error("Signup backend error:", result.error);
+
+                // Convert technical jargon to professional, user-friendly notifications
+                let userFriendlyDescription = "An error occurred. Please try again.";
+                const errorLower = (result.error || "").toLowerCase();
+                
+                if (errorLower.includes("querying schema") || errorLower.includes("database error") || errorLower.includes("schema")) {
+                    userFriendlyDescription = "We are experiencing technical difficulties. Please try again in a few moments.";
+                } else if (errorLower.includes("already registered") || errorLower.includes("already exists")) {
+                    userFriendlyDescription = "An account with this email address already exists.";
+                }
+
                 toast.error("Signup Failed", {
-                    description: result.error || "An error occurred. Please try again.",
-                    duration: 3000
+                    description: userFriendlyDescription,
+                    duration: 4000
                 });
             }
         } catch (err) {
+            // Log code/connection exceptions to the console
+            console.error("Signup client exception:", err);
+
             toast.error("Signup Failed", {
-                description: "Server or Network error. Please try again later."
+                description: "Something went wrong. Please try again later.",
+                duration: 4000
             });
-            console.error(err);
         } finally {
             setIsLoading(false);
         }

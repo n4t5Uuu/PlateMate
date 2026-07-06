@@ -62,7 +62,6 @@
         const { workspaces } = useWorkspaces();
         const activeWorkspace = workspaces[0];
         
-        console.log("SIDEBAR DEBUG: ", {user, loading})
         const handleLogout = async () => {
             try {
                 const result = await signOut();

@@ -294,20 +294,13 @@ export default function ProjectsPage() {
                                         className="glass-morphism overflow-hidden border-border/40 hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/5 transition-all duration-200 flex flex-col bg-white/60 dark:bg-card/30 cursor-pointer group"
                                         onClick={() => router.push(`/projects/${proj.id}`)}
                                     >
-                                        {/* Top priority highlight bar */}
-                                        <div className={`h-1.5 w-full ${
-                                            proj.priority?.toLowerCase() === "high" ? "bg-rose-500" :
-                                            proj.priority?.toLowerCase() === "medium" ? "bg-amber-500" :
-                                            "bg-emerald-500"
-                                        }`} />
-                                        
-                                        <CardHeader className="p-4 pb-2">
+                                        <CardHeader className="p-5 pb-2 pt-5">
                                             <div className="flex items-start justify-between gap-4">
                                                 <div className="space-y-1 min-w-0">
-                                                    <h3 className="font-extrabold text-sm tracking-tight group-hover:text-primary transition-colors truncate">
+                                                    <h3 className="font-extrabold text-base tracking-tight group-hover:text-primary transition-colors truncate">
                                                         {proj.title}
                                                     </h3>
-                                                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground/80 truncate">
+                                                    <div className="flex items-center gap-1 text-xs text-muted-foreground font-semibold truncate">
                                                         <Building2 className="w-3.5 h-3.5 shrink-0" />
                                                         <span>Client: <strong>{proj.client || "N/A"}</strong></span>
                                                     </div>
@@ -317,14 +310,14 @@ export default function ProjectsPage() {
                                         </CardHeader>
 
                                         <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-between gap-4">
-                                            <p className="text-[11px] text-muted-foreground/90 leading-relaxed line-clamp-2">
+                                            <p className="text-xs text-muted-foreground font-medium leading-relaxed line-clamp-2">
                                                 {proj.description || "No project description provided. Open the project canvas details to outline milestones, constraints, and submit sheets."}
                                             </p>
 
                                             <div className="space-y-3 pt-1">
                                                 {/* Progress Bar */}
                                                 <div className="space-y-1">
-                                                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                                                    <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-muted-foreground">
                                                         <span>Checklist Progress</span>
                                                         <span className="font-mono text-foreground">{proj.progress || 0}%</span>
                                                     </div>
@@ -332,17 +325,17 @@ export default function ProjectsPage() {
                                                 </div>
 
                                                 {/* Metadata Row */}
-                                                <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[10px] text-muted-foreground font-semibold">
+                                                <div className="flex items-center justify-between border-t border-border/40 pt-2 text-xs text-muted-foreground font-bold">
                                                     <div className="flex items-center gap-1">
                                                         <Calendar className="w-3.5 h-3.5" />
                                                         <span>Due: <strong>{proj.dueDate || "N/A"}</strong></span>
                                                     </div>
                                                     
                                                     <div className="flex gap-1">
-                                                        <Badge variant="outline" className={`${priorityColorClass} text-[8px] font-bold uppercase px-1 py-0.5 border shadow-none`}>
+                                                        <Badge variant="outline" className={`${priorityColorClass} text-[10px] font-bold uppercase px-1.5 py-0.5 border shadow-none`}>
                                                             {proj.priority}
                                                         </Badge>
-                                                        <Badge variant="outline" className={`${statusBadgeColorClass} text-[8px] font-bold uppercase px-1 py-0.5 border shadow-none`}>
+                                                        <Badge variant="outline" className={`${statusBadgeColorClass} text-[10px] font-bold uppercase px-1.5 py-0.5 border shadow-none`}>
                                                             {proj.status}
                                                         </Badge>
                                                     </div>
