@@ -1,53 +1,62 @@
-# Session Handoff
+# Project Handoff: Accomplished Changes
 
-Last updated: 2026-05-13
+This document provides a comprehensive summary of all modifications, bug fixes, and refinements completed in the **Plate-Mate** application so far.
 
-## What's Been Built
+---
 
-### Auth
-- Supabase email/password signup and login
-- `on_auth_user_created` trigger syncs `auth.users` → `tbl_users` on signup
-- `on_user_created_create_workspace` trigger auto-creates "[FirstName]'s Workspace" on signup
-- `middleware.ts` handles session refresh and route protection (auto-login on return visits)
-- Auth callback route at `/api/auth/callback` for email confirmation redirects
+## 1. Frontend UI & UX Refinements
 
-### Dashboard UI
-- Stats cards row (Active Projects, Pending Tasks, Team Members, Completed)
-- Active Projects list (ProjectRow) with status dot, priority badge, progress bar, due date, team count
-- Weekly Pulse sidebar card (Completed / Due Today / Meetings / Overdue)
-- Recent Activity sidebar card (compact list with small avatars + timeline line)
-- Layout: 3-col grid (projects 2/3 + pulse+activity 1/3) — all sample data for now
+### Card Readability Scaling (75% Screen Zoom Support)
+* **Problem**: The interface text was too small and difficult to read when viewed at 75% screen zoom.
+* **Fix**: Scaled up font classes across card layouts in `src/app/projects/page.tsx` (e.g., updated `text-[10px]` to `text-xs`, `text-sm` to `text-base`, and badges from `text-[8px]` to `text-[10px]`).
+* **Visual Polish**: 
+  * Removed the thick horizontal priority color highlight bars from the top of project cards to clean up the design.
+  * Balanced vertical layout spacing by adjusting project card headers padding to `p-5 pb-2 pt-5`.
 
-### Sidebar
-- Sections: General, Workspace, Pinned, Quick Actions
-- Workspace section renders real workspaces from useWorkspaces() hook
-- Workspace creation uses create_workspace_with_owner RPC (bypasses RLS chicken-and-egg)
+### Navigation & Routing
+* **Clickable Project Rows**: Modified `src/app/dashboard/project-row.tsx` to accept project `id` and wrap row items in a Next.js `<Link href={`/projects/${id}`}>` component, making navigation intuitive.
+* **Header Folder Parameters Collapse**: Adjusted `src/components/general-components/header.tsx` to suppress raw dynamic UUID directory names (like project ID segments) from the page breadcrumbs header, displaying `"Projects"` instead of `"Projects/11111111-..."`.
 
-### Database
-- All tables, RLS policies, triggers and functions deployed to Supabase
-- combine-schema.ps1 combines all SQL in correct order
+---
 
-### Error Handling
-- extractMessage() safely extracts string from any error type incl. Supabase PostgrestError
-- All dialogs show user-friendly toasts, never raw DB errors
-- All helpers log raw errors via console.error
+## 2. Database & RLS Policy Resolutions
 
-## What's Next
+### Row-Level Security (RLS) Policy Insertion Fix
+* **Problem**: Creating a new project triggered error `42501: new row violates row-level security policy for table "tbl_projects"`.
+* **Root Cause**: During `INSERT ... RETURNING *` (which Supabase uses on insertion), Postgres evaluates the SELECT policy (`is_project_member(id)`) on the new candidate row. Because the row was not yet committed, the subquery inside the function could not read the table recursively, returning `false` and violating RLS.
+* **Fix**: Updated `tbl_projects` SELECT policy to directly check `owner_id = auth.uid()` inline. This resolves instantly on the candidate row without table scan loops:
+  ```sql
+  CREATE POLICY "projects: members can view"
+    ON tbl_projects FOR SELECT
+    USING (owner_id = auth.uid() OR is_project_member(id));
+  ```
+  *(Changes persisted in `supabase/migrations/20260705234249_update_rpojects_select_policy.sql` and `supabase/schema/policies/projects.sql`)*
 
-- [ ] Wire up real projects to dashboard (replace sample data)
-- [ ] Wire up real pinned projects to sidebar
-- [ ] Build Projects page (/projects)
-- [ ] Build workspace detail page (/workspace/[id])
-- [ ] Hook up New Project dialog to DB
-- [ ] Build Teams and Calendar pages
+### Schema Permission Persistence
+* **Problem**: Resetting the database wiped table access privileges for frontend roles, causing `permission denied for table tbl_projects`.
+* **Fix**: Added explicit privilege grants to `anon`, `authenticated`, and `service_role` roles in the migration file to ensure permissions persist across local database resets.
 
-## Known Issues
+---
 
-- tbl_projects.owner_id has NOT NULL + ON DELETE SET NULL — contradictory, fix when building delete flows
-- Dashboard stats cards are hardcoded — need real DB queries
-- samplePinnedProjects in sidebar-data.ts is still static
-- /workspace/[id] page does not exist yet
+## 3. Local Supabase Auth Integration
 
-## SQL Schema Deployment
+### Seed Credential Synchronization
+* **Problem**: Users logging in manually faced credentials mismatch or missing workspaces because the local seed registered the user as `olmedalden4@gmail.com` (missing the "o") while the browser user registered as `olmedoalden4@gmail.com`.
+* **Fix**: Synced the login email to `olmedoalden4@gmail.com` in both `auth.users` and `auth.identities` inside `supabase/seed.sql`.
 
-Run .\combine-schema.ps1 → paste into Supabase SQL Editor → Run.
+### GoTrue Scan Crash NULL Resolution
+* **Problem**: Logging in returned `500: Database error querying schema` because the GoTrue auth container driver crashed trying to scan nullable DB columns into Go string variables.
+* **Fix**: Updated all three users inside `supabase/seed.sql` to explicitly populate nullable auth columns (`confirmation_token`, `recovery_token`, `email_change_token_new`, `email_change_token_current`, `email_change`, `phone_change`, `phone_change_token`, `reauthentication_token`) with empty strings (`''`) instead of database `NULL`s.
+
+---
+
+## 4. Frontend Toast Error Message Sanitization
+
+* **Problem**: When authentication or database operations failed, raw technical messages (like `"Database error querying schema"`) were shown directly to the user in toast notifications.
+* **Fix**: Refactored the authentication toast alerts in `LoginForm.tsx` and `SignUpForm.tsx`:
+  * Technical/backend errors are cleanly logged on the browser console for developer access (`console.error`).
+  * Toast alerts display professional, user-safe copy:
+    * *Database/Schema Startup*: `"We are experiencing technical difficulties. Please try again in a few moments."`
+    * *Invalid Credentials*: `"The email or password you entered is incorrect."`
+    * *Network/Connection Errors*: `"Something went wrong. Please try again later."`
+

@@ -1,4 +1,4 @@
-import {Calendar, CalendarCheck2, Cog, FolderOpen, GroupIcon, Home, LayoutTemplate, LucideIcon, Trash} from "lucide-react";
+import {Calendar, CalendarCheck2, Cog, FolderOpen, GroupIcon, Home, LayoutTemplate, LucideIcon, Trash, FolderArchive} from "lucide-react";
 
 export type NavItems = {
     name: string,
@@ -32,6 +32,11 @@ export const generalNavTabs: NavItems[] = [
         name: "Trash", 
         url: "/trash",   //placeholder muna toh for now or place it in the footer where the user can access its profile
         icon: Trash,
+    },
+    {
+        name: "Archived Projects",
+        url: "/archive",
+        icon: FolderArchive
     }
 ]
 

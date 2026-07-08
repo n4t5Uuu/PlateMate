@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useProjects } from "@/hooks/use-projects";
@@ -32,11 +32,23 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationPrevious,
+    PaginationNext,
+    PaginationLink,
+    PaginationEllipsis,
+} from "@/components/ui/pagination";
 
 export default function ProjectsPage() {
     const router = useRouter();
     const { user } = useAuth();
-    
+
+    const [currentPage, setCurrentPage] = useState(1)
+    const PROJECTS_PER_PAGE = 6
+
     // Fetch all user projects and workspaces
     const { projects, loading, error } = useProjects();
     const { workspaces, loading: loadingWorkspaces } = useWorkspaces();
@@ -52,6 +64,11 @@ export default function ProjectsPage() {
     const [priorityFilter, setPriorityFilter] = useState<string>("all");
     const [sortBy, setSortBy] = useState<string>("updated"); // "updated" | "name" | "progress" | "due"
     const [layout, setLayout] = useState<"grid" | "list">("grid");
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchQuery, statusFilter, priorityFilter])
+    
 
     // Colors mapping
     const priorityColors = {
@@ -126,6 +143,13 @@ export default function ProjectsPage() {
                 return dateB - dateA;
             });
     }, [projects, searchQuery, statusFilter, priorityFilter, sortBy]);
+
+    // Slice the filtered list
+    const paginatedProjects = useMemo(() => {
+        const startIndex = (currentPage - 1) * PROJECTS_PER_PAGE;
+        return filteredProjects.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
+    }, [filteredProjects, currentPage]);
+    const totalPages = Math.ceil(filteredProjects.length / PROJECTS_PER_PAGE);
 
     if (loading || loadingWorkspaces) {
         return (
@@ -283,7 +307,7 @@ export default function ProjectsPage() {
                     ) : layout === "grid" ? (
                         /* Grid Presentation (2 Columns in the 2/3 Area) */
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {filteredProjects.map((proj) => {
+                            {paginatedProjects.map((proj) => {
                                 const statusColor = statusIndicators[proj.status?.toLowerCase() as keyof typeof statusIndicators] || "bg-slate-400";
                                 const priorityColorClass = priorityColors[proj.priority?.toLowerCase() as keyof typeof priorityColors] || "bg-slate-500/10 text-slate-500 border-slate-500/20";
                                 const statusBadgeColorClass = statusBadgeColors[proj.status?.toLowerCase() as keyof typeof statusBadgeColors] || "bg-slate-500/10 text-slate-500 border-slate-500/20";
@@ -363,7 +387,7 @@ export default function ProjectsPage() {
 
                                 {/* List Items */}
                                 <div className="divide-y divide-border/30">
-                                    {filteredProjects.map((proj) => {
+                                    {paginatedProjects.map((proj) => {
                                         const statusColor = statusIndicators[proj.status?.toLowerCase() as keyof typeof statusIndicators] || "bg-slate-400";
                                         const priorityColorClass = priorityColors[proj.priority?.toLowerCase() as keyof typeof priorityColors] || "bg-slate-500/10 text-slate-500 border-slate-500/20";
                                         const statusBadgeColorClass = statusBadgeColors[proj.status?.toLowerCase() as keyof typeof statusBadgeColors] || "bg-slate-500/10 text-slate-500 border-slate-500/20";
@@ -432,6 +456,56 @@ export default function ProjectsPage() {
                                 </div>
                             </CardContent>
                         </Card>
+                    )}
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-center mt-8">
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious 
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage(prev => Math.max(prev - 1, 1));
+                                            }}
+                                            className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                                        />
+                                    </PaginationItem>
+                                    
+                                    {Array.from({ length: totalPages }).map((_, idx) => {
+                                        const page = idx + 1;
+                                        return (
+                                            <PaginationItem key={page}>
+                                                <PaginationLink 
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setCurrentPage(page);
+                                                    }}
+                                                    isActive={currentPage === page}
+                                                    className="cursor-pointer"
+                                                >
+                                                    {page}
+                                                </PaginationLink>
+                                            </PaginationItem>
+                                        );
+                                    })}
+
+                                    <PaginationItem>
+                                        <PaginationNext 
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                                            }}
+                                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
                     )}
                 </div>
 

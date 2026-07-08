@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import StatsCard from "./stats-card";
 import ProjectRow from "./project-row";
 import RecentActivity from "./recent-activity";
@@ -14,10 +16,28 @@ import {
     EmptyDescription,
     EmptyMedia,
 } from "@/components/ui/empty";
+import { 
+    Pagination, 
+    PaginationContent,
+    PaginationItem,
+    PaginationPrevious,
+    PaginationNext
+} from "@/components/ui/pagination"
 
 export default function Dashboard() {
 
+    const [currentPage, setCurrentPage] = useState(1)
+    const PROJECTS_PER_PAGE = 6
+
     const {loading, projects, error} = useProjects()
+
+    // Slice the project aaray based on the page
+    const paginatedProjects = projects.slice(
+        (currentPage - 1) * PROJECTS_PER_PAGE,
+        currentPage * PROJECTS_PER_PAGE
+    )
+
+    const totalPages = Math.ceil(projects.length/PROJECTS_PER_PAGE)
 
     /*
         * Converts a lowercase status string from the database (e.g., "active")
@@ -128,7 +148,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="font-bold text-xl tracking-tight">Active Projects</h2>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{projects.length} projects</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{projects.length > 6 ? 6 : projects.length} projects</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="sm" className="cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs">
@@ -167,7 +187,7 @@ export default function Dashboard() {
                         </Empty>
                     ) : (
                         <div className="space-y-2">
-                            {projects.slice(0, 4).map((item) => (
+                            {paginatedProjects.map((item) => (
                                 <ProjectRow
                                     key={item.id}
                                     id={item.id}
@@ -180,6 +200,40 @@ export default function Dashboard() {
                                     priority={item.priority?.toLowerCase() as "high" | "medium" | "low" || "medium"}
                                 />
                             ))}
+
+                            {totalPages > 1 && (
+                                <div className="pt-4 flex items-center justify-between border-t border-border/10">
+                                    <span className="font-bold uppercase tracking-wideset text-muted-foreground text-[10px]">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+
+                                    <Pagination className="w-auto mx-0">
+                                        <PaginationContent className="gap-0 5">
+                                            <PaginationItem>
+                                                <PaginationPrevious
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setCurrentPage(prev => Math.max(prev -1 , 1))
+                                                    }}
+                                                    className={`h-7 px-2 text-xs cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                                                />
+                                            </PaginationItem>
+
+                                            <PaginationItem>
+                                                <PaginationNext 
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setCurrentPage(prev => Math.min(prev + 1, totalPages))
+                                                    }}
+                                                    className={`h-7 px-2 text-xs cursor-pointer ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                                                />
+                                            </PaginationItem>
+                                        </PaginationContent>
+                                    </Pagination>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
