@@ -1,0 +1,2 @@
+ALTER TABLE tbl_projects 
+ADD COLUMN is_archived BOOLEAN NOT NULL DEFAULT false
