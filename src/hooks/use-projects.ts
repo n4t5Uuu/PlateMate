@@ -14,11 +14,12 @@ import { useAuth } from "@/components/providers/auth-provider";
  * @returns An object containing the projects array, loading state, error message, and CRUD operations.
  */
 export function useProjects(userIdOverride?: string) {
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const userId = userIdOverride || user?.id;
 
     const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(false);
+    // Tracks database loading state locally during CRUD / fetches
+    const [dbLoading, setDbLoading] = useState(false)
     const [error, setError] = useState<string | null>(null);
 
     /**
@@ -31,7 +32,7 @@ export function useProjects(userIdOverride?: string) {
             return;
         }
 
-        setLoading(true);   
+        setDbLoading(true);   
         setError(null);
 
         const result = await projectHelper.getProjects(browserSupabase, userId);
@@ -42,7 +43,7 @@ export function useProjects(userIdOverride?: string) {
             setError(result.error || "Failed to fetch projects");
         }
 
-        setLoading(false);
+        setDbLoading(false);
     }
 
     /**
@@ -104,8 +105,11 @@ export function useProjects(userIdOverride?: string) {
     return {
         /** Array of projects for the given user */
         projects,
-        /** Boolean indicating if a project-related operation is in progress */
-        loading, 
+        /** 
+         * Combined loading state: stays true while authentication is initializing
+         * OR while database query fetches are in flight to prevent UI flickering.
+         */
+        loading: (!userIdOverride && authLoading) || dbLoading, 
         /** Error message if an operation fails, null otherwise */
         error,
         /** Function to create a new project */

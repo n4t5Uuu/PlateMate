@@ -7,9 +7,11 @@ import { browserSupabase } from "@/lib/supabase/browser";
 import { useAuth } from "@/components/providers/auth-provider";
 
 export function useWorkspaces() {
-    const {user} = useAuth()
+    // Destructure auth loading state to coordinate page mount checks
+    const {user, loading: authLoading} = useAuth()
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
-    const [loading, setLoading] = useState(false)
+    // Tracks database loading state locally during workspace fetches/mutations
+    const [dbLoading, setDbLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const fetchWorkspaces = async () => {
@@ -19,7 +21,7 @@ export function useWorkspaces() {
             return
         }
 
-        setLoading(true)
+        setDbLoading(true)
         setError(null)
 
         const result = await workspaceHelper.getWorkspaces(browserSupabase, user.id)
@@ -29,7 +31,7 @@ export function useWorkspaces() {
         else 
             setError(result.error || "Failed to fetch workspaces")
 
-        setLoading(false)
+        setDbLoading(false)
     }
 
     useEffect(() => {
@@ -54,7 +56,8 @@ export function useWorkspaces() {
 
     return {
         workspaces,
-        loading, 
+        // Combined loading state to prevent double-flicker on workspace navigation/initial load
+        loading: authLoading || dbLoading, 
         error,
         createWorkspace,
         refetchWorkspaces: fetchWorkspaces

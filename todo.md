@@ -11,3 +11,4 @@
 - [ ] Edit the session of the auto login that will last for 24 hours (?)
 - [ ] Fix the logic for the View All projects in the Dashboard
 - [ ] Apply a logic for the archive and make an isArchive flag in the database
+- [x] Paginate the projects list on both the Dashboard and Projects page
