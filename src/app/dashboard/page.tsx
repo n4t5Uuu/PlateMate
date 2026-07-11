@@ -1,191 +1,17 @@
 "use client";
 
-import { browserSupabase } from "@/lib/supabase/browser";
-
-import { useState, useRef, useEffect } from "react";
-
 import StatsCard from "./stats-card";
-import ProjectRow from "./project-row";
 import RecentActivity from "./recent-activity";
+import WeeklyPulse from "./weekly-pulse";
+import ProjectsList from "./projects-list";
 
-import { Button } from "@/components/ui/button";
-import { FolderOpen, Clock, CheckCircle, Users, SlidersHorizontal, ArrowRight } from "lucide-react";
+import { FolderOpen, Clock, CheckCircle } from "lucide-react";
 import { useProjects } from "@/hooks/use-projects";
-import {
-    Empty,
-    EmptyHeader,
-    EmptyTitle,
-    EmptyDescription,
-    EmptyMedia,
-} from "@/components/ui/empty";
-import { 
-    Pagination, 
-    PaginationContent,
-    PaginationItem,
-    PaginationPrevious,
-    PaginationNext
-} from "@/components/ui/pagination"
-import {toast} from "sonner"
 
 export default function Dashboard() {
+    const { loading, projects, error, updateProject, deleteProject } = useProjects()
 
-    // Weekly Pulse stats state
-    const [weeklyPulse, setWeeklyPulse] = useState({
-        completed: 0,
-        dueToday: 0,
-        meetings: 0,
-        overdue: 0
-    })
-
-    // fetch the Weekly Pulse data from the database
-    useEffect(() => {
-        async function fetchWeeklyPulse() {
-            try {
-
-                // Get the authenticated user
-                const {data: {user}} = await browserSupabase.auth.getUser()
-                if(!user) return
-
-                // Get the workspace ID where the user is a member
-                const {data: workspaceMembers} = await browserSupabase.from("tbl_workspace_members")
-                                                                    .select("workspace_id")
-                                                                    .eq("user_id", user.id)
-                const workspaceIds = workspaceMembers?.map(m => m.workspace_id) || []
-                if(workspaceIds.length === 0) return
-
-                // Fetch project IDs inside the workspaces
-                const {data: dbProjects} = await browserSupabase.from("tbl_projects")
-                                                                .select("id")
-                                                                .in("workspace_id", workspaceIds)
-                const projectIds = dbProjects?.map(p => p.id) || []
-                if(projectIds.length === 0 ) return
-
-                // Query completed tasks whether its status is done or completed
-                // and query the tasks that are due today
-                const {count: completedCount} = await browserSupabase.from("tbl_tasks")
-                                                                    .select("*", {count: "exact", head: true})
-                                                                    .in("project_id", projectIds)
-                                                                    .in("status", ["done", "completed"])
-                const today = new Date().toISOString().split("T")[0]
-                const {count: dueTodayCount} = await browserSupabase.from("tbl_tasks")
-                                                                    .select("*", {count: "exact", head: true})
-                                                                    .in("project_id", projectIds)
-                                                                    .eq("due_date", today)
-                                                                    .not("status", "in", '("done","completed")')
-                
-                // Query the overdue tasks that is past the due date and status is not done/completed
-                const { count: overdueCount } = await browserSupabase.from("tbl_tasks")
-                                                                    .select("*", { count: "exact", head: true })
-                                                                    .in("project_id", projectIds)
-                                                                    .lt("due_date", today)
-                                                                    .not("status", "in", '("done","completed")')
-
-                // Query the crit sessions (meetings) that is scheduled this week
-                const now = new Date()
-                const day = now.getDay()
-                const diff = now.getDate() - day + (day === 0 ? -6 : 1)
-                const startOfWeek = new Date(now.setDate(diff))
-                startOfWeek.setHours(0,0,0,0)
-
-                const endOfWeek = new Date(startOfWeek)
-                endOfWeek.setDate(endOfWeek.getDate() + 6)
-                endOfWeek.setHours(23, 59, 59, 999)
-
-                const {count: meetingsCount} = await browserSupabase.from("tbl_crit_sessions")
-                                                                    .select("*", {count: "exact", head: true})
-                                                                    .in("project_id", projectIds)
-                                                                    .gte("started_at", endOfWeek.toISOString())
-                                                                    .lte("started_at", endOfWeek.toISOString())
-                setWeeklyPulse({
-                    completed: completedCount || 0,
-                    dueToday: dueTodayCount || 0,
-                    meetings: meetingsCount || 0,
-                    overdue: overdueCount || 0
-                })
-            } catch (error) {
-                console.error("Error loading Weekly Pulse")
-            }
-        }
-
-        fetchWeeklyPulse()
-    }, [])
-
-    // filter controls and popover states
-    const [filterOpen, setFilterOpen] = useState(false)
-    const [statusFilter, setStatusFilter] = useState<string>("all")
-    const [priorityFilter, setPriorityFilter] = useState<string>("all")
-    const filterRef = useRef<HTMLDivElement>(null)
-
-    // close filter popover when clicking outside
-    useEffect(() => {
-        function handleClickOutside(e: MouseEvent) {
-            if(filterRef.current && !filterRef.current.contains(e.target as Node)) {
-                setFilterOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-
-    // pagination controls
-    const [currentPage, setCurrentPage] = useState(1)
-    const PROJECTS_PER_PAGE = 6
-
-    // destructure of useProjects hook
-    const {loading, projects, error, updateProject, deleteProject} = useProjects()
-
-    // Filter active (non-archived) projects status and priority, then sort by recently updated/opened
-    const activeProjects = projects
-        .filter(p => {
-            const isNotArchived = !p.isArchived
-            const matchesStatus = statusFilter === "all" || p.status?.toLowerCase() === statusFilter
-            const matchesPriority = priorityFilter === "all" || p.priority?.toLowerCase() === priorityFilter
-            
-            return isNotArchived && matchesStatus && matchesPriority
-        }).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-
-    // Slice the active project array based on the page
-    const paginatedProjects = activeProjects.slice(
-        (currentPage - 1) * PROJECTS_PER_PAGE,
-        currentPage * PROJECTS_PER_PAGE
-    )
-
-    const totalPages = Math.ceil(activeProjects.length/PROJECTS_PER_PAGE)
-
-    /*
-        * Converts a lowercase status string from the database (e.g., "active")
-        * into a capitalized string matching the exact type the ProjectRow component expects.
-        * Defaults to "Active" if no status is provided or found in the dictionary.
-     */
-    const capitalizeStatus = (status: string) => {
-        if(!status) return "Active"
-        const mapped: Record<string, "Active" | "Review" | "Completed" | "Delayed"> = {
-            active: "Active",
-            review: "Review",
-            completed: "Completed",
-            delayed: "Delayed"
-        }
-
-        return mapped[status.toLowerCase()] || "Active"
-    }
-
-    // Method to format database ISO date strings
-    const formatDate = (dateStr?: string) => {
-        if(!dateStr) return "No due date"
-        try {
-            const date = new Date(dateStr)
-            return date.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric"
-            })
-        } catch  {
-            return dateStr
-        }
-    }
-
-    if(loading) {
+    if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
                 <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -194,7 +20,7 @@ export default function Dashboard() {
         )
     }
 
-    if(error) {
+    if (error) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <p className="text-rose-500 font-semibold text-xs">Error loading projects: {error}</p>
@@ -205,48 +31,47 @@ export default function Dashboard() {
     // Counts the projects based on status and will be displayed on the status cards
     const activeProjectsCount = projects.filter(p => p.status?.toLowerCase() === "active").length
     const completedProjectsCount = projects.filter(p => p.status?.toLowerCase() === "completed").length
-
+    
     // to edit once subtasks has been implemented on the project
     const pendingProjectsCount = projects.filter(p => p.status?.toLowerCase() === "review" || p.status?.toLowerCase() === "delayed" || p.status?.toLowerCase() === "active").length
 
     const statsCardData = [
         {
             title: "Active Projects",
-            value: String(activeProjectsCount), // Dynamic count from database
+            value: String(activeProjectsCount),
             change: "Live in workspace",
             changeType: "positive" as const,
             Icon: FolderOpen
         },
         {
             title: "Pending Tasks",
-            value: String(pendingProjectsCount), // Placeholder for task integration
+            value: String(pendingProjectsCount),
             change: "+5 from yesterday",
             changeType: "neutral" as const,
             Icon: Clock
         },
         {
-            title: "Team Members",
-            value: "3", // Dynamic count from your 3 seeded users
-            change: "Active partners",
-            changeType: "positive" as const,
-            Icon: Users
-        },
-        {
             title: "Completed",
-            value: String(completedProjectsCount), // Dynamic count from database
-            change: "Archive plates",
+            value: String(completedProjectsCount),
+            change: "Ready for review",
             changeType: "positive" as const,
             Icon: CheckCircle
         }
-    ];
+    ]
 
     return (
-        <div className="flex-1 space-y-6 pt-8 pb-12">
-            {/* Stats Row */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {statsCardData.map((data) => (
-                    <StatsCard
-                        key={data.title}
+        <div className="flex-1 space-y-6 pt-6 pb-12 w-full animate-in fade-in duration-500">
+            {/* Header */}
+            <div>
+                <h1 className="text-2xl font-black tracking-tight text-foreground">Welcome back, Alden!</h1>
+                <p className="text-xs text-muted-foreground mt-0.5">Here is what is happening with your projects this week.</p>
+            </div>
+
+            {/* Stats Cards Row */}
+            <div className="grid gap-4 md:grid-cols-3">
+                {statsCardData.map((data, index) => (
+                    <StatsCard 
+                        key={index}
                         title={data.title}
                         value={data.value}
                         change={data.change}
@@ -255,214 +80,22 @@ export default function Dashboard() {
                     />
                 ))}
             </div>
+
             {/* Main Content */}
             <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-                {/* Projects List */}
-                <div className="lg:col-span-2 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="font-bold text-xl tracking-tight">Recently Opened Projects</h2>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{activeProjects.length} projects</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {/* Filter Dropdown Popover */}
-                            <div className="relative" ref={filterRef}>
-                                <Button 
-                                    onClick={() => setFilterOpen(!filterOpen)}
-                                    variant="outline" 
-                                    size="sm" 
-                                    className={`cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs ${filterOpen ? 'border-primary/40 text-primary bg-primary/5' : ''}`}
-                                >
-                                    <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
-                                    Filter
-                                </Button>
+                {/* Projects List Component */}
+                <ProjectsList 
+                    projects={projects}
+                    loading={loading}
+                    error={error}
+                    updateProject={updateProject}
+                    deleteProject={deleteProject}
+                />
 
-                                {filterOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-background border border-border shadow-lg p-3 space-y-3 z-50 animate-in fade-in slide-in-from-top-1 duration-100">
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">Status</label>
-                                            <select 
-                                                value={statusFilter}
-                                                onChange={(e) => {
-                                                    setStatusFilter(e.target.value)
-                                                    setCurrentPage(1) // Reset page on filter change
-                                                }}
-                                                className="w-full h-8 text-xs rounded-lg border px-2 bg-background font-semibold cursor-pointer border-border/60 hover:border-primary/40 focus:outline-none"
-                                            >
-                                                <option value="all">All</option>
-                                                <option value="active">Active</option>
-                                                <option value="review">Review</option>
-                                                <option value="completed">Completed</option>
-                                                <option value="delayed">Delayed</option>
-                                            </select>
-                                        </div>
-                                        <div className="space-y-1 text-left">
-                                            <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">Priority</label>
-                                            <select 
-                                                value={priorityFilter}
-                                                onChange={(e) => {
-                                                    setPriorityFilter(e.target.value)
-                                                    setCurrentPage(1) // Reset page on filter change
-                                                }}
-                                                className="w-full h-8 text-xs rounded-lg border px-2 bg-background font-semibold cursor-pointer border-border/60 hover:border-primary/40 focus:outline-none"
-                                            >
-                                                <option value="all">All</option>
-                                                <option value="high">High</option>
-                                                <option value="medium">Medium</option>
-                                                <option value="low">Low</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    {/* 5. Render dynamic project rows or show an empty state placeholder */}
-                    {projects.length === 0 ? (
-                        <Empty className="border border-dashed border-border/60 bg-background/5 rounded-xl py-12">
-                            <EmptyHeader>
-                                <EmptyMedia variant="icon">
-                                    <FolderOpen className="text-muted-foreground w-5 h-5" />
-                                </EmptyMedia>
-                                <EmptyTitle className="text-sm font-bold mt-2">No Active Projects</EmptyTitle>
-                                <EmptyDescription className="text-xs text-muted-foreground/80 max-w-xs">
-                                    Go to the Projects tab to create your first project and begin tracking sheets.
-                                </EmptyDescription>
-                            </EmptyHeader>
-                        </Empty>
-                    ) : activeProjects.length === 0 ? (
-                        <Empty className="border border-dashed border-border/60 bg-background/5 rounded-xl py-12">
-                            <EmptyHeader>
-                                <EmptyMedia variant="icon">
-                                    <SlidersHorizontal className="text-muted-foreground w-5 h-5" />
-                                </EmptyMedia>
-                                <EmptyTitle className="text-sm font-bold mt-2">No Projects Match Filters</EmptyTitle>
-                                <EmptyDescription className="text-xs text-muted-foreground/80 max-w-xs">
-                                    Try adjusting or clearing your status and priority filters to see other projects.
-                                </EmptyDescription>
-                            </EmptyHeader>
-                        </Empty>
-                    ) : (
-                        <>
-                            {/* Column headers */}
-                            <div className="hidden lg:flex items-center gap-5 px-5 pr-12 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
-                                <div className="w-2 shrink-0" />
-                                <div className="flex-1">Project</div>
-                                <div className="w-20 shrink-0">Status</div>
-                                <div className="w-20 shrink-0">Priority</div>
-                                <div className="w-36 shrink-0">Progress</div>
-                                <div className="w-28 shrink-0">Due Date</div>
-                                <div className="w-12 shrink-0">Team</div>
-                            </div>
-                            
-                            <div className="space-y-2">
-                            {paginatedProjects.map((item) => (
-                                <ProjectRow
-                                    key={item.id}
-                                    id={item.id}
-                                    projectTitle={item.title}
-                                    clientName={item.client || "No client"}
-                                    progress={item.progress || 0}
-                                    dueDate={item.dueDate ? formatDate(item.dueDate) : "No due date"}
-                                    teamMembers={3}
-                                    status={capitalizeStatus(item.status)}
-                                    priority={item.priority?.toLowerCase() as "high" | "medium" | "low" || "medium"}
-                                    onArchive={async (id) => {
-                                        const res = await updateProject(id, { isArchived: true })
-
-                                        if(res.success) {
-                                            toast.success("Project archived successfully")
-                                        } else {
-                                            toast.error("Failed to archive project")
-                                        }
-                                    }}
-                                    onDelete={async (id) => {
-                                        const res = await deleteProject(id)
-
-                                        if(res.success) {
-                                            toast.success("Project deleted successfully")
-                                        } else {
-                                            toast.error("Failed to delete project")
-                                        }
-                                    }}
-                                />
-                            ))}
-
-                            {totalPages > 1 && (
-                                <div className="pt-4 flex items-center justify-between border-t border-border/10">
-                                    <span className="font-bold uppercase tracking-wideset text-muted-foreground text-[10px]">
-                                        Page {currentPage} of {totalPages}
-                                    </span>
-
-                                    <Pagination className="w-auto mx-0">
-                                        <PaginationContent className="gap-0 5">
-                                            <PaginationItem>
-                                                <PaginationPrevious
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        setCurrentPage(prev => Math.max(prev -1 , 1))
-                                                    }}
-                                                    className={`h-7 px-2 text-xs cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-50' : ''}`}
-                                                />
-                                            </PaginationItem>
-
-                                            <PaginationItem>
-                                                <PaginationNext 
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        setCurrentPage(prev => Math.min(prev + 1, totalPages))
-                                                    }}
-                                                    className={`h-7 px-2 text-xs cursor-pointer ${currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}`}
-                                                />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
-                                </div>
-                            )}
-                        </div>
-                    </>
-                )}
-                </div>
                 {/* Right Sidebar */}
                 <div className="lg:col-span-1 flex flex-col gap-4">
                     {/* Weekly Pulse */}
-                    <div className="glass-morphism rounded-xl border-none shadow-lg flex flex-col">
-                        <div className="px-5 sm:px-6 pt-6 pb-3">
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/70">Weekly Pulse</h3>
-                        </div>
-                        <div className="px-4 sm:px-5 pb-5 space-y-1">
-                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-emerald-500/5 transition-all group/row">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Completed</span>
-                                </div>
-                                <span className="text-sm font-bold font-jetbrains-mono text-emerald-500">{weeklyPulse.completed} tasks</span>
-                            </div>
-                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-amber-500/5 transition-all group/row">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Due Today</span>
-                                </div>
-                                <span className="text-sm font-bold font-jetbrains-mono text-amber-500">{weeklyPulse.dueToday} tasks</span>
-                            </div>
-                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-sky-500/5 transition-all group/row">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
-                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Meetings</span>
-                                </div>
-                                <span className="text-sm font-bold font-jetbrains-mono text-sky-500">{weeklyPulse.meetings} scheduled</span>
-                            </div>
-                            <div className="flex items-center justify-between px-3 py-3 rounded-lg hover:bg-rose-500/5 transition-all group/row">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
-                                    <span className="text-sm font-medium text-muted-foreground group-hover/row:text-foreground transition-colors">Overdue</span>
-                                </div>
-                                <span className="text-sm font-bold font-jetbrains-mono text-rose-500">{weeklyPulse.overdue} tasks</span>
-                            </div>
-                        </div>
-                    </div>
+                    <WeeklyPulse />
 
                     {/* Recent Activity */}
                     <div className="glass-morphism rounded-xl border-none shadow-lg px-5 sm:px-6 pt-5 pb-6">
