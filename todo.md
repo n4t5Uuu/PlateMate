@@ -9,7 +9,9 @@
 - [ ] Edit the ui of the ai companion and implement the backend of it
 - [ ] Edit the ui of the crits tab
 - [ ] Edit the session of the auto login that will last for 24 hours (?)
-- [ ] Apply the logic for the filter projects
+- [x] Apply the logic for the filter projects
 - [x] Apply a logic for the archive and make an isArchive flag in the database
 - [x] Paginate the projects list on both the Dashboard and Projects page
-- [ ] Align the column and the content for the projects in the dashboard
+- [ ] Align the column and the content for the projects in the dashboard - IN PROGRESS 
+- [ ] Apply the logic for the Weekly Pulse
+- [ ] Apply the logic for the Recent Activity

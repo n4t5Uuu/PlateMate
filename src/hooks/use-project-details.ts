@@ -82,6 +82,12 @@ export function useProjectDetails(projectId: string) {
                 }
 
                 if (projectData) {
+                    // Update updated_at in the database to record that this project was just opened
+                    await browserSupabase
+                        .from("tbl_projects")
+                        .update({ updated_at: new Date().toISOString() })
+                        .eq("id", projectId);
+
                     setProject({
                         id: projectData.id,
                         title: projectData.name,
@@ -94,7 +100,7 @@ export function useProjectDetails(projectId: string) {
                         status: projectData.status,
                         priority: projectData.priority,
                         createdAt: projectData.created_at,
-                        updatedAt: projectData.updated_at
+                        updatedAt: new Date().toISOString()
                     });
                 } else {
                     // Local fallback project
