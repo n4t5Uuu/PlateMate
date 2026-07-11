@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import StatsCard from "./stats-card";
 import ProjectRow from "./project-row";
@@ -27,13 +27,40 @@ import {toast} from "sonner"
 
 export default function Dashboard() {
 
+    // filter controls and popover states
+    const [filterOpen, setFilterOpen] = useState(false)
+    const [statusFilter, setStatusFilter] = useState<string>("all")
+    const [priorityFilter, setPriorityFilter] = useState<string>("all")
+    const filterRef = useRef<HTMLDivElement>(null)
+
+    // close filter popover when clicking outside
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if(filterRef.current && !filterRef.current.contains(e.target as Node)) {
+                setFilterOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
+    // pagination controls
     const [currentPage, setCurrentPage] = useState(1)
     const PROJECTS_PER_PAGE = 6
 
+    // destructure of useProjects hook
     const {loading, projects, error, updateProject, deleteProject} = useProjects()
 
-    // Filter active (non-archived) projects
-    const activeProjects = projects.filter(p => !p.isArchived)
+    // Filter active (non-archived) projects status and priority, then sort by recently updated/opened
+    const activeProjects = projects
+        .filter(p => {
+            const isNotArchived = !p.isArchived
+            const matchesStatus = statusFilter === "all" || p.status?.toLowerCase() === statusFilter
+            const matchesPriority = priorityFilter === "all" || p.priority?.toLowerCase() === priorityFilter
+            
+            return isNotArchived && matchesStatus && matchesPriority
+        }).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 
     // Slice the active project array based on the page
     const paginatedProjects = activeProjects.slice(
@@ -151,18 +178,60 @@ export default function Dashboard() {
                 <div className="lg:col-span-2 space-y-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="font-bold text-xl tracking-tight">Active Projects</h2>
+                            <h2 className="font-bold text-xl tracking-tight">Recently Opened Projects</h2>
                             <p className="text-[11px] text-muted-foreground mt-0.5">{activeProjects.length} projects</p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" className="cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs">
-                                <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
-                                Filter
-                            </Button>
-                            <Button variant="outline" size="sm" className="cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs">
-                                View All
-                                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                            </Button>
+                            {/* Filter Dropdown Popover */}
+                            <div className="relative" ref={filterRef}>
+                                <Button 
+                                    onClick={() => setFilterOpen(!filterOpen)}
+                                    variant="outline" 
+                                    size="sm" 
+                                    className={`cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs ${filterOpen ? 'border-primary/40 text-primary bg-primary/5' : ''}`}
+                                >
+                                    <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
+                                    Filter
+                                </Button>
+
+                                {filterOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-background border border-border shadow-lg p-3 space-y-3 z-50 animate-in fade-in slide-in-from-top-1 duration-100">
+                                        <div className="space-y-1 text-left">
+                                            <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">Status</label>
+                                            <select 
+                                                value={statusFilter}
+                                                onChange={(e) => {
+                                                    setStatusFilter(e.target.value)
+                                                    setCurrentPage(1) // Reset page on filter change
+                                                }}
+                                                className="w-full h-8 text-xs rounded-lg border px-2 bg-background font-semibold cursor-pointer border-border/60 hover:border-primary/40 focus:outline-none"
+                                            >
+                                                <option value="all">All</option>
+                                                <option value="active">Active</option>
+                                                <option value="review">Review</option>
+                                                <option value="completed">Completed</option>
+                                                <option value="delayed">Delayed</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-1 text-left">
+                                            <label className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">Priority</label>
+                                            <select 
+                                                value={priorityFilter}
+                                                onChange={(e) => {
+                                                    setPriorityFilter(e.target.value)
+                                                    setCurrentPage(1) // Reset page on filter change
+                                                }}
+                                                className="w-full h-8 text-xs rounded-lg border px-2 bg-background font-semibold cursor-pointer border-border/60 hover:border-primary/40 focus:outline-none"
+                                            >
+                                                <option value="all">All</option>
+                                                <option value="high">High</option>
+                                                <option value="medium">Medium</option>
+                                                <option value="low">Low</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                     {/* Column headers */}
