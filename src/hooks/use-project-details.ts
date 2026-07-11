@@ -93,8 +93,8 @@ export function useProjectDetails(projectId: string) {
                         dueDate: projectData.due_date,
                         status: projectData.status,
                         priority: projectData.priority,
-                        created_at: projectData.created_at,
-                        updated_at: projectData.updated_at
+                        createdAt: projectData.created_at,
+                        updatedAt: projectData.updated_at
                     });
                 } else {
                     // Local fallback project
@@ -110,8 +110,8 @@ export function useProjectDetails(projectId: string) {
                         dueDate: "2026-08-30",
                         status: "active",
                         priority: "high",
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
                     });
                 }
 

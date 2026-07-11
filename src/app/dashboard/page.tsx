@@ -23,21 +23,25 @@ import {
     PaginationPrevious,
     PaginationNext
 } from "@/components/ui/pagination"
+import {toast} from "sonner"
 
 export default function Dashboard() {
 
     const [currentPage, setCurrentPage] = useState(1)
     const PROJECTS_PER_PAGE = 6
 
-    const {loading, projects, error} = useProjects()
+    const {loading, projects, error, updateProject, deleteProject} = useProjects()
 
-    // Slice the project aaray based on the page
-    const paginatedProjects = projects.slice(
+    // Filter active (non-archived) projects
+    const activeProjects = projects.filter(p => !p.isArchived)
+
+    // Slice the active project array based on the page
+    const paginatedProjects = activeProjects.slice(
         (currentPage - 1) * PROJECTS_PER_PAGE,
         currentPage * PROJECTS_PER_PAGE
     )
 
-    const totalPages = Math.ceil(projects.length/PROJECTS_PER_PAGE)
+    const totalPages = Math.ceil(activeProjects.length/PROJECTS_PER_PAGE)
 
     /*
         * Converts a lowercase status string from the database (e.g., "active")
@@ -148,7 +152,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="font-bold text-xl tracking-tight">Active Projects</h2>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{projects.length > 6 ? 6 : projects.length} projects</p>
+                            <p className="text-[11px] text-muted-foreground mt-0.5">{activeProjects.length} projects</p>
                         </div>
                         <div className="flex items-center gap-2">
                             <Button variant="outline" size="sm" className="cursor-pointer border-border/40 hover:border-primary/40 transition-all font-semibold glass-morphism !bg-transparent h-8 text-xs">
@@ -162,15 +166,14 @@ export default function Dashboard() {
                         </div>
                     </div>
                     {/* Column headers */}
-                    <div className="hidden lg:flex items-center gap-5 px-5 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                    <div className="hidden lg:flex items-center gap-5 px-5 pr-12 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
                         <div className="w-2 shrink-0" />
                         <div className="flex-1">Project</div>
-                        <div className="w-14 shrink-0">Status</div>
-                        <div className="w-14 shrink-0">Priority</div>
+                        <div className="w-20 shrink-0">Status</div>
+                        <div className="w-20 shrink-0">Priority</div>
                         <div className="w-36 shrink-0">Progress</div>
-                        <div className="w-24 shrink-0">Due Date</div>
-                        <div className="w-8 shrink-0">Team</div>
-                        <div className="w-4 shrink-0" />
+                        <div className="w-28 shrink-0">Due Date</div>
+                        <div className="w-12 shrink-0">Team</div>
                     </div>
                     {/* 5. Render dynamic project rows or show an empty state placeholder */}
                     {projects.length === 0 ? (
@@ -198,6 +201,24 @@ export default function Dashboard() {
                                     teamMembers={3}
                                     status={capitalizeStatus(item.status)}
                                     priority={item.priority?.toLowerCase() as "high" | "medium" | "low" || "medium"}
+                                    onArchive={async (id) => {
+                                        const res = await updateProject(id, { isArchived: true })
+
+                                        if(res.success) {
+                                            toast.success("Project archived successfully")
+                                        } else {
+                                            toast.error("Failed to archive project")
+                                        }
+                                    }}
+                                    onDelete={async (id) => {
+                                        const res = await deleteProject(id)
+
+                                        if(res.success) {
+                                            toast.success("Project deleted successfully")
+                                        } else {
+                                            toast.error("Failed to delete project")
+                                        }
+                                    }}
                                 />
                             ))}
 

@@ -59,7 +59,7 @@ export function useProjects(userIdOverride?: string) {
      * @param projectData - The data of the new project (excluding generated fields).
      * @returns A promise that resolves to the result of the creation operation.
      */
-    const createProject = async (projectData: Omit<Project, "id" | "created_at" | "updated_at">) => {
+    const createProject = async (projectData: Omit<Project, "id" | "createdAt" | "updatedAt">) => {
         const result = await projectHelper.createProject(browserSupabase, projectData);
 
         if(result.success) {

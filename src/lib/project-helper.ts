@@ -28,8 +28,9 @@ function mapProjects(data: any): Project {
         dueDate: data.due_date,
         status: data.status,
         priority: data.priority,
-        created_at: data.created_at,
-        updated_at: data.updated_at
+        isArchived: data.is_archived,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
     };
 }
 
@@ -46,7 +47,7 @@ export const projectHelper = {
      * @param projectData - The project data to insert (excluding generated fields).
      * @returns A promise resolving to the created project on success.
      */
-    async createProject(supabase: SupabaseClient, projectData: Omit<Project, 'id' | 'created_at' | 'updated_at'>) {
+    async createProject(supabase: SupabaseClient, projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) {
         try {
 
             // maps out the details before inserting in the database
@@ -146,6 +147,11 @@ export const projectHelper = {
             if (dbData.dueDate) {
                 dbData.due_date = dbData.dueDate;
                 delete dbData.dueDate;
+            }
+
+            if (dbData.isArchived !== undefined) {
+                dbData.is_archived = dbData.isArchived;
+                delete dbData.isArchived;
             }
 
             const {data, error} = await supabase.from("tbl_projects")

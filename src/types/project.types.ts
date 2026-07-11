@@ -9,6 +9,8 @@ export interface Project {
     dueDate?: string;    // maps to DB `due_date`
     status: "active" | "review" | "completed" | "delayed";
     priority: "low" | "medium" | "high";
-    created_at: string;
-    updated_at: string;
+    isArchived?: boolean;
+    
+    createdAt: string;
+    updatedAt: string;
 }

@@ -122,8 +122,9 @@ export default function ProjectsPage() {
                 
                 const matchesStatus = statusFilter === "all" || p.status?.toLowerCase() === statusFilter;
                 const matchesPriority = priorityFilter === "all" || p.priority?.toLowerCase() === priorityFilter;
+                const isNotArchived = !p.isArchived;
 
-                return matchesSearch && matchesStatus && matchesPriority;
+                return matchesSearch && matchesStatus && matchesPriority && isNotArchived;
             })
             .sort((a, b) => {
                 if (sortBy === "name") {
@@ -137,9 +138,9 @@ export default function ProjectsPage() {
                     if (!b.dueDate) return -1;
                     return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
                 }
-                // default: sort by updated_at or created_at descending (latest first)
-                const dateA = a.updated_at ? new Date(a.updated_at).getTime() : 0;
-                const dateB = b.updated_at ? new Date(b.updated_at).getTime() : 0;
+                // default: sort by updatedAt or createdAt descending (latest first)
+                const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+                const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
                 return dateB - dateA;
             });
     }, [projects, searchQuery, statusFilter, priorityFilter, sortBy]);
