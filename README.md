@@ -87,9 +87,10 @@ You need Node.js, pnpm and Docker.
 
 ```bash
 pnpm install
-docker compose up -d     # Postgres and LocalStack
-pnpm dev                 # frontend and backend through Turborepo
+pnpm dev                 # starts Docker (Postgres, LocalStack), the backend and the frontend
 ```
+
+Docker Desktop must be running first. Use `pnpm dev:apps` to start only the frontend and backend.
 
 The frontend runs at `http://localhost:3000` and the API at `http://localhost:8787` (`/health` to check it).
 
