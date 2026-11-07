@@ -1,0 +1,28 @@
+{
+  "name": "@platemate/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@clerk/backend": "^3.27.0",
+    "@hono/node-server": "^1",
+    "@hono/zod-validator": "^0.9.1",
+    "@platemate/db": "workspace:*",
+    "@platemate/shared": "workspace:*",
+    "@react-email/components": "^1.0.12",
+    "hono": "^4",
+    "ics": "^3.12.1",
+    "inngest": "^4.26.2",
+    "resend": "^6.37.0",
+    "svix": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}
