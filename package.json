@@ -1,27 +1,16 @@
 {
   "name": "platemate",
-  "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.4.5",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
   },
   "devDependencies": {
-    "@tailwindcss/turbopack": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.5",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "packageManager": "pnpm@11.24.0"
+    "@playwright/test": "^1.65.0",
+    "turbo": "^2",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
+  }
 }

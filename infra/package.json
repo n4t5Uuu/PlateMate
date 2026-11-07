@@ -1,0 +1,9 @@
+{
+  "name": "@platemate/infra",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "sst": "^4.17.2"
+  }
+}
