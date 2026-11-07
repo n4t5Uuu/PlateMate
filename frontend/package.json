@@ -22,8 +22,8 @@
         "next": "16.4.5",
         "openseadragon": "^6.1.1",
         "pdfjs-dist": "^6.5.438",
-        "react": "19.3.0",
-        "react-dom": "19.3.0",
+        "react": "19.3.1",
+        "react-dom": "19.3.1",
         "react-hook-form": "^7.91.0",
         "zod": "^4.6.7"
     },
