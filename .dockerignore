@@ -1,0 +1,36 @@
+# dependencies (reinstalled inside the image)
+**/node_modules
+
+# build output
+**/.next
+**/dist
+**/out
+**/build
+**/.turbo
+**/*.tsbuildinfo
+
+# git and editor files
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# secrets and local config (never copy into an image)
+**/.env
+**/.env.*
+!**/.env.example
+
+# logs and OS junk
+**/*.log
+**/npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# local-only files
+.claude
+docker-compose*.yml
+docker-compose*.yaml
+**/Dockerfile*
+.dockerignore
+README.md
