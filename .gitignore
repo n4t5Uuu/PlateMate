@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -10,32 +10,58 @@
 !.yarn/releases
 !.yarn/versions
 
+# build output
+.next/
+out/
+build/
+dist/
+.turbo
+*.tsbuildinfo
+next-env.d.ts
+
 # testing
-/coverage
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
 
-# next.js
-/.next/
-/out/
+# env files: never commit secrets, but keep the example file
+.env*
+!.env.example
 
-# production
-/build
+# sst / aws
+.sst/
+.aws-sam/
+cdk.out/
 
-# misc
-.DS_Store
-*.pem
+# local docker data (localstack)
+.localstack/
+localstack-data/
+volume/
 
-# debug
+# logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# editor and OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+*.pem
+
+# claude code: local settings only (skills in .claude/skills are shared)
+.claude/settings.local.json
 
 # vercel
 .vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# python (skill scripts)
+__pycache__/
+*.pyc
