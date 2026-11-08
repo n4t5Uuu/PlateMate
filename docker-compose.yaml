@@ -1,6 +1,6 @@
 services:
   postgres:
-    images: posgtres16
+    image: postgres:16
     environment:
       - POSTGRES_USER=platemate
       - POSTGRES_PASSWORD=platemate
@@ -15,12 +15,12 @@ services:
       timeout: 5s
       retries: 5
 
-    localstack:
-      image: localstack/localstack
-      environment:
-        - SERVICES: s3,sqs,lambda
-      ports:
-        - "4566:4566"
+  localstack:
+    image: localstack/localstack
+    environment:
+      - SERVICES=s3,sqs,lambda
+    ports:
+      - "4566:4566"
 
 volumes:
   pgdata:
