@@ -90,7 +90,7 @@ pnpm install
 pnpm dev                 # starts Docker (Postgres, LocalStack), the backend and the frontend
 ```
 
-Docker Desktop must be running first. Use `pnpm dev:apps` to start only the frontend and backend.
+Docker Desktop must be running first. Stop the containers with `pnpm down`.
 
 The frontend runs at `http://localhost:3000` and the API at `http://localhost:8787` (`/health` to check it).
 
