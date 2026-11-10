@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@clerk/backend": "^3.27.0",
-    "@hono/node-server": "^1",
+    "@hono/node-server": "^2",
     "@hono/zod-validator": "^0.9.1",
     "@platemate/db": "workspace:*",
     "@platemate/shared": "workspace:*",
