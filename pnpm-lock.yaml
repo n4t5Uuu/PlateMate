@@ -27,8 +27,8 @@ importers:
         specifier: ^3.27.0
         version: 3.27.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@hono/node-server':
-        specifier: ^1
-        version: 1.19.18(hono@4.13.16)
+        specifier: ^2
+        version: 2.1.6(hono@4.13.16)
       '@hono/zod-validator':
         specifier: ^0.9.1
         version: 0.9.1(hono@4.13.16)(zod@4.6.7)
@@ -1025,11 +1025,11 @@ packages:
       prosemirror-state: ^1.0.0
       prosemirror-view: ^1.0.0
 
-  '@hono/node-server@1.19.18':
-    resolution: {integrity: sha512-609kppIP9GITS+EwPyB6Kiq8z2yXONaYD1VHpo7MMP9celRJYbkFr9KakJncHwK0EK/XYtlogqmrLchDv5HX5w==}
-    engines: {node: '>=18.14.1'}
+  '@hono/node-server@2.1.6':
+    resolution: {integrity: sha512-p/KH9MnfNcsm3sR6x4lNgm5j+QN4Et8srKredl9DZfXiyZ1UQ3aQ2YVpFLbqktYN5JI+DB+VZFKM2PqE5hLKjQ==}
+    engines: {node: '>=20'}
     peerDependencies:
-      hono: ^4
+      hono: ^4 || ^5.0.0-0
 
   '@hono/zod-validator@0.9.1':
     resolution: {integrity: sha512-iiv6w0qrIc0arfvCtUqBWsvl4fXjzaTcQcCJTTtCnkawF9HHGE+KjEl0ox3gQJ6rKZEgE3mLExlQCF72M+mNuw==}
@@ -6780,7 +6780,7 @@ snapshots:
       prosemirror-transform: 1.12.5
       prosemirror-view: 1.42.9
 
-  '@hono/node-server@1.19.18(hono@4.13.16)':
+  '@hono/node-server@2.1.6(hono@4.13.16)':
     dependencies:
       hono: 4.13.16
 
