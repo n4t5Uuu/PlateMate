@@ -187,6 +187,10 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - `packages/db/src/schema.ts` is the source of truth for the DB — never hand-write SQL for schema changes
 - Config files written from Windows PowerShell must be UTF-8 without a BOM, or Turborepo fails with a misleading "recursive turbo invocation" error
 
+### UI and design work
+
+For anything about the UI (design, build, change, critique, review, polish), always use the `impeccable` skill and follow [`frontend/CLAUDE.md`](./frontend/CLAUDE.md), which lists the Impeccable commands and when to use each one. Source: https://github.com/pbakaus/impeccable.
+
 ### Forbidden
 
 - Do not add `@radix-ui/*` packages — this repo uses Base UI primitives
