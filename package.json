@@ -11,6 +11,7 @@
     "rebuild": "docker compose up -d --build --wait && turbo run build",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "smoke": "pnpm --filter @platemate/backend smoke",
     "services:down": "docker compose down",
     "services:restart": "docker compose restart",
     "services:logs": "docker compose logs -f",

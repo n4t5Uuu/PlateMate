@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "smoke": "bash smoke-test.sh"
   },
   "dependencies": {
     "@clerk/backend": "^3.27.0",
