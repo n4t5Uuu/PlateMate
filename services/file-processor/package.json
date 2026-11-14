@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1163.0",
+    "@aws-sdk/client-s3": "^3.1166.0",
     "@hyzyla/pdfium": "^3.0.0",
     "ag-psd": "^34.1.0",
     "file-type": "^22.3.0",
