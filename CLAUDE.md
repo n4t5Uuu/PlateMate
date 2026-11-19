@@ -176,14 +176,14 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - `services/file-processor` — Lambda that renders previews, thumbnails and tiles
 - `infra` — SST config (empty so far)
 - `docker-compose.yaml` — Postgres and LocalStack for local dev
-- `.claude/skills` — project skills: `commit`, `pr`, `docs`, `codebase-onboarding`
+- `.claude/skills` — project skills: `commit`, `make-pr`, `docs`, `codebase-onboarding`
 - Tests: none written yet
 
 ### Conventions specific to this repo
 
 - Permissions split: Clerk Organizations hold workspace membership and roles (admin, moderator, member); project roles (head, editor, commenter, viewer) live in the `project_members` table
 - Versions are immutable S3 objects keyed by content hash; the version tree lives in Postgres. Branches are design options, promoted instead of merged
-- Commits follow Conventional Commits, in small commits (use the `commit` skill); PRs use `.github/pr_template.md` (use the `pr` skill)
+- Commits follow Conventional Commits, in small commits (use the `commit` skill); PRs use `.github/pr_template.md` (use the `make-pr` skill)
 - `packages/db/src/schema.ts` is the source of truth for the DB — never hand-write SQL for schema changes
 - Config files written from Windows PowerShell must be UTF-8 without a BOM, or Turborepo fails with a misleading "recursive turbo invocation" error
 

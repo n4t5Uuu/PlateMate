@@ -1,5 +1,5 @@
 ---
-name: pr
+name: make-pr
 description: Open a pull request using the repo's PR template, written in plain, human language. Use when the user says "open a PR", "make a PR", "create a pull request", or asks for a PR description.
 ---
 
