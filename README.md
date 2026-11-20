@@ -59,7 +59,7 @@ PlateMate renders a base image of each plate and never edits the file. Original 
 | Frontend | Next.js, shadcn/ui, Tailwind CSS, motion-primitives, TanStack Query, React Hook Form, OpenSeadragon, Annotorious, BlockNote |
 | Backend | Hono, PostgreSQL (Neon), Drizzle ORM, Zod, Clerk, Resend, Inngest |
 | Files | S3, CloudFront, SQS, Lambda (sharp, pdfium, ag-psd, pixelmatch). Neon Object Storage is also set up; which one we use is open, see [#27](../../issues/27) |
-| Tooling | pnpm, Turborepo, Docker, LocalStack, SST, Vitest, Playwright |
+| Tooling | pnpm, Turborepo, Docker, LocalStack, SST, Jest, Playwright |
 | Deployment | Vercel, Neon, AWS, GitHub Actions |
 
 ---
@@ -103,7 +103,7 @@ Local development uses the Docker Postgres by default. Copy `.env.example` to `.
 | Command | What it does |
 |---|---|
 | `pnpm build`, `pnpm lint` | Build and lint every package |
-| `pnpm test`, `pnpm test:e2e` | Unit tests (Vitest) and end-to-end tests (Playwright) |
+| `pnpm test`, `pnpm test:e2e` | Unit tests (Jest) and end-to-end tests (Playwright) |
 | `pnpm smoke` | Check every API endpoint listed in `backend/smoke-test.sh` (the backend must be running) |
 | `pnpm db:push`, `pnpm db:seed`, `pnpm db:sync` | Push the schema, seed local data, or both |
 | `pnpm db:studio` | Browse the database |
