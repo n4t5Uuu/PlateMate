@@ -1,6 +1,7 @@
 packages:
   - frontend
   - backend
+  - backend/db
   - packages/*
   - services/*
   - infra
@@ -10,3 +11,10 @@ allowBuilds:
   unrs-resolver: false
   esbuild: true
   protobufjs: false
+
+# Security: force patched versions of transitive packages that their parents still pin (see pnpm audit).
+overrides:
+  "esbuild@<0.25.0": "^0.25.0"
+  "@hono/node-server@>=1.19.10 <2.1.3": ">=2.1.3"
+  "glob@>=9.0.0 <=14.0.1": ">=14.0.2"
+  "minimatch@>=7.0.0 <11.0.1": ">=11.0.1"

@@ -5,6 +5,7 @@ updates:
       - "/"
       - "/frontend"
       - "/backend"
+      - "/backend/db"
       - "/packages/*"
       - "/services/*"
       - "/infra"

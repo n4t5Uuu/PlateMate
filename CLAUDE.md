@@ -151,7 +151,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - Language: TypeScript throughout
 - Frontend: Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (our main UI library, installed on Base UI); planned: motion-primitives, Clerk, TanStack Query, React Hook Form, OpenSeadragon + Annotorious, BlockNote
 - Backend: Hono on Node in `backend/` (standalone for now; to be mounted in a Next.js route, Lambda-ready); Zod validation; Clerk, Resend and Inngest for auth, email and jobs
-- Database: PostgreSQL + Drizzle ORM (`packages/db`); local Postgres via Docker Compose
+- Database: PostgreSQL + Drizzle ORM (`backend/db`); Neon URLs use the Neon WebSocket driver (transactions work), anything else (local Docker Postgres) uses postgres.js; local Postgres via Docker Compose
 - Files: S3 + CloudFront, SQS, and a Lambda in `services/file-processor` (sharp, pdfium, ag-psd, pixelmatch)
 - Package manager: pnpm workspace + Turborepo (`frontend`, `backend`, `packages/*`, `services/*`, `infra`)
 - Deployment target: Vercel (app), Neon (database), AWS via SST (files and processing)
@@ -164,7 +164,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - Lint: `pnpm lint`
 - Test: `pnpm test` (Vitest, passes with no tests yet); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
 - Docker services: `pnpm down` or `pnpm services:down` (stop), `pnpm services:restart`, `pnpm services:logs`; `pnpm dev` starts them
-- Database: `pnpm db:push` (push schema, for prototyping), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:seed` (wipes all tables, then loads `packages/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
+- Database: `pnpm db:push` (push schema, for prototyping), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:seed` (wipes all tables, then loads `backend/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
 - React checks: `pnpm --filter @platemate/frontend react-doctor`
 - Deploy: not set up yet
 
@@ -173,7 +173,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - `docs/PRD.md` — product requirements; the source for `/speckit-specify` (one feature per run, P0 items first)
 - `frontend/app` — Next.js App Router pages and layout
 - `backend/src` — Hono app (`index.ts`, health route on port 8787)
-- `packages/db` — Drizzle config (`drizzle.config.ts`) and schema (`src/schema.ts`, empty so far); `packages/shared` — Zod schemas, types, permission helpers
+- `backend/db` — Drizzle config (`drizzle.config.ts`) and schema (`src/schema.ts`, empty so far); `packages/shared` — Zod schemas, types, permission helpers
 - `services/file-processor` — Lambda that renders previews, thumbnails and tiles
 - `infra` — SST config (empty so far)
 - `docker-compose.yaml` — Postgres and LocalStack for local dev
@@ -185,7 +185,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - Permissions split: Clerk Organizations hold workspace membership and roles (admin, moderator, member); project roles (head, editor, commenter, viewer) live in the `project_members` table
 - Versions are immutable S3 objects keyed by content hash; the version tree lives in Postgres. Branches are design options, promoted instead of merged
 - Commits follow Conventional Commits, in small commits (use the `commit` skill); PRs use `.github/pr_template.md` (use the `make-pr` skill)
-- `packages/db/src/schema.ts` is the source of truth for the DB — never hand-write SQL for schema changes
+- `backend/db/src/schema.ts` is the source of truth for the DB — never hand-write SQL for schema changes
 - Config files written from Windows PowerShell must be UTF-8 without a BOM, or Turborepo fails with a misleading "recursive turbo invocation" error
 
 ### UI and design work
@@ -195,7 +195,7 @@ For anything about the UI (design, build, change, critique, review, polish), alw
 ### Forbidden
 
 - Do not add `@radix-ui/*` packages — this repo uses Base UI primitives
-- Do not hand-write SQL migrations — change `packages/db/src/schema.ts` and run `pnpm db:push`
+- Do not hand-write SQL migrations — change `backend/db/src/schema.ts` and run `pnpm db:push`
 
 ---
 
@@ -229,14 +229,14 @@ introducing new ones ad hoc.
 
 # Database (Drizzle)
 
-`packages/db/src/schema.ts` is the source of truth — never hand-write SQL for
+`backend/db/src/schema.ts` is the source of truth — never hand-write SQL for
 schema changes.
 
 - `pnpm dev` — starts Postgres (docker compose) along with the apps.
 - `pnpm db:push` — push the current schema to the running database
   (`drizzle-kit push`, for local dev; no migration files).
 - `pnpm db:seed` — wipe all tables, then apply dev fixtures
-  (`packages/db/src/seed.ts`); safe to re-run, local database only.
+  (`backend/db/src/seed.ts`); safe to re-run, local database only.
 - `pnpm db:sync` — `db:push` then `db:seed`.
 
 Typical local setup: `pnpm dev`, then `pnpm db:sync`.
