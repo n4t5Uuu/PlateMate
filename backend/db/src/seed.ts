@@ -15,8 +15,7 @@ const sql = postgres(url, { max: 1 });
 // Wipe first so re-running after editing this file never creates duplicates.
 const tables = await sql`select tablename from pg_tables where schemaname = 'public'`;
 if (tables.length) {
-  const names = tables.map((t) => `"${t.tablename}"`).join(", ");
-  await sql.unsafe(`truncate ${names} restart identity cascade`);
+  await sql`truncate ${sql(tables.map((t) => t.tablename))} restart identity cascade`;
 }
 
 // Add your starter data below, for example:
