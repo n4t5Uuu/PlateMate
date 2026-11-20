@@ -149,7 +149,7 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 PlateMate: version control and critique for architectural plates (git-style versions, annotations, crit notes) for architecture students and firms. Plates are view-only: store the original file, render a base image, annotate the image. Full tool list and reasoning: the stack file (`STACK.md`, not in the repo yet).
 
 - Language: TypeScript throughout
-- Frontend: Next.js 16 (App Router) + React 19 + Tailwind CSS 4; planned: shadcn/ui, motion-primitives, Clerk, TanStack Query, React Hook Form, OpenSeadragon + Annotorious, BlockNote
+- Frontend: Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (our main UI library, installed on Base UI); planned: motion-primitives, Clerk, TanStack Query, React Hook Form, OpenSeadragon + Annotorious, BlockNote
 - Backend: Hono on Node in `backend/` (standalone for now; to be mounted in a Next.js route, Lambda-ready); Zod validation; Clerk, Resend and Inngest for auth, email and jobs
 - Database: PostgreSQL + Drizzle ORM (`packages/db`); local Postgres via Docker Compose
 - Files: S3 + CloudFront, SQS, and a Lambda in `services/file-processor` (sharp, pdfium, ag-psd, pixelmatch)

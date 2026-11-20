@@ -8,6 +8,10 @@
 - **Keep components small** — aim for well under 150 lines each. Reach for
   an existing primitive in `src/components/ui/` or `@base-ui/react` before
   writing a new one.
+- **shadcn/ui is our main UI library.** Build every screen from shadcn
+  components first; only reach for something else when shadcn has no
+  equivalent. It is installed (`components.json`, `components/ui/`,
+  `lib/utils.ts`).
 - This repo is shadcn v4 on **Base UI** (`components.json` → `"base-nova"`),
   not Radix — never add `@radix-ui/*`. Add primitives with `npx shadcn@latest
   add <component>` and extend the generated source directly for one-off
@@ -51,7 +55,7 @@ Usage: `/impeccable <command> <target>`, for example `/impeccable critique the p
 | "write down the visual system" | `document` (writes `DESIGN.md`) |
 | "capture product context" | `init` (writes `PRODUCT.md`) |
 
-Setup state: `PRODUCT.md` and `DESIGN.md` do not exist yet. Run `/impeccable init` once, then `/impeccable document` after the first real UI exists, so later commands stay on-brand. Other commands: `/impeccable pin <command>` makes `/<command>` a shortcut, `/impeccable hooks <on|off|status>` manages the design hook, `/impeccable doctor` repairs stale setup. `craft` is a deprecated alias for a plain build request.
+Setup state: `frontend/PRODUCT.md` exists (written by `/impeccable init` from `docs/PRD.md`); `DESIGN.md` does not yet. Run `/impeccable document` after the first real UI exists, so later commands stay on-brand. Other commands: `/impeccable pin <command>` makes `/<command>` a shortcut, `/impeccable hooks <on|off|status>` manages the design hook, `/impeccable doctor` repairs stale setup. `craft` is a deprecated alias for a plain build request.
 
 Slop check outside the agent: `npx impeccable detect .` from `frontend/` (add `http://localhost:3000` to include rendered-page rules). Exit code 2 means findings.
 
