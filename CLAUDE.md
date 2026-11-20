@@ -170,6 +170,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 
 ### Layout
 
+- `docs/PRD.md` — product requirements; the source for `/speckit-specify` (one feature per run, P0 items first)
 - `frontend/app` — Next.js App Router pages and layout
 - `backend/src` — Hono app (`index.ts`, health route on port 8787)
 - `packages/db` — Drizzle config (`drizzle.config.ts`) and schema (`src/schema.ts`, empty so far); `packages/shared` — Zod schemas, types, permission helpers
