@@ -178,7 +178,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - `infra` — SST config (empty so far)
 - `docker-compose.yaml` — Postgres and LocalStack for local dev
 - `.claude/skills` — project skills: `commit`, `make-pr`, `docs`, `codebase-onboarding`
-- Tests: none written yet
+- `frontend/tests`, `backend/tests` — tests (Vitest; none written yet)
 
 ### Conventions specific to this repo
 
@@ -191,6 +191,16 @@ PlateMate: version control and critique for architectural plates (git-style vers
 ### UI and design work
 
 For anything about the UI (design, build, change, critique, review, polish), always use the `impeccable` skill and follow [`frontend/CLAUDE.md`](./frontend/CLAUDE.md), which lists the Impeccable commands and when to use each one. Source: https://github.com/pbakaus/impeccable.
+
+### Agent workflow: coder, reviewer, tester
+
+Run any task that writes, fixes or debugs code through the agents in `.claude/agents/`, in order: `coder`, then `reviewer`, then `tester`. Subagents cannot start each other, so the main session runs the chain and reads each agent's `HANDOFF`, `VERDICT` or `RESULT` block. Skip the chain for questions, docs-only edits, or when the user says to. Visual UI work uses `ui-ux` in place of `coder`; the reviewer and tester still follow.
+
+- **Model ladder (sonnet, then opus only):** every coder run starts on sonnet at high effort, the file's own setting. If its handoff says `Status: PARTIAL` or `STUCK`, run the coder again with `model: "opus"` and `effort: "high"`, giving it only the `Unsolved` and `Tried` items. Escalate only on failure: a `DONE` coder is never re-run on opus. The reviewer stays on sonnet at high effort.
+- **Review and test failures go straight back to the coder:** `CHANGES REQUESTED` sends the `Fix` list to the coder (sonnet first), then the reviewer runs again. `APPROVE` goes to the tester. `FAIL` sends the `Failures` list to the coder, then review and test run again, because the code changed. An item that comes back a second time goes straight to opus.
+- **Stop and tell the user** when an item is still open after opus tried it, after 4 round trips, or on `NOT VERIFIED` (part of the tests could not run).
+- **Done** means the tester returned `PASS`. Commit only when asked.
+- Tests live in `frontend/tests/` and `backend/tests/` (Playwright in `frontend/tests/e2e/`).
 
 ### Forbidden
 
