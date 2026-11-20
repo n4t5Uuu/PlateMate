@@ -10,6 +10,9 @@ const url =
   process.env.DATABASE_URL ??
   "postgresql://platemate:platemate@localhost:5432/platemate";
 
+// Fail fast without echoing the value: a bare `new URL` error carries the input, which includes the password.
+if (!URL.canParse(url)) throw new Error("DATABASE_URL is not a valid URL.");
+
 // Neon is reached over WebSocket so transactions work. Plain Postgres (docker) only speaks TCP, so it keeps postgres.js.
 const isNeon = new URL(url).hostname.endsWith(".neon.tech");
 
