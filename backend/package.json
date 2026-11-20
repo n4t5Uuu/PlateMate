@@ -12,7 +12,7 @@
     "@aws-sdk/s3-presigned-post": "^3.1172.0",
     "@aws-sdk/s3-request-presigner": "^3.1172.0",
     "@clerk/backend": "^3.27.0",
-    "@hono/node-server": "^1",
+    "@hono/node-server": "^2.1.9",
     "@hono/zod-validator": "^0.9.1",
     "@platemate/db": "workspace:*",
     "@platemate/shared": "workspace:*",
