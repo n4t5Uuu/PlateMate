@@ -26,6 +26,8 @@ check() {
 
 # Add a line here for every new endpoint.
 check "health" GET /health 200 '{"ok":true}'
+check "database" GET /health/db 200 '{"ok":true}'
+check "storage" GET /health/storage 200 '{"ok":true}'
 check "unknown route is a 404" GET /does-not-exist 404
 
 echo

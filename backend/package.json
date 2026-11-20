@@ -8,12 +8,16 @@
     "smoke": "bash smoke-test.sh"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1163.0",
+    "@aws-sdk/s3-presigned-post": "^3.1172.0",
+    "@aws-sdk/s3-request-presigner": "^3.1172.0",
     "@clerk/backend": "^3.27.0",
     "@hono/node-server": "^1",
     "@hono/zod-validator": "^0.9.1",
     "@platemate/db": "workspace:*",
     "@platemate/shared": "workspace:*",
     "@react-email/components": "^1.0.12",
+    "files-sdk": "^3.2.0",
     "hono": "^4",
     "ics": "^3.12.1",
     "inngest": "^4.26.2",
