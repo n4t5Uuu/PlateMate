@@ -7,9 +7,11 @@
     "down": "docker compose down",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "vitest run --passWithNoTests",
+    "typecheck": "turbo run typecheck",
+    "quality": "pnpm lint && pnpm typecheck && pnpm react-doctor && pnpm test && pnpm audit --audit-level high",
+    "test": "jest --passWithNoTests",
     "rebuild": "docker compose up -d --build --wait && turbo run build",
-    "test:watch": "vitest",
+    "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "smoke": "pnpm --filter @platemate/backend smoke",
     "react-doctor": "pnpm --filter @platemate/frontend react-doctor",
@@ -27,9 +29,12 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.65.0",
+    "@swc/core": "^1.16.22",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.5.2",
     "turbo": "^2",
-    "typescript": "^5.9.3",
-    "vitest": "^5.1.0"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@neon/config": "^1.14.4",
