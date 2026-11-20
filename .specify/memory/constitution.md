@@ -29,7 +29,7 @@ Rationale: small diffs are reviewable, revertable and cheap to maintain.
 TypeScript MUST be used throughout, with no `any` or unchecked casts where a real type is
 available. Data crossing a trust boundary (HTTP requests, env vars, webhooks, queue messages,
 uploaded files) MUST be validated with Zod, with shared schemas and types in `packages/shared`.
-`packages/db/src/schema.ts` is the only source of truth for the database; schema changes MUST NOT
+`backend/db/src/schema.ts` is the only source of truth for the database; schema changes MUST NOT
 be hand-written SQL. Permission rules MUST live in shared helpers, not be re-implemented per route.
 Rationale: one definition per fact removes a whole class of drift bugs between layers.
 

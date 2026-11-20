@@ -22,7 +22,7 @@ Beyond the categories below, run a real pen test of the app's security as an out
 
 ## Method
 
-1. Map the attack surface by reading code first: `backend/src` routes, `backend/smoke-test.sh` endpoint list, `packages/db/src/schema.ts`, `packages/shared` permission helpers, `frontend/app` pages and route handlers, `services/file-processor`, `infra`.
+1. Map the attack surface by reading code first: `backend/src` routes, `backend/smoke-test.sh` endpoint list, `backend/db/src/schema.ts`, `packages/shared` permission helpers, `frontend/app` pages and route handlers, `services/file-processor`, `infra`.
 2. Attack by category, spending effort where the code suggests weakness:
    - **Authz**: missing auth on routes; IDOR (access another project's plate or version by ID); role escalation across Clerk org roles (admin, moderator, member) and project roles (head, editor, commenter, viewer); viewer or commenter writing; cross-workspace reads.
    - **Input**: malformed, oversized, wrong-type, unicode and null-byte payloads against every Zod-validated endpoint; unvalidated routes; SQL injection through any raw query; path traversal in file keys; XSS in annotation, crit note and name fields.
