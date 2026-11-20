@@ -57,6 +57,18 @@ Slop check outside the agent: `npx impeccable detect .` from `frontend/` (add `h
 
 Impeccable works alongside the stack, not instead of it: build with shadcn/ui and Tailwind, animate with motion-primitives, and let Impeccable steer the design decisions.
 
+**The user picks the layout.** When Impeccable asks which layout, direction or variant to use, relay the options to the user and wait for their choice. Never pick one on the user's behalf, including when running through the `ui-ux` agent.
+
+## Emil Kowalski skills: use alongside Impeccable
+
+The skills from https://github.com/emilkowalski/skills are installed in `.claude/skills/`. Use them together with Impeccable, not instead of it: Impeccable decides the design (layout, color, type, copy), and Emil's skills set the motion and interaction details.
+
+- **Motion:** `animate` (build from scratch), `review-animations` (strict review), `choreograph` (several elements moving together), `animation-performance` (dropped frames), `remove-animations` (cut motion that isn't needed).
+- **Interaction and polish:** `emil-design-eng` (press, hover, popover and tooltip details), `gestures` (drag, swipe, sheets), `break-ui` (worst-case data), `mobile-native` (phone feel).
+- **Libraries:** `pick-ui-library` before adding a UI dependency, `ask-sonner` for toasts.
+
+When both apply, run Impeccable first for the design, then an Emil skill for the motion and polish pass. For motion, invoke the Emil skill by its own name (`/animate` is Emil's; Impeccable's version is `/impeccable animate`). If the two disagree on a motion value, DESIGN.md wins once it exists.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
