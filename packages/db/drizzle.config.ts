@@ -5,8 +5,9 @@ export default defineConfig({
   schema: "./src/schema.ts",
   out: "./drizzle",
   dbCredentials: {
-    // Falls back to the local docker compose database.
+    // Neon migrations need the direct URL, not the pooled one. Falls back to the local docker compose database.
     url:
+      process.env.DATABASE_URL_UNPOOLED ??
       process.env.DATABASE_URL ??
       "postgresql://platemate:platemate@localhost:5432/platemate",
   },
