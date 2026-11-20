@@ -8,6 +8,10 @@
 - **Keep components small** — aim for well under 150 lines each. Reach for
   an existing primitive in `src/components/ui/` or `@base-ui/react` before
   writing a new one.
+- **shadcn/ui is our main UI library.** Build every screen from shadcn
+  components first; only reach for something else when shadcn has no
+  equivalent. It is installed (`components.json`, `components/ui/`,
+  `lib/utils.ts`).
 - This repo is shadcn v4 on **Base UI** (`components.json` → `"base-nova"`),
   not Radix — never add `@radix-ui/*`. Add primitives with `npx shadcn@latest
   add <component>` and extend the generated source directly for one-off
@@ -51,11 +55,23 @@ Usage: `/impeccable <command> <target>`, for example `/impeccable critique the p
 | "write down the visual system" | `document` (writes `DESIGN.md`) |
 | "capture product context" | `init` (writes `PRODUCT.md`) |
 
-Setup state: `PRODUCT.md` and `DESIGN.md` do not exist yet. Run `/impeccable init` once, then `/impeccable document` after the first real UI exists, so later commands stay on-brand. Other commands: `/impeccable pin <command>` makes `/<command>` a shortcut, `/impeccable hooks <on|off|status>` manages the design hook, `/impeccable doctor` repairs stale setup. `craft` is a deprecated alias for a plain build request.
+Setup state: `frontend/PRODUCT.md` exists (written by `/impeccable init` from `docs/PRD.md`); `DESIGN.md` does not yet. Run `/impeccable document` after the first real UI exists, so later commands stay on-brand. Other commands: `/impeccable pin <command>` makes `/<command>` a shortcut, `/impeccable hooks <on|off|status>` manages the design hook, `/impeccable doctor` repairs stale setup. `craft` is a deprecated alias for a plain build request.
 
 Slop check outside the agent: `npx impeccable detect .` from `frontend/` (add `http://localhost:3000` to include rendered-page rules). Exit code 2 means findings.
 
 Impeccable works alongside the stack, not instead of it: build with shadcn/ui and Tailwind, animate with motion-primitives, and let Impeccable steer the design decisions.
+
+**The user picks the layout.** When Impeccable asks which layout, direction or variant to use, relay the options to the user and wait for their choice. Never pick one on the user's behalf, including when running through the `ui-ux` agent.
+
+## Emil Kowalski skills: use alongside Impeccable
+
+The skills from https://github.com/emilkowalski/skills are installed in `.claude/skills/`. Use them together with Impeccable, not instead of it: Impeccable decides the design (layout, color, type, copy), and Emil's skills set the motion and interaction details.
+
+- **Motion:** `animate` (build from scratch), `review-animations` (strict review), `choreograph` (several elements moving together), `animation-performance` (dropped frames), `remove-animations` (cut motion that isn't needed).
+- **Interaction and polish:** `emil-design-eng` (press, hover, popover and tooltip details), `gestures` (drag, swipe, sheets), `break-ui` (worst-case data), `mobile-native` (phone feel).
+- **Libraries:** `pick-ui-library` before adding a UI dependency, `ask-sonner` for toasts.
+
+When both apply, run Impeccable first for the design, then an Emil skill for the motion and polish pass. For motion, invoke the Emil skill by its own name (`/animate` is Emil's; Impeccable's version is `/impeccable animate`). If the two disagree on a motion value, DESIGN.md wins once it exists.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
