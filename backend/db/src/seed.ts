@@ -4,6 +4,8 @@ const url =
   process.env.DATABASE_URL ??
   "postgresql://platemate:platemate@localhost:5432/platemate";
 
+if (!URL.canParse(url)) throw new Error("Refusing to seed: DATABASE_URL is not a valid URL.");
+
 // The wipe below deletes every row, so only ever run it against a local database.
 if (!["localhost", "127.0.0.1"].includes(new URL(url).hostname)) {
   console.error("Refusing to seed: DATABASE_URL is not a local database.");
@@ -15,8 +17,7 @@ const sql = postgres(url, { max: 1 });
 // Wipe first so re-running after editing this file never creates duplicates.
 const tables = await sql`select tablename from pg_tables where schemaname = 'public'`;
 if (tables.length) {
-  const names = tables.map((t) => `"${t.tablename}"`).join(", ");
-  await sql.unsafe(`truncate ${names} restart identity cascade`);
+  await sql`truncate ${sql(tables.map((t) => t.tablename))} restart identity cascade`;
 }
 
 // Add your starter data below, for example:

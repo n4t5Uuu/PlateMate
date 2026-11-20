@@ -12,6 +12,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "smoke": "pnpm --filter @platemate/backend smoke",
+    "react-doctor": "pnpm --filter @platemate/frontend react-doctor",
+    "react-doctor:backend": "pnpm --filter @platemate/frontend exec react-doctor ../backend",
     "services:down": "docker compose down",
     "services:restart": "docker compose restart",
     "services:logs": "docker compose logs -f",
