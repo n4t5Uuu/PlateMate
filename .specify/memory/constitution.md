@@ -11,7 +11,7 @@ Rationale: these are the same checks CI runs, so a green local run predicts a gr
 
 ### II. Test What Can Break (NON-NEGOTIABLE)
 New logic with branching, parsing, validation, permissions or version-tree behavior MUST ship with
-a Vitest test in the same change. A bug fix MUST start with a test that reproduces the bug and
+a Jest test in the same change. A bug fix MUST start with a test that reproduces the bug and
 fails, then passes after the fix. Tests MUST assert behavior, never be deleted or weakened to make
 a change pass, and MUST NOT depend on network access or on a developer's local data. Journeys that
 cross frontend, backend and database MUST be covered by Playwright or `pnpm smoke` as they are
@@ -70,4 +70,4 @@ Compliance MUST be checked in pull-request review, and in `/speckit-plan` as a g
 A deliberate violation MUST be justified in the pull request description. Runtime guidance for
 agents lives in `CLAUDE.md`.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-20
+**Version**: 1.0.1 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-21

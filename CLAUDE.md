@@ -161,8 +161,9 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - Install: `pnpm install` from the repo root
 - Dev, everything: `pnpm dev` (starts Docker, backend and frontend; Docker Desktop must be running)
 - Build: `pnpm build`
-- Lint: `pnpm lint`
-- Test: `pnpm test` (Vitest, passes with no tests yet); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
+- Lint: `pnpm lint` (frontend and backend); types: `pnpm typecheck` (strict, frontend and backend incl. `backend/db`)
+- Quality gate, everything CI checks in one go (lint, types, react-doctor, tests, `pnpm audit --audit-level high`): `pnpm quality`; CI also scans for secrets (`.github/workflows/quality.yml`)
+- Test: `pnpm test` (Jest, one config with a frontend and a backend project; passes with no tests yet); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
 - Docker services: `pnpm down` or `pnpm services:down` (stop), `pnpm services:restart`, `pnpm services:logs`; `pnpm dev` starts them
 - Database: `pnpm db:push` (push schema, for prototyping), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:seed` (wipes all tables, then loads `backend/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
 - React checks: `pnpm react-doctor` (same as `pnpm --filter @platemate/frontend react-doctor`); `pnpm react-doctor:backend` scans `backend/` on demand (advisory, not in CI: its rules are React-tuned and the backend scores ~52)
