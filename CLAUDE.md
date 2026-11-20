@@ -165,7 +165,7 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - Test: `pnpm test` (Vitest, passes with no tests yet); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
 - Docker services: `pnpm down` or `pnpm services:down` (stop), `pnpm services:restart`, `pnpm services:logs`; `pnpm dev` starts them
 - Database: `pnpm db:push` (push schema, for prototyping), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:seed` (wipes all tables, then loads `backend/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
-- React checks: `pnpm --filter @platemate/frontend react-doctor`
+- React checks: `pnpm react-doctor` (same as `pnpm --filter @platemate/frontend react-doctor`)
 - Deploy: not set up yet
 
 ### Layout
