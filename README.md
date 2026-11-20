@@ -57,8 +57,8 @@ PlateMate renders a base image of each plate and never edits the file. Original 
 | Layer | Tools |
 |---|---|
 | Frontend | Next.js, shadcn/ui, Tailwind CSS, motion-primitives, TanStack Query, React Hook Form, OpenSeadragon, Annotorious, BlockNote |
-| Backend | Hono, PostgreSQL, Drizzle ORM, Zod, Clerk, Resend, Inngest |
-| Files | S3, CloudFront, SQS, Lambda (sharp, pdfium, ag-psd, pixelmatch) |
+| Backend | Hono, PostgreSQL (Neon), Drizzle ORM, Zod, Clerk, Resend, Inngest |
+| Files | S3, CloudFront, SQS, Lambda (sharp, pdfium, ag-psd, pixelmatch). Neon Object Storage is also set up; which one we use is open, see [#27](../../issues/27) |
 | Tooling | pnpm, Turborepo, Docker, LocalStack, SST, Vitest, Playwright |
 | Deployment | Vercel, Neon, AWS, GitHub Actions |
 
@@ -70,13 +70,15 @@ PlateMate renders a base image of each plate and never edits the file. Original 
 platemate/
 ├─ frontend/              Next.js app (UI)
 ├─ backend/               Hono API
+│  └─ db/                 Drizzle schema, client and migrations
 ├─ packages/
-│  ├─ db/                 Drizzle schema and migrations
 │  └─ shared/             Zod schemas, types, permission helpers
 ├─ services/
 │  └─ file-processor/     Lambda that renders previews, thumbnails and tiles
 ├─ infra/                 SST config
-└─ docker-compose.yml     Postgres and LocalStack for local development
+├─ docs/                  Product requirements (PRD.md)
+├─ neon.ts                Neon services (the assets bucket)
+└─ docker-compose.yaml    Postgres and LocalStack for local development
 ```
 
 ---
@@ -94,10 +96,28 @@ Docker Desktop must be running first. Stop the containers with `pnpm down`.
 
 The frontend runs at `http://localhost:3000` and the API at `http://localhost:8787` (`/health` to check it).
 
-Copy your keys into a `.env` file before using auth or email. It is git-ignored.
+Local development uses the Docker Postgres by default. Copy `.env.example` to `.env` and add your keys before using auth or email. All `.env*` files are git-ignored.
+
+### Commands
+
+| Command | What it does |
+|---|---|
+| `pnpm build`, `pnpm lint` | Build and lint every package |
+| `pnpm test`, `pnpm test:e2e` | Unit tests (Vitest) and end-to-end tests (Playwright) |
+| `pnpm smoke` | Check every API endpoint listed in `backend/smoke-test.sh` (the backend must be running) |
+| `pnpm db:push`, `pnpm db:seed`, `pnpm db:sync` | Push the schema, seed local data, or both |
+| `pnpm db:studio` | Browse the database |
+
+### Neon
+
+The project is linked to Neon (`neon.ts`). `neon deploy` provisions what `neon.ts` declares and writes the credentials to `.env.local`, which points at the production branch. `pnpm dev` does not read that file. Use a Neon dev branch (`neon checkout dev --create`) rather than production for day-to-day work.
+
+The database code lives in `backend/db` (schema in `src/schema.ts`). The client picks its driver from `DATABASE_URL`: Neon URLs use the Neon WebSocket driver, so transactions work, and anything else, like the local Docker Postgres, uses postgres.js.
 
 ---
 
 ## Status
 
-Early setup. The monorepo, dependencies and local services are in place. The database schema, auth and the plate viewer are next.
+Early setup. Done so far: the monorepo, local services, CI (lint, react-doctor, tests and build on every pull request), shadcn/ui, the Neon database and bucket connection, and the product requirements in [docs/PRD.md](docs/PRD.md). The database schema is still empty. Auth, uploads and the plate viewer are next.
+
+Work is tracked in [GitHub issues](../../issues), grouped under the MVP milestone.
