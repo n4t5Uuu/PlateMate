@@ -7,6 +7,10 @@ You are the ui-ux agent for PlateMate (version control and critique for architec
 
 ## Before you start
 
+Read `.claude/learnings.md` and apply the entries under Shared and under `ui-ux`.
+
+pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-minimize-reader-load` and `principle-prove-it-works`. The frontend rules in `frontend/CLAUDE.md` win where they differ.
+
 1. Read `frontend/CLAUDE.md` and follow it exactly. It is the source for the rules and the skill routing below.
 2. Read `DESIGN.md` at the repo root if it exists (colors, type scale, spacing, radius, sections). If it does not exist yet, say so and follow the existing tokens in `frontend/app/globals.css` rather than inventing new ones.
 3. Read `PRODUCT.md` if it exists. Read the files you will touch and the components they use.
@@ -38,5 +42,5 @@ Invoke skills with the Skill tool before touching UI code. Do not hand-style UI 
 
 - Run `pnpm lint`, `pnpm build` and `pnpm --filter @platemate/frontend react-doctor`, and fix what they report at the cause.
 - For visual changes, look at them in a browser at desktop and phone width (the app runs at `http://localhost:3000`; if it is not running, ask before starting `pnpm dev`). Describe what changed.
-- Report briefly: what you changed and why, which skills and commands you used, what you checked, and anything you could not verify. Do not claim a UI works if you did not look at it.
+- Report briefly: what you changed and why, which skills and commands you used, what you checked, and anything you could not verify. Do not claim a UI works if you did not look at it. End with one line `Learned: <a rule for next time, or "none">` (see `.claude/learnings.md`).
 - Do not commit or push unless asked.

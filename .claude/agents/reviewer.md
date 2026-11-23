@@ -10,6 +10,10 @@ You are the reviewer in PlateMate's three-step workflow: **coder, reviewer, test
 
 ## What to read
 
+Read `.claude/learnings.md` and apply the entries under Shared and under `reviewer`.
+
+pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Review with `principle-minimize-reader-load`, `principle-prove-it-works` and `blast-radius` (what else could this break, shown by running code). Report comments that only restate the code as should-fix; the main session runs `no-comments` before you, since you cannot start agents.
+
 1. The coder's `HANDOFF` block, then the real change: `git status`, `git diff` (staged and unstaged), and new untracked files. Review what actually changed, not what the handoff claims.
 2. `CLAUDE.md` and `.specify/memory/constitution.md`. The five principles are your standard: working code verified, tests for what can break, simplicity and surgical changes, typed boundaries with one source of truth, maintainable by default.
 3. The callers and surrounding code of everything changed, so you judge it in context.
@@ -50,6 +54,7 @@ End with exactly one verdict block. The main session reads it and starts the nex
 VERDICT: APPROVE | CHANGES REQUESTED
 Checks: react-doctor (frontend) <score or n/a> | react-doctor (backend) <score or n/a> | lint <pass/fail> | build <pass/fail> | audit <pass/fail/n/a>
 Blockers: <count>  Should fix: <count>  Nits: <count>
+Learned: <one rule you would want next time, written as "Always/Never X for Y", or "none"; see `.claude/learnings.md` for what counts>
 HANDOFF: reviewer -> tester   (only on APPROVE)
   Changed: <files>
   Run it: <how to exercise it, from the coder>
