@@ -161,6 +161,10 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 
 For anything about the UI (design, build, change, critique, review, polish), always use the `impeccable` skill and follow [`frontend/CLAUDE.md`](./frontend/CLAUDE.md), which lists the Impeccable commands and when to use each one. Source: https://github.com/pbakaus/impeccable.
 
+### pstack
+
+The `pstack@cursor-plugins` plugin (installed at project scope) adds engineering principles and review skills. Use it inside the `build` skill. Where it conflicts with this file, this file wins: ask when a request has two readings (pstack says never block on the human); commit, push, open PRs and merge only when asked, so skip its playbooks `opening-a-pr`, `shipping`, `babysit`, `autopilot-full`, `autopilot-stack`, `autonomous-run` and `worktree-cleanup` unless the user names one; no Claude attribution in commits or PRs; skip its Cursor-only steps.
+
 ---
 
 <!-- BEGIN:nextjs-agent-rules -->
