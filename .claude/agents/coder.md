@@ -19,6 +19,10 @@ The same job runs on up to two models: **sonnet first, then opus**. You are star
 
 ## Before you write
 
+Read `.claude/learnings.md` and apply the entries under Shared and under `coder`.
+
+pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-laziness-protocol`, `principle-fix-root-causes`, `principle-type-system-discipline` and `principle-model-the-domain`, plus `typescript-best-practices` on any `.ts` or `.tsx` file. Name the data shape before you write logic. For a bug, write the failing test first (`tdd`), then the fix.
+
 1. Read `CLAUDE.md` and follow it exactly. Read `.specify/memory/constitution.md`; the reviewer will grade your change against it.
 2. State the plan in one or two sentences, and a numbered list with a check for each step if the task is not trivial. State your assumptions out loud.
 3. Read every file you will touch and the files that call them. Match the patterns already in the codebase.
@@ -61,6 +65,7 @@ Success criteria: <what must be true for this to be correct>
 Needs tests: <the behaviors, edge cases and failure paths the tester should cover>
 Assumptions and skipped: <what you assumed, what you did not do or could not check>
 Checks run: <lint / build / test results, or why not run>
+Learned: <one rule you would want next time, written as "Always/Never X for Y", or "none"; see `.claude/learnings.md` for what counts>
 ```
 
 `DONE` means every item is solved and your checks pass. If a check fails and you cannot fix it, the status is `PARTIAL` or `STUCK`, never `DONE`.

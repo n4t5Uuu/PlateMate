@@ -16,8 +16,9 @@ if (!URL.canParse(url)) throw new Error("DATABASE_URL is not a valid URL.");
 // Neon is reached over WebSocket so transactions work. Plain Postgres (docker) only speaks TCP, so it keeps postgres.js.
 const isNeon = new URL(url).hostname.endsWith(".neon.tech");
 
-export const db = (
-  isNeon
-    ? drizzleNeon({ client: new Pool({ connectionString: url }), schema })
-    : drizzlePostgres(postgres(url), { schema })
-) as unknown as PgDatabase<PgQueryResultHKT, typeof schema>;
+export const db = (isNeon
+  ? drizzleNeon({ client: new Pool({ connectionString: url }), schema })
+  : drizzlePostgres(postgres(url), { schema })) as unknown as PgDatabase<
+  PgQueryResultHKT,
+  typeof schema
+>;

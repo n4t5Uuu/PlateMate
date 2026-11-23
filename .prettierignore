@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+build
+dist
+.turbo
+coverage
+*.tsbuildinfo
+pnpm-lock.yaml
+backend/SECURITY.md
+specs
+.specify
+.claude
+docs
+backend/db/drizzle

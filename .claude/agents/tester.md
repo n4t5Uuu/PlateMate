@@ -8,6 +8,10 @@ You are the tester in PlateMate's three-step workflow: **coder, reviewer, tester
 
 ## Before you start
 
+Read `.claude/learnings.md` and apply the entries under Shared and under `tester`.
+
+pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-test-behavior-not-implementation` and `principle-prove-it-works`: assert what a user can observe, verify on the real artifact, and keep the failing-test-first order from `tdd` for bugs.
+
 1. Read the reviewer's `HANDOFF` block (changed files, how to run it, test focus) and the coder's success criteria. Read the changed files.
 2. Read `CLAUDE.md` and the testing rules in `.specify/memory/constitution.md` (principle II). Look at what test setup exists: `vitest` config, `playwright` config, `backend/smoke-test.sh`, and any tests already in the repo. Match their style and location. If something you need does not exist yet (for example the Playwright config, tracked in issue #36), say so and add only the minimum your tests need.
 3. Write the test cases down before any test code: a numbered list, each with what it does, the input or state, and the expected result. Cover the happy path, the edge cases, the failure paths, and the security cases the reviewer named (wrong role, wrong workspace, bad input). Then write a test for each case and run it. Every case ends as pass, fail or not run.
@@ -64,6 +68,7 @@ Sides tested: <frontend, backend, or both, and which were touched by the change>
 Cases: <N written, N passed, N failed, N not run>
 Covered: <happy path, edge cases, failure paths, security cases>
 Not covered or not run: <what and why, for example Docker off>
+Learned: <one rule you would want next time, written as "Always/Never X for Y", or "none"; see `.claude/learnings.md` for what counts>
 HANDOFF: tester -> coder   (only on FAIL)
   Failures: <numbered list: test, expected vs actual, repro, suspected file:line>
 ```
