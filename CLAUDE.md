@@ -144,18 +144,6 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 
 ## 10. Project context
 
-### Stack
-
-PlateMate: version control and critique for architectural plates (git-style versions, annotations, crit notes) for architecture students and firms. Plates are view-only: store the original file, render a base image, annotate the image. Full tool list and reasoning: the stack file (`STACK.md`, not in the repo yet).
-
-- Language: TypeScript throughout
-- Frontend: Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + shadcn/ui (our main UI library, installed on Base UI); planned: motion-primitives, Clerk, TanStack Query, React Hook Form, OpenSeadragon + Annotorious, BlockNote
-- Backend: Hono on Node in `backend/` (standalone for now; to be mounted in a Next.js route, Lambda-ready); Zod validation; Clerk, Resend and Inngest for auth, email and jobs
-- Database: PostgreSQL + Drizzle ORM (`backend/db`); Neon URLs use the Neon WebSocket driver (transactions work), anything else (local Docker Postgres) uses postgres.js; local Postgres via Docker Compose
-- Files: S3 + CloudFront, SQS, and a Lambda in `services/file-processor` (sharp, pdfium, ag-psd, pixelmatch)
-- Package manager: pnpm workspace + Turborepo (`frontend`, `backend`, `packages/*`, `services/*`, `infra`)
-- Deployment target: Vercel (app), Neon (database), AWS via SST (files and processing)
-
 ### Commands
 
 - Install: `pnpm install` from the repo root
@@ -169,54 +157,9 @@ PlateMate: version control and critique for architectural plates (git-style vers
 - React checks: `pnpm react-doctor` (same as `pnpm --filter @platemate/frontend react-doctor`); `pnpm react-doctor:backend` scans `backend/` on demand (advisory, not in CI: its rules are React-tuned and the backend scores ~52)
 - Deploy: not set up yet
 
-### Layout
-
-- `docs/PRD.md` — product requirements; the source for `/speckit-specify` (one feature per run, P0 items first)
-- `frontend/app` — Next.js App Router pages and layout
-- `backend/src` — Hono app (`index.ts`, health route on port 8787)
-- `backend/db` — Drizzle config (`drizzle.config.ts`) and schema (`src/schema.ts`, empty so far); `packages/shared` — Zod schemas, types, permission helpers
-- `services/file-processor` — Lambda that renders previews, thumbnails and tiles
-- `infra` — SST config (empty so far)
-- `docker-compose.yaml` — Postgres and LocalStack for local dev
-- `.claude/skills` — project skills: `commit`, `make-pr`, `docs`, `codebase-onboarding`
-- `frontend/tests`, `backend/tests` — tests (Vitest; none written yet)
-
-### Conventions specific to this repo
-
-- Permissions split: Clerk Organizations hold workspace membership and roles (admin, moderator, member); project roles (head, editor, commenter, viewer) live in the `project_members` table
-- Versions are immutable S3 objects keyed by content hash; the version tree lives in Postgres. Branches are design options, promoted instead of merged
-- Commits follow Conventional Commits, in small commits (use the `commit` skill); PRs use `.github/pr_template.md` (use the `make-pr` skill)
-- `backend/db/src/schema.ts` is the source of truth for the DB — never hand-write SQL for schema changes
-- Config files written from Windows PowerShell must be UTF-8 without a BOM, or Turborepo fails with a misleading "recursive turbo invocation" error
-
 ### UI and design work
 
 For anything about the UI (design, build, change, critique, review, polish), always use the `impeccable` skill and follow [`frontend/CLAUDE.md`](./frontend/CLAUDE.md), which lists the Impeccable commands and when to use each one. Source: https://github.com/pbakaus/impeccable.
-
-### Agent workflow: coder, reviewer, tester
-
-Run any task that writes, fixes or debugs code through the agents in `.claude/agents/`, in order: `coder`, then `reviewer`, then `tester`. Subagents cannot start each other, so the main session runs the chain and reads each agent's `HANDOFF`, `VERDICT` or `RESULT` block. Skip the chain for questions, docs-only edits, or when the user says to. Visual UI work uses `ui-ux` in place of `coder`; the reviewer and tester still follow.
-
-- **Model ladder (sonnet, then opus only):** every coder run starts on sonnet at high effort, the file's own setting. If its handoff says `Status: PARTIAL` or `STUCK`, run the coder again with `model: "opus"` and `effort: "high"`, giving it only the `Unsolved` and `Tried` items. Escalate only on failure: a `DONE` coder is never re-run on opus. The reviewer stays on sonnet at high effort.
-- **Review and test failures go straight back to the coder:** `CHANGES REQUESTED` sends the `Fix` list to the coder (sonnet first), then the reviewer runs again. `APPROVE` goes to the tester. `FAIL` sends the `Failures` list to the coder, then review and test run again, because the code changed. An item that comes back a second time goes straight to opus.
-- **Stop and tell the user** when an item is still open after opus tried it, after 4 round trips, or on `NOT VERIFIED` (part of the tests could not run).
-- **Done** means the tester returned `PASS`. Commit only when asked.
-- Tests live in `frontend/tests/` and `backend/tests/` (Playwright in `frontend/tests/e2e/`).
-
-### Forbidden
-
-- Do not add `@radix-ui/*` packages — this repo uses Base UI primitives
-- Do not hand-write SQL migrations — change `backend/db/src/schema.ts` and run `pnpm db:push`
-
----
-
-## 11. Project Learnings
-
-**Accumulated corrections. This section is for the agent to maintain, not just the human.**
-
-When the user corrects your approach, append a one-line rule here before ending the session. Write it concretely ("Always use X for Y"), never abstractly ("be careful with Y"). If an existing line already covers the correction, tighten it instead of adding a new one. Remove lines when the underlying issue goes away (model upgrades, refactors, process changes).
-
-(none yet)
 
 ---
 
@@ -229,25 +172,3 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
-
-# Design basis
-
-[`DESIGN.md`](./DESIGN.md) at the repo root is the design basis for every
-frontend component — colors, typography, spacing, page sections, and the
-component inventory. Read it before building or styling any component, and
-keep new components consistent with its tokens and conventions rather than
-introducing new ones ad hoc.
-
-# Database (Drizzle)
-
-`backend/db/src/schema.ts` is the source of truth — never hand-write SQL for
-schema changes.
-
-- `pnpm dev` — starts Postgres (docker compose) along with the apps.
-- `pnpm db:push` — push the current schema to the running database
-  (`drizzle-kit push`, for local dev; no migration files).
-- `pnpm db:seed` — wipe all tables, then apply dev fixtures
-  (`backend/db/src/seed.ts`); safe to re-run, local database only.
-- `pnpm db:sync` — `db:push` then `db:seed`.
-
-Typical local setup: `pnpm dev`, then `pnpm db:sync`.
