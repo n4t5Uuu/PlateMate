@@ -8,6 +8,8 @@ export default defineConfig({
   dialect: "postgresql",
   schema: "./src/schema.ts",
   out: "./drizzle",
+  // `roles: true` would make db:push DROP every role in pg_roles that schema.ts does not declare, so allow-list ours.
+  entities: { roles: { include: ["platemate_app"] } },
   dbCredentials: {
     // Neon migrations need the direct URL, not the pooled one. Falls back to the local docker compose database.
     url:
