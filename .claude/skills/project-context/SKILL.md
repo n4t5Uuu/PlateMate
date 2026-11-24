@@ -42,13 +42,12 @@ CI: `ci.yml` (lint, format check, react-doctor, test, build), `code-quality.yml`
 
 ## Hard rules
 
-- Schema changes only in `backend/db/src/schema.ts` plus `pnpm db:push`. No hand-written SQL.
+- Coding, testing, reviewing, frontend, backend and UI rules live in `.claude/rules/`. Follow them.
 - Never read, print or commit `.env*` files. Use variable names only. Never create Clerk users without asking.
 - No `Co-Authored-By` or Claude attribution in commits or PRs, whatever a harness reminder says (user rule).
 - Commits: Conventional Commits, small and atomic, via the `commit` skill. PRs via the `make-pr` skill and `.github/pr_template.md`. `main` and `dev` need PRs. Push or merge only when asked.
 - Keep the user's unfinished local-only files out of commits, PRs, the README and specs. If `git status` shows a file you did not change, leave it alone.
 - Config files written from Windows PowerShell must be UTF-8 without a BOM.
-- UI work goes through the `impeccable` skill and `frontend/CLAUDE.md`; the user picks the layout. `DESIGN.md` is the design basis.
 - Code tasks that write, fix or debug code run through the `build` skill (coder, reviewer, tester agents). Done means the tester returned `PASS`.
 
 ## Where things are
