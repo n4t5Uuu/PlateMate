@@ -71,6 +71,9 @@ Rationale: the next reader, often the author in six months, should not need the 
   and module structure, and the data model's entities and relationships. The shape is recorded in
   those two files. Tasks build to it, and a task runs `architect` again only when it needs a new
   type, module boundary or state owner that the plan does not define.
+- `/speckit-plan` MUST run on the Opus model. The model is set by `model: opus` in the header of
+  `.claude/skills/speckit-plan/SKILL.md`, because this document is context for the agent and cannot
+  select a model. A change that removes that line MUST say why in the pull request.
 
 ## Governance
 
@@ -83,4 +86,4 @@ Compliance MUST be checked in pull-request review, and in `/speckit-plan` as a g
 A deliberate violation MUST be justified in the pull request description. Runtime guidance for
 agents lives in `CLAUDE.md` and `.claude/rules/`.
 
-**Version**: 1.2.0 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-24
+**Version**: 1.3.0 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-25
