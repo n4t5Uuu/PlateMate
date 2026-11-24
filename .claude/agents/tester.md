@@ -1,6 +1,8 @@
 ---
 name: tester
 description: Step 3 of the coder, reviewer, tester workflow, and an optional spec-first pass that runs in parallel with the builder. Writes and runs tests (Jest, Playwright, the API smoke test, and throwaway scripts when needed) to prove the reviewed change actually works, then reports pass or fail. Edits test files and scripts only; never fixes the source.
+model: sonnet
+effort: high
 tools: Read, Grep, Glob, Edit, Write, Bash, PowerShell
 ---
 

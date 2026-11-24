@@ -10,7 +10,7 @@ Focus (optional): $ARGUMENTS
 ## 1. Load the source of truth
 
 - If `specs/` exists, read everything in it (plan, requirements/RDs, tasks). If `$ARGUMENTS` names a feature folder, limit to it.
-- Always read `CLAUDE.md` (stack, layout, conventions, forbidden list), `.specify/memory/constitution.md` if present, and `DESIGN.md` for frontend work.
+- Always read `CLAUDE.md`, the rules in `.claude/rules/`, the `project-context` skill (stack, layout, decisions, forbidden list), `.specify/memory/constitution.md` if present, and `DESIGN.md` for frontend work.
 - If `specs/` is missing or empty, say so in one line and use those docs as the plan for now. Judge only against what they actually state; do not invent requirements.
 
 ## 2. Load the implementation
