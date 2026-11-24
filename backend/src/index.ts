@@ -1,9 +1,11 @@
 import { serve } from "@hono/node-server";
 import { db, sql } from "@platemate/db";
 import { Hono } from "hono";
+import { appCors } from "./cors";
 import { files } from "./storage";
 
 export const app = new Hono()
+  .use(appCors(process.env.APP_URL))
   .get("/health", (c) => c.json({ ok: true }))
   .get("/health/db", async (c) => {
     await db.execute(sql`select 1`);
