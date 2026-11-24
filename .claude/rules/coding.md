@@ -37,7 +37,7 @@ The test: would a senior engineer reading the diff call this overcomplicated? If
 
 ## Verify before you say done
 
-- Prefer running the code to guessing about it. Run the linter, the type checker and the tests that exist: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`. Read the whole output. Note that `pnpm test` passes with no tests, so a pass proves little.
+- Prefer running the code to guessing about it. Run the linter, the type checker, the format check and the tests that exist: `pnpm lint`, `pnpm typecheck`, `pnpm format:check`, `pnpm build`, `pnpm test`. Read the whole output. Note that `pnpm test` passes with no tests, so a pass proves little.
 - Never report "done" from a plausible-looking diff. Plausibility is not correctness.
 - If a check fails, fix the cause. Never suppress an error or loosen a rule. If a check cannot run (for example Docker is off), say so instead of claiming success.
 - For UI changes, verify visually (see `ui-ux.md`).

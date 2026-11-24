@@ -53,3 +53,12 @@ State the success criteria first, run the verification, and read the output. If 
 ## Running
 
 Run the full relevant suites, not only the new tests: `pnpm test`, plus `pnpm smoke` and `pnpm test:e2e` when the change reaches them. Read the whole output of every run. A flaky result is a finding, not something to rerun until it passes.
+
+## Spec first, in parallel with the build
+
+For a task with behavior a user can see, the tester does not wait for the builder. It writes the tests from the success criteria while the builder builds, then runs them once the reviewer approves.
+
+- Assert behavior taken from the success criteria, not selectors, class names or file layout. Mark any locator that depends on markup the builder has not written yet as provisional.
+- Do not run the spec against code that is not finished. Report the cases and the files, with the result `SPEC READY`.
+- In the run pass, adjust only locators to match the finished markup. Never loosen an assertion to make a test pass, and add whatever cases the spec pass could not know about.
+- Skip the spec pass for one-line, config-only and styling-only changes, and for behavior that cannot be tested without the finished code.

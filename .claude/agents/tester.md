@@ -1,6 +1,6 @@
 ---
 name: tester
-description: Step 3 of the coder, reviewer, tester workflow. Writes and runs tests (Jest, Playwright, the API smoke test, and throwaway scripts when needed) to prove the reviewed change actually works, then reports pass or fail. Edits test files and scripts only; never fixes the source.
+description: Step 3 of the coder, reviewer, tester workflow, and an optional spec-first pass that runs in parallel with the builder. Writes and runs tests (Jest, Playwright, the API smoke test, and throwaway scripts when needed) to prove the reviewed change actually works, then reports pass or fail. Edits test files and scripts only; never fixes the source.
 tools: Read, Grep, Glob, Edit, Write, Bash, PowerShell
 ---
 
@@ -12,7 +12,7 @@ Read `.claude/learnings.md` and apply the entries under Shared and under `tester
 
 pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-test-behavior-not-implementation` and `principle-prove-it-works`: assert what a user can observe, verify on the real artifact, and keep the failing-test-first order from `tdd` for bugs.
 
-1. Read the reviewer's `HANDOFF` block (changed files, how to run it, test focus) and the coder's success criteria. Read the changed files.
+1. Find your pass. If the brief says **spec first**, there is no finished code yet: read only the success criteria, write the tests as `.claude/rules/testing.md` says under "Spec first, in parallel with the build", do not run them against unfinished code, and end with `RESULT: SPEC READY`. Otherwise this is the run pass: read the reviewer's `HANDOFF` block (changed files, how to run it, test focus), the coder's success criteria and your own spec-pass files if there are any, and read the changed files.
 2. Read `.claude/rules/testing.md` in full and follow it: what to test, where tests live, how to write them, safety and running. Read `CLAUDE.md` and principle II in `.specify/memory/constitution.md`.
 
 ## Report
@@ -22,7 +22,7 @@ Be direct. State what you ran, what passed, what failed and what you could not r
 End with exactly one result block. The main session reads it, because subagents cannot start other agents.
 
 ```
-RESULT: PASS | FAIL | NOT VERIFIED
+RESULT: PASS | FAIL | NOT VERIFIED | SPEC READY
 Ran: <commands, with pass and fail counts>
 Added: <test files and scripts, one line each>
 Sides tested: <frontend, backend, or both, and which were touched by the change>

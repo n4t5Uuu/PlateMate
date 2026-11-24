@@ -21,16 +21,19 @@ Speckit owns the plan once per feature: `speckit-specify`, `speckit-clarify`, `s
 ## The chain
 
 1. **Builder.** Visual UI work (pages, components, layout, motion, copy) goes to `ui-ux`. Everything else (backend, database, shared packages, services, config, non-visual frontend logic) goes to `coder`. Give it the task, the spec or task ids, and what "done" means as something checkable. The coder starts on sonnet at high effort (its file sets this; do not pass a model).
+   **Tester, spec pass, in parallel.** For a task with behavior a user can see, start the tester in the same message as the builder, with only the success criteria and the words "spec first". It writes the tests and does not run them. Skip this for one-line, config-only and styling-only changes.
 2. **Reviewer.** Pass the builder's `HANDOFF`. Sonnet, high effort. It reports only and never edits.
-3. **Tester.** Only after `VERDICT: APPROVE`. Pass the reviewer's `HANDOFF`. It edits test files and scripts only, never the source.
+3. **Tester, run pass.** Only after `VERDICT: APPROVE`. Pass the reviewer's `HANDOFF` and the spec-pass files. It edits test files and scripts only, never the source.
 4. **Done** means `RESULT: PASS`. Report the result. Commit only when the user asks (use the `commit` skill).
 
 ## What to do with each result
 
 - Coder `Status: DONE`: go to the reviewer. Never re-run a `DONE` coder on opus.
 - Coder `Status: PARTIAL` or `STUCK`: run the coder again with `model: "opus"` and `effort: "high"`, giving it only the `Unsolved` and `Tried` items, not the whole task.
-- Reviewer `CHANGES REQUESTED`: send the `Fix` list to the coder (sonnet first), then run the reviewer again.
-- Tester `FAIL`: send the `Failures` list to the coder, then run the reviewer and tester again, because the code changed.
+- Reviewer `CHANGES REQUESTED`: send the `Fix` list to the coder (sonnet first), then run the reviewer again as a delta pass.
+- Tester `FAIL`: send the `Failures` list to the coder. If the fix is small (one file, under about 20 changed lines, no new logic branch), skip the comment cleanup and the reviewer and run the tester once on the whole suite. Otherwise run the cleanup, a delta review and the tester again, because the code changed.
+- Delta pass: from the second reviewer pass on, give the reviewer its earlier findings and the diff since, and say it is a delta pass. It re-checks those findings and the changed lines only, and does not redo browser checks, which are the tester's job. Lint, build and react-doctor may come from the turbo cache.
+- Run `no-comments` once per build, after the builder's first complete pass, and not after small fix rounds.
 - An item that comes back a second time goes straight to opus.
 - Haiku is not used for the coder.
 
@@ -42,7 +45,7 @@ How to use pstack skills: they live at `~/.claude/plugins/cache/cursor-plugins/p
 
 1. **Understand** (you, read-only): **off for now.** The codebase is small, so `how` and `why` have little to explain. Turn this on when real code exists beyond the starter, when a task touches code nobody wrote recently, or when you need to know which package owns something: `how` for how it works and where something belongs, `why` for the history and rationale.
 2. **Design** (you, before the builder): skip it when `plan.md`, `data-model.md` or `contracts/` already settle the shape, which is the normal case for a task from `tasks.md`. Run `architect` only for a shape the plan does not pin down, and `interrogate` when the plan leaves a design open or contested (for example the Row-Level Security approach). `arena` only when two real designs compete.
-3. **Build** (`coder`, or `ui-ux` for visual work): `tdd` (failing test first, then the fix), `typescript-best-practices` on any `.ts` or `.tsx`. Then clean up the diff: you run `no-comments`, and `deslop` if `cursor-team-kit` is installed. Do this before the reviewer.
+3. **Build** (`coder`, or `ui-ux` for visual work): `tdd` (failing test first, then the fix), `typescript-best-practices` on any `.ts` or `.tsx`. Then clean up the diff once: you run `no-comments`, and `deslop` if `cursor-team-kit` is installed. Do this before the first review.
 4. **Test** (`reviewer`, then `tester`, then you): the reviewer applies `blast-radius`. The tester applies `principle-test-behavior-not-implementation` and `principle-prove-it-works`. You then run `interrogate` on the diff for risky changes, `swarm` for parallel coverage, and `benchmark-checklist` for any number someone measured. `create-verification-skill` is a one-time setup that builds a skill to drive the real app; offer it if the project has none. `thermo-nuclear-code-quality-review` is available only with `cursor-team-kit`.
 5. **Ship**: off. The pstack playbooks `opening-a-pr`, `shipping`, `babysit`, `autopilot-full`, `autopilot-stack`, `autonomous-run` and `worktree-cleanup` push, open PRs and merge. Use the `commit` and `make-pr` skills, and only when the user asks.
 
