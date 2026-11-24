@@ -11,7 +11,8 @@
     "migrate": "drizzle-kit migrate",
     "push": "drizzle-kit push",
     "seed": "tsx --env-file-if-exists=../../.env.local src/seed.ts",
-    "studio": "drizzle-kit studio"
+    "studio": "drizzle-kit studio",
+    "verify-rls": "tsx --env-file-if-exists=../../.env.local src/verify-rls.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.1",
