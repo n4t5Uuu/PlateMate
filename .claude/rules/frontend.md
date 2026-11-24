@@ -18,3 +18,12 @@ For anyone writing code under `frontend/`. Design decisions are in `ui-ux.md`; g
 - Respect reduced motion, keyboard use, focus states and contrast, and check phone width.
 - Do not touch backend, database or infra code. If a UI task needs an API or schema change, stop and report it instead of making it.
 - Run `pnpm lint`, `pnpm build` and `pnpm --filter @platemate/frontend react-doctor`, and fix what they report at the cause.
+
+## Before you hand off
+
+A dev server hides what a production build shows, and these three defects were only found late in review and testing. For any change to a page or layout, check the built app, not `next dev`:
+
+- Run `pnpm build`, start the build, and `curl` each changed route. The heading and the main content (the form, for a sign-in page) must be in the server HTML, with no `$RX` or `BAILOUT_TO_CLIENT` client-render marker.
+- Press Tab through every focusable control in a browser and read the computed focus style once transitions have finished: `outline-style` is not `none`, or a `box-shadow` ring is not transparent. Tailwind v4 `outline-none` removes the outline for good.
+- When the change switches between routes on the client, check after each switch (tab click, back, forward): one visible h1, no duplicate ids, and a label click focuses its input.
+- `pnpm format:check` passes.
