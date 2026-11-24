@@ -5,10 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-plane-blue: var(--plane-blue);
+  --color-plane-red: var(--plane-red);
+  --color-plane-yellow: var(--plane-yellow);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-jetbrains);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -49,38 +52,41 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #fafaf8;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #1a1a1a;
+  --primary-foreground: #fafaf8;
+  --secondary: #f1f0ec;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f1f0ec;
+  --muted-foreground: #6b6a66;
+  --accent: #f1f0ec;
+  --accent-foreground: #1a1a1a;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #d6d4ce;
+  --input: #1a1a1a;
+  --ring: #2b3f8c;
+  --plane-blue: #2b3f8c;
+  --plane-red: #d4381f;
+  --plane-yellow: #f2b705;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+  --sidebar: #fafaf8;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #1a1a1a;
+  --sidebar-primary-foreground: #fafaf8;
+  --sidebar-accent: #f1f0ec;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #d6d4ce;
+  --sidebar-ring: #2b3f8c;
 }
 
 .dark {
@@ -127,4 +133,131 @@
   html {
     @apply font-sans;
   }
+}
+
+.auth-stage {
+  --auth-ease: cubic-bezier(0.77, 0, 0.18, 1);
+  --auth-time: 0.75s;
+}
+
+.auth-plane,
+.auth-sheet {
+  transition: transform var(--auth-time) var(--auth-ease);
+}
+
+.auth-plane {
+  position: absolute;
+}
+
+.auth-plane-blue {
+  top: 0;
+  left: 0;
+  width: 88vw;
+  height: 88vw;
+  background: var(--plane-blue);
+  border-radius: 0 0 100% 0;
+}
+
+.auth-plane-red {
+  bottom: 0;
+  left: 38vw;
+  width: 62vw;
+  height: 84vw;
+  background: var(--plane-red);
+  border-radius: 999px 999px 0 0;
+}
+
+.auth-plane-yellow {
+  top: 4vw;
+  left: 70vw;
+  width: 22vw;
+  height: 22vw;
+  background: var(--plane-yellow);
+  border-radius: 50%;
+}
+
+.auth-stage:has([data-auth-mode="sign-up"]) .auth-plane-blue {
+  transform: translateX(12vw) rotate(90deg);
+}
+.auth-stage:has([data-auth-mode="sign-up"]) .auth-plane-red {
+  transform: translateX(-38vw);
+}
+.auth-stage:has([data-auth-mode="sign-up"]) .auth-plane-yellow {
+  transform: translateX(-64vw);
+}
+
+@media (min-width: 768px) {
+  .auth-plane-blue {
+    width: 52.8vw;
+    height: 52.8vw;
+  }
+  .auth-plane-red {
+    left: 62.5vw;
+    width: 33.3vw;
+    height: 41.7vw;
+  }
+  .auth-plane-yellow {
+    top: 4.9vw;
+    left: 73.6vw;
+    width: 18vw;
+    height: 18vw;
+  }
+  .auth-sheet {
+    margin-left: 17.4vw;
+  }
+  .auth-stage:has([data-auth-mode="sign-up"]) .auth-plane-blue {
+    transform: translateX(47.2vw) rotate(90deg);
+  }
+  .auth-stage:has([data-auth-mode="sign-up"]) .auth-plane-red {
+    transform: translateX(-58.3vw);
+  }
+  .auth-stage:has([data-auth-mode="sign-up"]) .auth-plane-yellow {
+    transform: translate(8.3vw, 37.5vw);
+  }
+  .auth-stage:has([data-auth-mode="sign-up"]) .auth-sheet {
+    transform: translateX(29.2vw);
+  }
+}
+
+.auth-pane {
+  grid-area: 1 / 1;
+}
+
+.auth-pane-exit {
+  opacity: 0;
+  pointer-events: none;
+  animation: auth-pane-exit 0.3s ease both;
+}
+
+.auth-pane-enter {
+  opacity: 1;
+  animation: auth-pane-enter 0.45s var(--auth-ease) 0.2s both;
+}
+
+@keyframes auth-pane-exit {
+  from {
+    opacity: 1;
+  }
+}
+
+@keyframes auth-pane-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-plane,
+  .auth-sheet {
+    transition: none;
+  }
+  .auth-pane-enter {
+    animation: none;
+  }
+}
+
+.auth-stage ::selection {
+  background: var(--plane-blue);
+  color: #fff;
 }
