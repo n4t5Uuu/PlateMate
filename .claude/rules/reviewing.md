@@ -39,3 +39,7 @@ Be direct. No flattery and no padding. Rank findings:
 Each finding gives `file:line`, what is wrong, why it matters, and the fix in one line. Say what you could not check.
 
 Approve only with zero blockers. Should-fix items on an approval go to the tester as notes. Do not approve a change whose build or lint fails.
+
+## Delta passes
+
+From your second pass on, you get your earlier findings and the diff since. Re-check those findings and the changed lines only. Do not repeat browser checks, which belong to the tester, and do not re-read the whole change. Run lint, build and react-doctor; they may come from the turbo cache. Say in your report that it was a delta pass, and what you did not re-check.
