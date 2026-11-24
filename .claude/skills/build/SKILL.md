@@ -9,6 +9,15 @@ Run the work through the agents in `.claude/agents/`. Subagents cannot start eac
 
 Before starting, load `project-context` if it is not already loaded, and read the task's spec or tasks (for example `specs/001-user-auth/tasks.md`) so you can give the coder concrete success criteria.
 
+## Speckit plans, build executes
+
+Speckit owns the plan once per feature: `speckit-specify`, `speckit-clarify`, `speckit-plan`, `speckit-tasks`, `speckit-analyze`. This skill owns each task. Do not run `speckit-implement`; `build` runs the tasks so every one goes through the reviewer and tester.
+
+- Take the next unchecked task from `specs/<feature>/tasks.md`. Read the task, then the parts of `plan.md`, `data-model.md` and `contracts/` it points at.
+- A task marked manual (for example the Clerk keys and Dashboard steps): do not attempt it. Say what the user must do, then stop or move to a task that does not depend on it.
+- When the task passes (`RESULT: PASS`), change its `- [ ]` to `- [x]` in `tasks.md`. Change nothing else in that file.
+- When no unchecked tasks remain, run `speckit-converge` to find work the plan missed. Commit and open PRs only when the user asks.
+
 ## The chain
 
 1. **Builder.** Visual UI work (pages, components, layout, motion, copy) goes to `ui-ux`. Everything else (backend, database, shared packages, services, config, non-visual frontend logic) goes to `coder`. Give it the task, the spec or task ids, and what "done" means as something checkable. The coder starts on sonnet at high effort (its file sets this; do not pass a model).
@@ -31,8 +40,8 @@ The `pstack@cursor-plugins` plugin (project scope) adds the stages below around 
 
 How to use pstack skills: they live at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (newest version folder). The `Skill` tool refuses most of them, so read the file by path. Read `docs/harness/claude-code.md` in that folder once per session; it maps Cursor names to Claude Code. Subagents cannot start other agents, so any skill that spawns workers (`arena`, `swarm`, `interrogate`, `no-comments`) is run by you, the main session, never inside an agent.
 
-1. **Understand** (you, read-only, only if the code is unfamiliar): `how` for how it works and where something belongs, `why` for the history and rationale.
-2. **Design** (you, before the builder, non-trivial work): `architect` to sketch the types and signatures first. `arena` only when two real designs compete. `interrogate` when the design is contested.
+1. **Understand** (you, read-only): **off for now.** The codebase is small, so `how` and `why` have little to explain. Turn this on when real code exists beyond the starter, when a task touches code nobody wrote recently, or when you need to know which package owns something: `how` for how it works and where something belongs, `why` for the history and rationale.
+2. **Design** (you, before the builder): skip it when `plan.md`, `data-model.md` or `contracts/` already settle the shape, which is the normal case for a task from `tasks.md`. Run `architect` only for a shape the plan does not pin down, and `interrogate` when the plan leaves a design open or contested (for example the Row-Level Security approach). `arena` only when two real designs compete.
 3. **Build** (`coder`, or `ui-ux` for visual work): `tdd` (failing test first, then the fix), `typescript-best-practices` on any `.ts` or `.tsx`. Then clean up the diff: you run `no-comments`, and `deslop` if `cursor-team-kit` is installed. Do this before the reviewer.
 4. **Test** (`reviewer`, then `tester`, then you): the reviewer applies `blast-radius`. The tester applies `principle-test-behavior-not-implementation` and `principle-prove-it-works`. You then run `interrogate` on the diff for risky changes, `swarm` for parallel coverage, and `benchmark-checklist` for any number someone measured. `create-verification-skill` is a one-time setup that builds a skill to drive the real app; offer it if the project has none. `thermo-nuclear-code-quality-review` is available only with `cursor-team-kit`.
 5. **Ship**: off. The pstack playbooks `opening-a-pr`, `shipping`, `babysit`, `autopilot-full`, `autopilot-stack`, `autonomous-run` and `worktree-cleanup` push, open PRs and merge. Use the `commit` and `make-pr` skills, and only when the user asks.
@@ -62,8 +71,6 @@ When stopping, report what is done, what is open, what was tried, and what you n
 ## Rules that apply to every agent
 
 - Keep each agent's brief short and specific. Do not paste the whole conversation.
-- Schema changes only in `backend/db/src/schema.ts` plus `pnpm db:push`; no hand-written SQL.
-- No `@radix-ui/*` packages (the repo uses Base UI). Never read or print `.env*` files.
-- Tests are Jest (`pnpm test`), Playwright for end to end (`frontend/tests/e2e/`). Tests come before code where practical.
+- Every agent follows the rules in `.claude/rules/` (`coding.md`, `testing.md`, `reviewing.md`, `frontend.md`, `ui-ux.md`, `backend.md`). Each agent file names the ones it reads.
 - Do not touch the user's own uncommitted files (anything in `git status` that the agents did not change).
 - No `Co-Authored-By` or Claude attribution anywhere.

@@ -18,7 +18,8 @@ Keep each section under 20 lines. When a section is full, merge or delete the we
 
 ## Shared
 
-(none yet)
+- With `cacheComponents` on, Next keeps the previous route mounted but hidden (`display:none`, effects cleaned up and re-run). Never retain `children` as a snapshot, give ids from a form that can render twice a `useId()` prefix, scope queries and Playwright locators with `:visible`, and test back and forward in a built app: React will not re-apply an unchanged prop after a cleanup removed an attribute.
+- With `cacheComponents` on, a client component that reads the URL (`usePathname`, `useSelectedLayoutSegment`) makes a production page render blank on the server even inside Suspense. Derive the mode in each server page and pass it down, then `curl` the production build to check the server HTML for the h1.
 
 ## coder
 
@@ -26,12 +27,14 @@ Keep each section under 20 lines. When a section is full, merge or delete the we
 
 ## reviewer
 
-(none yet)
+- Run `pnpm build` before `pnpm test:e2e` and check nothing listens on the Playwright port, because a reused server can serve a stale build.
 
 ## tester
 
-(none yet)
+- Before asserting computed focus styles on shadcn buttons (`transition-all`), wait for CSS transitions to finish; filter `document.getAnimations()` by `playState`, because finished fill-forwards animations stay in the list.
 
 ## ui-ux
 
-(none yet)
+- `npx shadcn@latest add` writes `import { cn } from "cn"` and adds that unrelated package: rewrite the import to `@/lib/utils` and revert `package.json` and `pnpm-lock.yaml` with `git checkout` (not `pnpm remove`, which re-resolves the lockfile).
+- Tailwind v4 `outline-none` sets `outline-style: none` unconditionally, so `focus-visible:outline-*` never shows. Use `focus-visible:ring-[3px] focus-visible:ring-ring` and check the computed style after a real Tab press.
+- Before calling an animation fix behavior-identical, sample computed opacity per frame; a transition on a class swap can silently never run. Use a keyframe animation for both the fade-in and the fade-out.

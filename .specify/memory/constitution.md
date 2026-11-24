@@ -58,6 +58,10 @@ Rationale: the next reader, often the author in six months, should not need the 
 - A reviewer MUST check the change against this constitution; unjustified complexity or a missing
   test is grounds to request changes.
 - Behavior-changing or large cleanups MUST be split from unrelated work into separate pull requests.
+- Every feature spec MUST start from `docs/PRD.md`, P0 requirements first. Anything the PRD leaves
+  undecided MUST be recorded as an open question and MUST NOT be invented.
+- When a gap in the PRD would matter to the product, the agent MUST also mention it in the chat as a
+  suggestion, so the owner can decide it instead of finding it later in the spec.
 
 ## Governance
 
@@ -70,4 +74,4 @@ Compliance MUST be checked in pull-request review, and in `/speckit-plan` as a g
 A deliberate violation MUST be justified in the pull request description. Runtime guidance for
 agents lives in `CLAUDE.md`.
 
-**Version**: 1.0.1 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-21
+**Version**: 1.1.0 | **Ratified**: 2026-11-20 | **Last Amended**: 2026-11-24

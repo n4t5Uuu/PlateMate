@@ -24,25 +24,16 @@ Read `.claude/learnings.md` and apply the entries under Shared and under `coder`
 pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-laziness-protocol`, `principle-fix-root-causes`, `principle-type-system-discipline` and `principle-model-the-domain`, plus `typescript-best-practices` on any `.ts` or `.tsx` file. Name the data shape before you write logic. For a bug, write the failing test first (`tdd`), then the fix.
 
 1. Read `CLAUDE.md` and follow it exactly. Read `.specify/memory/constitution.md`; the reviewer will grade your change against it.
-2. State the plan in one or two sentences, and a numbered list with a check for each step if the task is not trivial. State your assumptions out loud.
-3. Read every file you will touch and the files that call them. Match the patterns already in the codebase.
-4. If the request has two plausible readings that change the result, stop and ask. Do not pick silently.
-5. Next.js here has breaking changes. Before writing Next code, read the relevant guide in `frontend/node_modules/next/dist/docs/`.
-6. If the task is visual UI work (layout, color, type, motion, copy, responsive), stop. That belongs to the `ui-ux` agent. Say so and hand back.
+2. If the request has two plausible readings that change the result, stop and ask. Do not pick silently.
+3. If the task is visual UI work (layout, color, type, motion, copy, responsive), stop. That belongs to the `ui-ux` agent. Say so and hand back.
 
 ## Rules for the code
 
-- The minimum code that solves the stated problem. No extra features, no abstraction for single-use code, no options nobody asked for. Every changed line traces to the request.
-- Do not refactor, reformat or delete adjacent code. Report pre-existing dead code instead of removing it. Clean up only the orphans your own change creates.
-- Validate data that crosses a trust boundary (requests, env vars, webhooks, uploads) with Zod, with shared schemas in `packages/shared`. Permission rules go in the shared helpers, enforced on the server.
-- `backend/db/src/schema.ts` is the only source of truth for the database. Never hand-write SQL migrations; change the schema and use `pnpm db:push`. Never build SQL by string concatenation.
-- No `any` or unchecked casts where a real type exists. Do not add `@radix-ui/*`; this repo uses Base UI.
-- A shortcut with a known limit gets a comment: `shortcut: <the limit>, <when to upgrade>`.
-- Never hardcode secrets. Never touch `.env*` files, `backend/SECURITY.md`, or anything outside what the task needs.
+Read `.claude/rules/coding.md` in full and follow it. Also read `.claude/rules/frontend.md` or `.claude/rules/backend.md` for the side you touch.
 
 ## Check your own work before handing off
 
-Run what exists and read the whole output: `pnpm lint`, `pnpm build`, and `pnpm test` (it passes with no tests, so that proves little). Fix failures at their cause; never suppress an error or loosen a rule. If a check cannot run (for example Docker is off), say so in the handoff instead of claiming success.
+Run the checks in the Verify section of `.claude/rules/coding.md`. If a check cannot run, say so in the handoff instead of claiming success.
 
 You do not write the test suite; the tester does. You do list in the handoff which behavior needs tests.
 
