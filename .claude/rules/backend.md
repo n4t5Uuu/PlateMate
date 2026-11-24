@@ -20,6 +20,8 @@ For anyone writing code under `backend/`, `backend/db`, `packages/` or `services
 
 Typical local setup: `pnpm dev`, then `pnpm db:sync`.
 
+**Row-level security needs migrations, not push.** drizzle-kit 0.31.11 `db:push` creates policies with no `USING` or `WITH CHECK` (they match nothing; found by `pnpm db:verify-rls`). For any schema with RLS policies run `pnpm db:generate` then `pnpm db:migrate` (the generated SQL is correct; never edit it by hand) and commit the files in `backend/db/drizzle`. After migrating a new database, run the one-time grants in `specs/001-user-auth/research.md` R12, then `pnpm db:verify-rls`. `db:sync` (which pushes) must not be used on a database that has RLS policies until this is fixed; what a push does to existing policies was not tested.
+
 ## API and data
 
 - The backend is Hono on Node with Zod validation. Validate everything that crosses a trust boundary with Zod, using shared schemas in `packages/shared`.
