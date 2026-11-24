@@ -1,3 +1,7 @@
 export default {
-  projects: ["<rootDir>/frontend", "<rootDir>/backend"],
+  projects: [
+    "<rootDir>/frontend",
+    "<rootDir>/backend",
+    "<rootDir>/packages/shared",
+  ],
 };
