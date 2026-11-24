@@ -27,6 +27,7 @@
     "db:seed": "pnpm --filter @platemate/db seed",
     "db:sync": "pnpm db:push && pnpm db:seed",
     "db:studio": "pnpm --filter @platemate/db studio",
+    "db:verify-rls": "pnpm --filter @platemate/db verify-rls",
     "db:reset": "docker compose down -v && docker compose up -d --wait && pnpm db:push"
   },
   "devDependencies": {

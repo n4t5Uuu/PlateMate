@@ -1,4 +1,17 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
+
+// e2e must not need the internet: abort every request that leaves localhost (Clerk's
+// clerk.accounts.dev / clerk.com / protect.clerk.com init traffic included).
+const blockExternal = (context: BrowserContext) =>
+  context.route(
+    (url) =>
+      /^https?:$/.test(url.protocol) &&
+      !["localhost", "127.0.0.1"].includes(url.hostname),
+    (route) => route.abort(),
+  );
+
+// Covers the default context of every test; a context made with `browser.newContext()` must call blockExternal itself.
+test.beforeEach(({ context }) => blockExternal(context));
 
 const routes = [
   {
@@ -29,6 +42,26 @@ const routes = [
 
 const tab = (page: Page, name: string) =>
   page.locator("nav a:visible", { hasText: new RegExp(`^${name}$`) });
+
+const headings: Record<string, string> = {
+  "/sign-in": "Sign in",
+  "/sign-up": "Create account",
+};
+
+// Navigates and waits on the app itself: the h1 is shown and React has hydrated the form (no network-idle guess).
+async function open(page: Page, path: string) {
+  await page.goto(path);
+  await expect(page.locator("h1:visible")).toHaveText(headings[path]);
+  const email = page.locator("input[type=email]:visible");
+  await expect(email).toBeVisible();
+  await expect
+    .poll(() =>
+      email.evaluate((e) =>
+        Object.keys(e).some((k) => k.startsWith("__reactFiber$")),
+      ),
+    )
+    .toBe(true);
+}
 
 async function expectSettled(page: Page, heading: string) {
   await expect(page.locator(".auth-pane-exit")).toHaveCount(0);
@@ -125,8 +158,7 @@ test.describe("switching", () => {
   test("tab, back, forward and rapid toggling settle cleanly", async ({
     page,
   }) => {
-    await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
+    await open(page, "/sign-in");
     await expectSettled(page, "Sign in");
     const signInPose = await bluePose(page);
 
@@ -161,8 +193,7 @@ test.describe("switching", () => {
   test("mid-transition the leaving pane is inert and fading", async ({
     page,
   }) => {
-    await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
+    await open(page, "/sign-in");
     await tab(page, "Create account").click();
     // wait until the old pane is really fading, not for a fixed time
     await page.waitForFunction(() => {
@@ -193,16 +224,15 @@ test.describe("switching", () => {
     page,
     browser,
   }) => {
-    await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
+    await open(page, "/sign-in");
     await tab(page, "Create account").click();
     await expect(page).toHaveURL(/\/sign-up$/);
     await expectSettled(page, "Create account");
     const switched = await bluePose(page);
     const context = await browser.newContext();
+    await blockExternal(context);
     const fresh = await context.newPage();
-    await fresh.goto("/sign-up");
-    await fresh.waitForLoadState("networkidle");
+    await open(fresh, "/sign-up");
     expect(await bluePose(fresh)).toBe(switched);
     expect(
       await fresh.evaluate(
@@ -218,8 +248,7 @@ test.describe("reduced motion", () => {
   test("switch is instant: no leaving pane, no transition", async ({
     page,
   }) => {
-    await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
+    await open(page, "/sign-in");
     const before = await bluePose(page);
     // record whether a leaving pane ever appears, even for a single frame
     await page.evaluate(() => {
@@ -272,8 +301,7 @@ test.describe("375px", () => {
       ["/sign-in", "Create account"],
       ["/sign-up", "Sign in"],
     ]) {
-      await page.goto(start);
-      await page.waitForLoadState("networkidle");
+      await open(page, start);
       expect(await overflow()).toBeLessThanOrEqual(0);
       await tab(page, other).click();
       expect(await maxOverflowWhileSwitching(page, other)).toBeLessThanOrEqual(
@@ -288,8 +316,7 @@ test.describe("keyboard and placeholders", () => {
   test("tab order and a visible focus indicator on every control", async ({
     page,
   }) => {
-    await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
+    await open(page, "/sign-in");
     const expected = [
       "Sign in",
       "Create account",
@@ -358,8 +385,7 @@ test.describe("keyboard and placeholders", () => {
     test(`${path}: both tab links show a 3px blue ring when focused, active or not`, async ({
       page,
     }) => {
-      await page.goto(path);
-      await page.waitForLoadState("networkidle");
+      await open(page, path);
       const stops: { name: string; current: boolean; layers: Shadow[] }[] = [];
       for (let i = 0; i < 2; i++) {
         await page.keyboard.press("Tab");
@@ -404,16 +430,19 @@ test.describe("keyboard and placeholders", () => {
   test("placeholders do nothing and Enter does not submit", async ({
     page,
   }) => {
-    await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
+    await open(page, "/sign-in");
     await page.evaluate(
       () => ((window as unknown as { marker: number }).marker = 1),
     );
     const navs: string[] = [];
     page.on("framenavigated", (f) => navs.push(f.url()));
+    // Only the app's own origin counts: Clerk's init traffic goes to other hosts and is aborted by
+    // blockExternal, so a request here means a placeholder or Enter really submitted something.
+    const appOrigin = new URL(page.url()).origin;
     const requests: string[] = [];
     page.on("request", (r) => {
-      if (r.method() !== "GET") requests.push(r.url());
+      if (r.method() !== "GET" && new URL(r.url()).origin === appOrigin)
+        requests.push(r.url());
     });
 
     for (const name of [
@@ -435,7 +464,13 @@ test.describe("keyboard and placeholders", () => {
     await page.keyboard.press("Enter");
     await page.locator("input[type=password]").fill("secret123");
     await page.keyboard.press("Enter");
-    await page.waitForLoadState("networkidle"); // nothing in flight after the key presses
+    // two frames: a submit or navigation started by the key presses would have begun by now
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
 
     expect(page.url()).toMatch(/\/sign-in$/);
     expect(navs).toEqual([]);

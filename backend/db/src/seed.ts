@@ -1,19 +1,18 @@
-import postgres from "postgres";
+import { openLocalClient } from "./local-database";
 
 const url =
   process.env.DATABASE_URL ??
   "postgresql://platemate:platemate@localhost:5432/platemate";
 
-if (!URL.canParse(url))
-  throw new Error("Refusing to seed: DATABASE_URL is not a valid URL.");
-
-// The wipe below deletes every row, so only ever run it against a local database.
-if (!["localhost", "127.0.0.1"].includes(new URL(url).hostname)) {
-  console.error("Refusing to seed: DATABASE_URL is not a local database.");
+// The wipe below deletes every row, so only ever run it against a local database. The check runs on the host
+// postgres.js resolves, not on the URL (see local-database.ts). The URL is never printed.
+const sql = await openLocalClient(url);
+if (!sql) {
+  console.error(
+    "Refusing to seed: DATABASE_URL is not a valid local database URL.",
+  );
   process.exit(1);
 }
-
-const sql = postgres(url, { max: 1 });
 
 // Wipe first so re-running after editing this file never creates duplicates.
 const tables = await sql<
