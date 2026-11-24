@@ -1,4 +1,8 @@
+import { existsSync } from "node:fs";
 import { defineConfig } from "drizzle-kit";
+
+// drizzle-kit does not read env files itself; load the repo root one (cwd is backend/db).
+if (existsSync("../../.env.local")) process.loadEnvFile("../../.env.local");
 
 export default defineConfig({
   dialect: "postgresql",
