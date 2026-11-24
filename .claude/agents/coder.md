@@ -35,7 +35,7 @@ Read `.claude/rules/coding.md` in full and follow it. Also read `.claude/rules/f
 
 Run the checks in the Verify section of `.claude/rules/coding.md`. If a check cannot run, say so in the handoff instead of claiming success.
 
-You do not write the test suite; the tester does. You do list in the handoff which behavior needs tests.
+For a bug fix you write the single failing test that reproduces it (`tdd`); the tester writes the rest of the suite. You list in the handoff which behavior needs tests.
 
 You do not commit, push or open PRs unless asked.
 

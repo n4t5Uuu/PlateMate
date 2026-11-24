@@ -37,6 +37,7 @@ CI: `ci.yml` (lint, format check, react-doctor, test, build), `code-quality.yml`
 - Clerk prebuilt `<SignIn />` / `<SignUp />`, deny-by-default `frontend/proxy.ts`, signed webhook plus just-in-time upsert for the `users` table.
 - Public route patterns use `/sign-in(/.*)?`, never `/sign-in(.*)` (the latter makes `/sign-in-evil` public).
 - The `pstack@cursor-plugins` plugin is installed at project scope (`.claude/settings.json`). It is the rigor layer inside the `build` skill; project rules win where they conflict (see `CLAUDE.md`, section pstack).
+- Visual world: Title Block (ink #1A1A1A on paper #FAFAF8, thin lines, a rounded sheet). The sign-in and sign-up pages put three flat planes behind the sheet (blue #2B3F8C, vermilion #D4381F, yellow #F2B705) with an animated switch between the two routes. The tokens are app-wide and `.dark` still has the stock values.
 - Rejected: knip, `react-doctor install`, a Dockerfile, SMS 2FA, `@radix-ui/*` packages, haiku for the coder agent.
 - Prettier uses defaults plus `endOfLine: auto`; `specs/`, `docs/`, `.claude/`, `.specify/` and generated drizzle output are ignored.
 
@@ -56,16 +57,17 @@ CI: `ci.yml` (lint, format check, react-doctor, test, build), `code-quality.yml`
 - `.claude/skills/`: project skills (`commit`, `make-pr`, `docs`, `handoff`, `codebase-onboarding`, speckit, UI and animation skills).
 - `docs/PRD.md`: product requirements. `docker-compose.yaml`: Postgres and LocalStack.
 - `frontend/app`: App Router pages and layout. `backend/src`: Hono app (`index.ts`, health route on 8787). `backend/db`: Drizzle config and `src/schema.ts`. `packages/shared`, `services/file-processor`, `infra` as above.
-- Tests: `frontend/tests/`, `backend/tests/`, Playwright in `frontend/tests/e2e/`.
+- Tests: `frontend/tests/`, `backend/tests/`, Playwright in `frontend/tests/e2e/` (config at the repo root, `playwright.config.ts`).
+- `.claude/rules/`: the shared coding, testing, reviewing, frontend, backend and ui-ux rules. `.claude/learnings.md`: what the agents learned.
 
 ## Current work
 
-User authentication (sign up and log in) with Clerk, branch `docs/user-auth-spec`. Spec, plan and tasks are written; no auth code exists yet. Next: open the PRs, then start `specs/001-user-auth/tasks.md` at T001. T002 (Clerk login and keys) and T028 (Clerk Dashboard and webhook) are manual steps for the user.
+User authentication (sign up and log in) with Clerk, in `specs/001-user-auth/`. Merged: the spec, plan and tasks (#49) and the sign-in and sign-up page shell with its tests (#50, #51). The pages use static placeholders; Clerk is not wired. Next: the manual steps T002 (Clerk login and keys) and T028 (Clerk Dashboard and webhook), then `ClerkProvider` and Clerk's own components (T017 on). T025, T030, T027 and T032 stay open until Clerk is wired.
 
 Env files: Next.js only reads env from `frontend/`, so the Clerk frontend keys go in `frontend/.env.local`. How the backend loads env is unverified; check before telling the user where backend keys go.
 
 Open risks (research R2, unverified): Clerk MFA needs a paid plan in production; unknown whether required MFA also challenges Google and Microsoft sign-ins; unknown whether a user can remove their own second factor. The tasks say to stop and ask the product owner if these fail.
 
-Known stale text: `CLAUDE.md` still says "backend scores ~52" and mentions `quality.yml`; `.claude/agents/tester.md` still says Vitest; `ui-ux.md` has no handoff block. Not fixed; the user has not approved it.
+Known gaps: `DESIGN.md` does not exist yet (run `/impeccable document` after Clerk's components are styled); the `.dark` tokens are the old stock values; CI does not run the Playwright tests; the home page redirects to sign-in and must become a real home page once Clerk is wired.
 
 Check `handoff.md` (if present), `git log` and `git status` for anything newer than this section.

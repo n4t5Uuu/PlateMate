@@ -36,7 +36,7 @@ These rules live in `.claude/rules/`. Read and follow them:
 - After two failed corrections on the same issue, stop. Summarize what you learned and ask the user to reset the session with a sharper prompt.
 - Use subagents (Claude Code: "use subagents to investigate X") for exploration tasks that would otherwise pollute the main context with dozens of file reads.
 - When committing, write descriptive commit messages (subject under 72 chars, body explains the why). No "update file" or "fix bug" commits. No "Co-Authored-By: Claude" attribution unless the project explicitly wants it.
-- When the user says "commit this" (or similar) after a multi-part change, do not make one commit. Split the diff into atomic commits along logical boundaries: core logic, then call-sites/wiring that use it, then tests, then docs — in that order, each buildable/passing on its own. One concern per commit; group only files that fail to compile or make no sense without each other. If a single concern touches multiple files, that is still one commit.
+- When the user says "commit this" (or similar) after a multi-part change, do not make one commit. Split the diff into atomic commits along logical boundaries: core logic together with its tests, then call-sites/wiring that use it, then docs — in that order, each buildable/passing on its own. One concern per commit; group only files that fail to compile or make no sense without each other. If a single concern touches multiple files, that is still one commit.
 
 ---
 
@@ -74,7 +74,7 @@ These rules live in `.claude/rules/`. Read and follow them:
 After every session where the agent did something wrong:
 
 1. Ask: was the mistake because this file lacks a rule, or because the agent ignored a rule?
-2. If lacking: add the rule under "Project Learnings" below, written as concretely as possible ("Always use X for Y" not "be careful with Y").
+2. If lacking: add the rule to `.claude/learnings.md` (a correction you were given goes under Shared), written as concretely as possible ("Always use X for Y" not "be careful with Y").
 3. If ignored: the rule may be too long, too vague, or buried. Tighten it or move it up.
 4. Every few weeks, prune. For each line, ask: "Would removing this cause the agent to make a mistake?" If no, delete. Bloated AGENTS.md files get ignored wholesale.
 
@@ -90,16 +90,20 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 - Dev, everything: `pnpm dev` (starts Docker, backend and frontend; Docker Desktop must be running)
 - Build: `pnpm build`
 - Lint: `pnpm lint` (frontend and backend); types: `pnpm typecheck` (strict, frontend and backend incl. `backend/db`)
-- Quality gate, everything CI checks in one go (lint, types, react-doctor, tests, `pnpm audit --audit-level high`): `pnpm quality`; CI also scans for secrets (`.github/workflows/quality.yml`)
-- Test: `pnpm test` (Jest, one config with a frontend and a backend project; passes with no tests yet); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
+- Quality gate, everything CI checks in one go (lint, format check, types, react-doctor, tests, `pnpm audit --audit-level high`): `pnpm quality`; CI also scans for secrets (`.github/workflows/code-quality.yml`)
+- Test: `pnpm test` (Jest, one config with a frontend and a backend project); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
 - Docker services: `pnpm down` or `pnpm services:down` (stop), `pnpm services:restart`, `pnpm services:logs`; `pnpm dev` starts them
 - Database: `pnpm db:push` (push schema, for prototyping), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:seed` (wipes all tables, then loads `backend/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
-- React checks: `pnpm react-doctor` (same as `pnpm --filter @platemate/frontend react-doctor`); `pnpm react-doctor:backend` scans `backend/` on demand (advisory, not in CI: its rules are React-tuned and the backend scores ~52)
+- React checks: `pnpm react-doctor` (same as `pnpm --filter @platemate/frontend react-doctor`); `pnpm react-doctor:backend` scans `backend/` on demand (advisory, not in CI: its rules are React-tuned)
 - Deploy: not set up yet
 
 ### UI and design work
 
 See `.claude/rules/ui-ux.md`: always use the `impeccable` skill for anything about the UI, and the user picks the layout.
+
+### Speckit
+
+Speckit plans a feature (specify, clarify, plan, tasks, analyze) and the `build` skill runs its tasks. Do not run `/speckit-implement`: it skips the reviewer and the tester.
 
 ### pstack
 
