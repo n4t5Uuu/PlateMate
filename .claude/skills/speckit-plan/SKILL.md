@@ -7,6 +7,7 @@ metadata:
   author: "github-spec-kit"
   source: "templates/commands/plan.md"
 user-invocable: true
+model: opus
 disable-model-invocation: false
 ---
 
