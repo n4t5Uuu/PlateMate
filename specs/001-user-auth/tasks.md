@@ -78,11 +78,11 @@ Each code task goes through the coder, reviewer and tester agents (see `CLAUDE.m
 
 - [x] T023 [US1] Create `backend/src/webhooks/clerk.ts`: `POST /webhooks/clerk` that verifies the request with `verifyWebhook` from `@clerk/backend/webhooks` using `CLERK_WEBHOOK_SIGNING_SECRET`, parses with `parseClerkUserEvent` (T007) and applies `user.created`, `user.updated` (`upsertUser`) and `user.deleted` (`softDeleteUser`) inside `withSyncContext`; status codes exactly as in contracts/api.md; make T022 pass. Before inserting on `user.created`, check with Clerk (`getUser`) that the user still exists and skip the insert if not, because a retried `user.created` that arrives after `user.deleted` would otherwise create a live row for a deleted account (`softDeleteUser` does nothing for an unknown id)
 - [x] T024 [US1] Mount the webhook route in `backend/src/index.ts`
-- [ ] T025 [P] [US1] Create `frontend/app/sign-up/[[...sign-up]]/page.tsx` rendering Clerk's `<SignUp />` inside `<Suspense>` (research R1 and R9; `cacheComponents` is on)
-- [ ] T026 [P] [US1] Replace the create-next-app placeholder in `frontend/app/page.tsx` with a minimal signed-in home: the signed-in person's name and email read with `await currentUser()` inside `<Suspense>`, rendered as plain text through React (never `dangerouslySetInnerHTML`; FR-023). The `/me` call replaces this in T041
-- [ ] T027 [US1] Run the `impeccable` skill for the sign-up page and the home page (`shape`, then build), following `frontend/CLAUDE.md`, using shadcn components and Clerk's `appearance` options. **The user picks the layout.** Keep the sign-in page (T030) on the same layout
+- [x] T025 [P] [US1] Create `frontend/app/sign-up/[[...sign-up]]/page.tsx` rendering Clerk's `<SignUp />` inside `<Suspense>` (research R1 and R9; `cacheComponents` is on)
+- [x] T026 [P] [US1] Replace the create-next-app placeholder in `frontend/app/page.tsx` with a minimal signed-in home: the signed-in person's name and email read with `await currentUser()` inside `<Suspense>`, rendered as plain text through React (never `dangerouslySetInnerHTML`; FR-023). The `/me` call replaces this in T041
+- [x] T027 [US1] Run the `impeccable` skill for the sign-up page and the home page (`shape`, then build), following `frontend/CLAUDE.md`, using shadcn components and Clerk's `appearance` options. **The user picks the layout.** Keep the sign-in page (T030) on the same layout
 - [x] T028 [US1] (manual) In the Clerk Dashboard: turn on email and password, require email confirmation, set the password rules; add the backend webhook address (a public tunnel to `http://localhost:8787/webhooks/clerk`) subscribed to `user.created`, `user.updated` and `user.deleted`, and copy its signing secret into the backend env as `CLERK_WEBHOOK_SIGNING_SECRET`
-- [ ] T029 [US1] Validate quickstart Scenario 1 (steps 1 to 4), Scenario 6 (steps 1, 4, 5) and Scenario 9 (steps 1 and 2); fix anything that fails
+- [x] T029 [US1] Validate quickstart Scenario 1 (steps 1 to 4), Scenario 6 (steps 1, 4, 5) and Scenario 9 (steps 1 and 2); fix anything that fails
 
 **Checkpoint**: A new person can sign up and has exactly one PlateMate record
 
