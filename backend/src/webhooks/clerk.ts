@@ -18,6 +18,20 @@ function isNotFound(error: unknown): boolean {
   );
 }
 
+/** A short code only (SQLSTATE, system code or HTTP status). Messages can carry the SQL and the person's email, so they are never logged. */
+function errorCode(error: unknown): string {
+  for (const source of [
+    error instanceof Error ? error.cause : undefined,
+    error,
+  ]) {
+    if (typeof source !== "object" || source === null) continue;
+    const code =
+      "code" in source ? source.code : "status" in source ? source.status : "";
+    if (/^[A-Za-z0-9_]{1,40}$/.test(String(code))) return String(code);
+  }
+  return "unknown";
+}
+
 // Public on purpose: Clerk calls it, and the Svix signature is the only check. Never log the body, headers or secret.
 export const clerkWebhook = new Hono().post("/webhooks/clerk", async (c) => {
   const env = getEnv();
@@ -41,8 +55,10 @@ export const clerkWebhook = new Hono().post("/webhooks/clerk", async (c) => {
     return c.json({ error: "invalid webhook" }, 400);
   }
 
+  let step = "database write";
   try {
     if (event.type === "user.created") {
+      step = "Clerk user check";
       // A retried user.created can arrive after user.deleted; softDeleteUser did nothing for the unknown id,
       // so inserting now would resurrect a deleted account. Ask Clerk whether the user still exists.
       // shortcut: the guard covers user.created only, so a retried user.updated after user.deleted can still insert a live row, and a user.deleted landing between getUser and the write is overwritten; widen the guard or compare event timestamps if this shows up.
@@ -54,6 +70,7 @@ export const clerkWebhook = new Hono().post("/webhooks/clerk", async (c) => {
         if (isNotFound(error)) return c.json({ ok: true });
         throw error;
       }
+      step = "database write";
     }
 
     await withSyncContext(async (tx) => {
@@ -65,9 +82,11 @@ export const clerkWebhook = new Hono().post("/webhooks/clerk", async (c) => {
         await upsertUser(tx, { clerkUserId, email, name, avatarUrl });
       }
     });
-  } catch {
-    // Fixed message, no error object: driver errors can carry the SQL and the person's email.
-    console.error("clerk webhook: write failed");
+  } catch (error) {
+    // No error object or message: driver errors can carry the SQL and the person's email.
+    console.error(
+      `clerk webhook: write failed (${event.type}, ${step}, code ${errorCode(error)})`,
+    );
     return c.body(null, 500);
   }
 
