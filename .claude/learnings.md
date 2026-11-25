@@ -33,6 +33,8 @@ Keep each section under 20 lines. When a section is full, merge or delete the we
 - With no safe database, verify `backend/db/src/schema.ts` with `drizzle-kit export` (prints the SQL offline) and `drizzle-kit check`. drizzle-kit emits no GRANT: table privileges are the one-time step in research R12.
 - Never apply RLS policies with `drizzle-kit push` (0.31.11 drops the `USING`/`WITH CHECK` conditions): use `db:generate` then `db:migrate`, then run `pnpm db:verify-rls` against the real local database, because `drizzle-kit export` output alone looked correct.
 - A new endpoint needs its `check` line in `backend/smoke-test.sh` and `prettier --check` on every new file (tests included) before review; `pnpm format:check` also fails on old files, so check only yours.
+- drizzle-orm 0.45 wraps every postgres.js error in a `DrizzleQueryError` named "Error": read `error.cause` and print only its SQLSTATE `code`, never the message (auth failures carry the user name). Type a helper that accepts a client or a transaction as `postgres.ISql`, not `postgres.Sql`.
+- An optional persistent turbo task (like `//#tunnel`) must exit 0 on every failure: any non-zero exit from a persistent task makes turbo kill every other task in `turbo run dev`. Run `//#task` names from PowerShell, because Git Bash rewrites the leading `//`.
 - Hono's `cors()` with a string origin answers every caller; wrap it so other origins get no CORS headers (`backend/src/cors.ts`).
 - `frontend/next.config.ts` imports local files lazily inside `headers()` with the `.ts` extension, because next/jest's legacy loader cannot resolve static local imports there.
 
