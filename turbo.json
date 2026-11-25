@@ -5,6 +5,7 @@
     "build": { "dependsOn": ["^build"], "outputs": [".next/**", "dist/**"] },
     "lint": {},
     "typecheck": {},
-    "//#graph:watch": { "cache": false, "persistent": true }
+    "//#graph:watch": { "cache": false, "persistent": true },
+    "//#tunnel": { "cache": false, "persistent": true }
   }
 }

@@ -87,7 +87,7 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 ### Commands
 
 - Install: `pnpm install` from the repo root
-- Dev, everything: `pnpm dev` (starts Docker, backend and frontend; Docker Desktop must be running). It also runs `graphify watch .` to keep the code graph fresh, and skips it when graphify is not installed or no graph exists (`graph:watch`, `scripts/graph-watch.mjs`)
+- Dev, everything: `pnpm dev` (starts Docker, backend and frontend; Docker Desktop must be running). It also runs `graphify watch .` to keep the code graph fresh, and skips it when graphify is not installed or no graph exists (`graph:watch`, `scripts/graph-watch.mjs`). It also opens an ngrok tunnel to the backend for the Clerk webhook when `NGROK_DOMAIN` is set in `.env.local` and ngrok is installed, and skips it otherwise (`tunnel`, `scripts/tunnel.mjs`)
 - Build: `pnpm build`
 - Lint: `pnpm lint` (frontend and backend); types: `pnpm typecheck` (strict, frontend and backend incl. `backend/db`)
 - Quality gate, everything CI checks in one go (lint, format check, types, react-doctor, tests, `pnpm audit --audit-level high`): `pnpm quality`; CI also scans for secrets (`.github/workflows/code-quality.yml`)

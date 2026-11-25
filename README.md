@@ -92,7 +92,7 @@ pnpm install
 pnpm dev                 # starts Docker (Postgres, LocalStack), the backend and the frontend
 ```
 
-Docker Desktop must be running first. Stop the containers with `pnpm down`.
+Docker Desktop must be running first. Stop the containers with `pnpm down`. If `NGROK_DOMAIN` is set in `.env.local` and ngrok is installed, `pnpm dev` also tunnels the backend to that domain for the Clerk webhook; otherwise it skips the tunnel.
 
 The frontend runs at `http://localhost:3000` and the API at `http://localhost:8787` (`/health` to check it).
 

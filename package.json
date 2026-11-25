@@ -3,8 +3,9 @@
   "private": true,
   "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "dev": "docker compose up -d --wait && turbo run dev //#graph:watch",
+    "dev": "docker compose up -d --wait && turbo run dev //#graph:watch //#tunnel",
     "graph:watch": "node scripts/graph-watch.mjs",
+    "tunnel": "node scripts/tunnel.mjs",
     "down": "docker compose down",
     "build": "turbo run build",
     "lint": "turbo run lint",
