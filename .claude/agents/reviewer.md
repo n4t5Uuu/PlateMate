@@ -14,6 +14,8 @@ Read `.claude/learnings.md` and apply the entries under Shared and under `review
 
 pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Review with `principle-minimize-reader-load`, `principle-prove-it-works` and `blast-radius` (what else could this break, shown by running code). Report comments that only restate the code as should-fix; the main session runs `no-comments` before you, since you cannot start agents.
 
+For blast-radius, if `graphify-out/graph.json` exists, start from the graph: `graphify explain "<changed symbol>"` lists its neighbours and `graphify path "<A>" "<B>"` shows how two things connect. The graph is a map of the code before this change (it is refreshed only after a task passes), so treat it as a list of places to check, then grep to confirm real callers. Never run `graphify update` or edit `graphify-out/`.
+
 Read `.claude/rules/reviewing.md` in full and follow it: what to read, what to run, what to check and how to rank findings. Start from the coder's `HANDOFF` block.
 
 ## Report

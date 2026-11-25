@@ -1,0 +1,13 @@
+# Third-party skill docs and static assets: noise for the project graph, and they cost tokens to extract.
+.claude/skills/
+frontend/public/
+pnpm-lock.yaml
+.specify/templates/
+# Draft, kept out of anything shareable until it is finished.
+backend/SECURITY.md
+# Config key/value files become hundreds of low-value nodes
+*.json
+*.yml
+*.yaml
+*.toml
+pnpm-workspace.yaml
