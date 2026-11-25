@@ -32,6 +32,7 @@ Keep each section under 20 lines. When a section is full, merge or delete the we
 - A new workspace package with a `lint` script needs `eslint`, `@eslint/js`, `typescript-eslint` and `typescript` as devDependencies, plus its own tsconfig and jest project; check `pnpm lint` and `pnpm typecheck` actually list it.
 - With no safe database, verify `backend/db/src/schema.ts` with `drizzle-kit export` (prints the SQL offline) and `drizzle-kit check`. drizzle-kit emits no GRANT: table privileges are the one-time step in research R12.
 - Never apply RLS policies with `drizzle-kit push` (0.31.11 drops the `USING`/`WITH CHECK` conditions): use `db:generate` then `db:migrate`, then run `pnpm db:verify-rls` against the real local database, because `drizzle-kit export` output alone looked correct.
+- A new endpoint needs its `check` line in `backend/smoke-test.sh` and `prettier --check` on every new file (tests included) before review; `pnpm format:check` also fails on old files, so check only yours.
 - Hono's `cors()` with a string origin answers every caller; wrap it so other origins get no CORS headers (`backend/src/cors.ts`).
 - `frontend/next.config.ts` imports local files lazily inside `headers()` with the `.ts` extension, because next/jest's legacy loader cannot resolve static local imports there.
 
@@ -47,10 +48,12 @@ Keep each section under 20 lines. When a section is full, merge or delete the we
 - With `ClerkProvider` mounted a page never reaches `networkidle` (Clerk probes on odd ports): abort non-localhost requests in every Playwright context (including `browser.newContext()`) with `test.beforeEach`, and wait on the app (h1 and the form input) instead.
 - Use `jest.isolateModules` with a saved and restored `process.env` for module-level caches, and `.bind(obj)` when saving a method off a fake (lint rule `unbound-method`).
 - Run a package's own jest config (`--config <pkg>/jest.config.mjs --rootDir <pkg>`) when the root config is broken by another package, because `--selectProjects` still loads every project's config.
+- Navigations to a Clerk-protected route reach the Clerk dev instance (the handshake redirect is not covered by `blockExternal`), and Playwright reports each navigation twice: collapse repeated `framenavigated` events before asserting redirect hops. The repo has no jsdom or RTL; render async server components with `renderToPipeableStream` and `onAllReady`.
 - Before asserting computed focus styles on shadcn buttons (`transition-all`), wait for CSS transitions to finish; filter `document.getAnimations()` by `playState`, because finished fill-forwards animations stay in the list.
 
 ## ui-ux
 
 - `npx shadcn@latest add` writes `import { cn } from "cn"` and adds that unrelated package: rewrite the import to `@/lib/utils` and revert `package.json` and `pnpm-lock.yaml` with `git checkout` (not `pnpm remove`, which re-resolves the lockfile).
+- Clerk `appearance.elements` overrides need `!important`, and an override that does nothing is usually capped by Clerk's `max-height`/`min-height`: read the computed style in Chrome against `next start`. Clerk's `cardBox` is `overflow:hidden`, so use an inset hairline and `overflow:visible` for focus rings. `auth()`/`currentUser()` need `frontend/proxy.ts` (`clerkMiddleware`) even for a page-level check.
 - Tailwind v4 `outline-none` sets `outline-style: none` unconditionally, so `focus-visible:outline-*` never shows. Use `focus-visible:ring-[3px] focus-visible:ring-ring` and check the computed style after a real Tab press.
 - Before calling an animation fix behavior-identical, sample computed opacity per frame; a transition on a class swap can silently never run. Use a keyframe animation for both the fade-in and the fade-out.
