@@ -29,6 +29,7 @@ check "health" GET /health 200 '{"ok":true}'
 check "database" GET /health/db 200 '{"ok":true}'
 check "storage" GET /health/storage 200 '{"ok":true}'
 check "unknown route is a 404" GET /does-not-exist 404
+check "webhook rejects an unsigned request" POST /webhooks/clerk 400 '{"error":"invalid webhook"}'
 
 echo
 if [ "$failed" -gt 0 ]; then

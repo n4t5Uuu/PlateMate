@@ -11,9 +11,12 @@ const leavingPaneClasses = "auth-pane auth-pane-exit";
 export function AuthPane({
   mode,
   children,
+  leaving = children,
 }: {
   mode: AuthMode;
   children: ReactNode;
+  // what the sheet fades out when switching away from this pane (default: the pane itself)
+  leaving?: ReactNode;
 }) {
   const { leavingPane, hasSwitched, registerCurrentPane, clearLeavingPane } =
     useAuthStage();
@@ -25,9 +28,9 @@ export function AuthPane({
   useLayoutEffect(() => {
     const pane = paneRef.current;
     pane?.setAttribute("data-auth-mode", mode);
-    registerCurrentPane({ mode, node: children });
+    registerCurrentPane({ mode, node: leaving });
     return () => pane?.removeAttribute("data-auth-mode");
-  }, [registerCurrentPane, mode, children]);
+  }, [registerCurrentPane, mode, leaving]);
 
   return (
     <div className="grid">

@@ -3,7 +3,9 @@
   "private": true,
   "packageManager": "pnpm@11.24.0",
   "scripts": {
-    "dev": "docker compose up -d --wait && turbo run dev",
+    "dev": "docker compose up -d --wait && turbo run dev //#graph:watch //#tunnel",
+    "graph:watch": "node scripts/graph-watch.mjs",
+    "tunnel": "node scripts/tunnel.mjs",
     "down": "docker compose down",
     "build": "turbo run build",
     "lint": "turbo run lint",
@@ -23,6 +25,7 @@
     "services:logs": "docker compose logs -f",
     "db:generate": "pnpm --filter @platemate/db generate",
     "db:migrate": "pnpm --filter @platemate/db migrate",
+    "db:apply": "pnpm --filter @platemate/db apply",
     "db:push": "pnpm --filter @platemate/db push",
     "db:seed": "pnpm --filter @platemate/db seed",
     "db:sync": "pnpm db:push && pnpm db:seed",

@@ -10,6 +10,16 @@
 
 **Source**: `docs/PRD.md`. The dashboard itself is not a named PRD feature. It builds on three P0 requirements: "Project list with search and filters (status, client, deadline)", "Switch between workspaces", and the project fields in "Create a project with name, client name, client contact, site location, project type, deadline and description". Anything the PRD leaves undecided is listed under Open Questions and is not invented here.
 
+## Clarifications
+
+### Session 2026-11-25
+
+- Q: Are "Crits" and "Meetings" two separate sidebar screens, or one screen? → A: One screen. Meetings is dropped from the sidebar; the meeting link, date and attendees live inside each crit session (PRD).
+- Q: Are "Archive" and "Trash" two separate sidebar screens, or one screen? → A: One screen. Trash is dropped from the sidebar; Archive holds archived projects, which can be restored until the PRD's waiting period ends or an Owner or Admin deletes them.
+- Q: Until their screens exist, should unbuilt sidebar entries be greyed out as "coming soon" or hidden? → A: Greyed out and marked "coming soon", but only during development, for the team; a release hides entries that have no screen.
+- Q: How long should a project stay in a person's "Recently opened" history? → A: No expiry. Only the latest visit per project is kept, and the 5 newest are shown.
+- Q: In what order should the full project list be shown by default? → A: Last activity, newest first; projects with no activity last, ordered by name.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - See my projects at a glance (Priority: P1)
@@ -114,13 +124,13 @@ A toggle on the dashboard switches the app between light and dark mode. The choi
 ### Functional Requirements
 
 - **FR-001**: The dashboard MUST be the first screen a signed-in person lands on, and MUST be unreachable while signed out.
-- **FR-002**: The dashboard MUST list the projects the person can see in their current workspace, and MUST NOT show projects from other workspaces, projects they were not added to (unless they are a workspace Owner or Admin), or archived projects.
+- **FR-002**: The dashboard MUST list the projects the person can see in their current workspace, and MUST NOT show projects from other workspaces, projects they were not added to (unless they are a workspace Owner or Admin), or archived projects. The list MUST be ordered by last activity, newest first; projects with no activity come last, ordered by name.
 - **FR-003**: Each listed project MUST appear as a card showing exactly these details: project name, client name, deadline, member count and last activity. A detail the project does not have (for example no client name or no deadline) is left out of that card without leaving a gap. Last activity is shown as a relative time such as "2 days ago".
 - **FR-004**: The whole project card MUST be clickable and take the person to that project, and MUST work with the keyboard. The same card form is used in "Recently opened".
 - **FR-005**: The dashboard MUST show a "Recently opened" area of the projects the person opened most recently, newest first, each project once, scoped to that person only.
 - **FR-006**: Opening a project MUST update that person's recent history; a project that is archived, deleted or no longer accessible MUST NOT be shown there.
 - **FR-007**: The dashboard MUST show a clear empty state when the person has no projects, and a sensible state when there is no recent history yet.
-- **FR-008**: The dashboard MUST have a sidebar listing these destinations: Dashboard, Projects, Activity, Crits, Meetings, Archive, Trash and Settings. It MUST mark the current one. A destination whose screen is not built yet MUST be shown as unavailable and MUST NOT lead to a broken page.
+- **FR-008**: The dashboard MUST have a sidebar listing these destinations: Dashboard, Projects, Activity, Crits, Archive and Settings. It MUST mark the current one. While the app is under development, a destination whose screen is not built yet MUST be shown greyed out and marked "coming soon", MUST NOT be clickable, MUST be announced to screen readers as unavailable, and MUST NOT lead to a broken page. This is a development aid for the team: a release MUST NOT show destinations that have no screen.
 - **FR-009**: The dashboard MUST have a search that narrows the project list by project name as the person types, case-insensitive, with a clear way to reset it and a "no results" state.
 - **FR-010**: The dashboard MUST have a light and dark mode toggle that applies to the whole dashboard, is remembered between visits on the same device, and defaults to the device's setting on first visit.
 - **FR-011**: Which projects a person sees MUST be decided on the server for every request. A hidden or filtered item in the browser is never the only check.
@@ -154,9 +164,9 @@ A toggle on the dashboard switches the app between light and dark mode. The choi
 - **Depends on features that do not exist yet**: workspaces and projects (PRD P0) are separate features, and "last activity" needs the project activity log (also P0). This spec assumes they provide the data (a current workspace, projects with name, client name and deadline, members, project roles, and the time of the latest activity). Until they exist, the dashboard can only show its empty state.
 - **Out of scope here**: creating, editing, archiving or deleting projects; creating or switching workspaces (the dashboard shows the current workspace only); plates, versions, compare, annotations, crits, notes and notifications; filters by status, client or deadline (the PRD lists them with the project list, but this feature asks only for search); an in-app notification inbox.
 - **Signed-in only**: sign-in, sign-out and route protection come from `specs/001-user-auth`. This feature does not change them.
-- **"Recently opened" is per person**: ordered by the person's last open of each project, newest first, one entry per project, showing the 5 most recent. The 5 is an adjustable default, not a PRD decision.
+- **"Recently opened" is per person**: ordered by the person's last open of each project, newest first, one entry per project, showing the 5 most recent. The 5 is an adjustable default, not a PRD decision. A visit never expires: only the person's latest visit per project is kept, and older ones fall out of view by being pushed past the 5 newest or by the project being archived or becoming inaccessible.
 - **Search matches project names only**, in the current workspace (decided with the owner). Client names, plates, notes and people are not searched.
-- **Sidebar destinations are listed ahead of their screens**: only the dashboard exists in this feature. The other entries are shown as unavailable until their features are built (an assumption; the owner can instead hide them until then).
+- **Sidebar destinations are listed ahead of their screens**: only the dashboard exists in this feature. While the app is under development the other entries are shown greyed out as "coming soon", so the team sees the sidebar as designed (decided with the owner). Before a release, entries whose screens are not built are hidden.
 - **Theme choice is stored on the device**: it is not tied to the account, and it follows the device setting until chosen. Storing it per account is a possible later change.
 - **Dark mode needs a design**: the app's dark tokens are still the old defaults and do not match the "Title Block" look (see `project-context`). Designing dark mode is part of this feature's UI work, through the `impeccable` skill, and **the user picks the layout**.
 - **Phone**: the web app is view-only on phones (PRD), so the dashboard only needs a usable collapsed sidebar there.
@@ -164,14 +174,12 @@ A toggle on the dashboard switches the app between light and dark mode. The choi
 
 ## Open Questions
 
-PRD gaps recorded here and not invented, per the constitution. All three clarification questions are answered; two follow-ups on the sidebar remain below.
+PRD gaps recorded here and not invented, per the constitution. All three clarification questions and both sidebar follow-ups are answered.
 
 - Decided with the owner: cards show project name, client name, deadline, member count and last activity. Project type, site location, plate count, the person's role and the description were offered and not chosen.
 - Decided with the owner: search covers project names only.
-- Decided with the owner: the sidebar lists Dashboard, Projects, Activity, Crits, Meetings, Archive, Trash and Settings. Two of these overlap the PRD and need the owner's call before the plan:
-  - **Crits and Meetings**: the PRD's crit session already holds the meeting link, date and attendees. Are Meetings a separate screen from Crits, or one screen?
-  - **Archive and Trash**: the PRD has only "Archive" (a project hidden from lists and permanently deleted after a waiting period, or by an Owner or Admin) and no separate trash. Is Trash a separate screen, or the same as Archive?
+- Decided with the owner: the sidebar lists Dashboard, Projects, Activity, Crits, Archive and Settings. Meetings and Trash were dropped because they overlap the PRD: a crit session already holds the meeting link, date and attendees, and the PRD has only "Archive" (a project hidden from lists and permanently deleted after a waiting period, or by an Owner or Admin) with no separate trash (see Clarifications).
 - The PRD has no "dashboard", no "recently opened" and no light or dark mode requirement. Treated here as a new, small P1/P2 addition; the owner should confirm it belongs in the MVP.
-- How many recent projects to show, and for how long they stay in the history, is not in the PRD (5 is the default used above).
-- Whether the project list can be sorted (by name, deadline, last updated) is not in the PRD.
+- How many recent projects to show is not in the PRD (5 is the default used above). How long they stay in the history is decided: no expiry (see Clarifications).
+- Whether the project list can be sorted by the person is not in the PRD and is out of scope. The default order is decided: last activity, newest first (see Clarifications).
 - What "status" means for a project: the PRD lists "status" as a filter but defines only archived. Not needed for this spec; it matters when filters are added.

@@ -14,7 +14,8 @@ Read `.claude/learnings.md` and apply the entries under Shared and under `ui-ux`
 pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-minimize-reader-load` and `principle-prove-it-works`. The frontend and UI rules in `.claude/rules/` win where they differ.
 
 1. Read `.claude/rules/ui-ux.md` and `.claude/rules/frontend.md` in full and follow them. They cover the Impeccable and Emil skill routing, who picks the layout, `DESIGN.md`, and the code rules.
-2. Read `PRODUCT.md` if it exists. Read the files you will touch and the components they use.
+2. Finding code: if `graphify-out/graph.json` exists, ask the graph before you grep (`graphify explain "<symbol>"`, or `graphify query "<question>" --budget 1000`). Read only the files it points to, and confirm any INFERRED edge in the code. Never run `graphify update`, never build the graph and never edit `graphify-out/`; the main session refreshes it.
+3. Read `PRODUCT.md` if it exists. Read the files you will touch and the components they use.
 
 ## Verify, then report
 

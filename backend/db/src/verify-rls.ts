@@ -9,7 +9,7 @@ type Check = { name: string; ok: boolean; detail?: string };
 type Tx = postgres.TransactionSql;
 
 const PRIVILEGES = ["select", "insert", "update"] as const;
-const GRANT_PRIVILEGES = `grant ${PRIVILEGES.join(", ")} on users to platemate_app;`;
+export const GRANT_PRIVILEGES = `grant ${PRIVILEGES.join(", ")} on users to platemate_app;`;
 
 /** Names of the tables whose row-level security is switched off. */
 export function tablesWithRlsOff(
@@ -75,7 +75,7 @@ async function runChecks(tx: Tx, checks: Check[]) {
     add(
       "platemate_app and public.users exist",
       false,
-      "run `pnpm db:push` first",
+      "run `pnpm db:migrate` first",
     );
     return;
   }

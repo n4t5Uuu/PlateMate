@@ -23,6 +23,7 @@ Read `.claude/learnings.md` and apply the entries under Shared and under `coder`
 
 pstack skills are at `~/.claude/plugins/cache/cursor-plugins/pstack/*/skills/<name>/SKILL.md` (use the newest version folder). Read the ones named here in full before you start; the `Skill` tool does not load them. If the folder is missing, say so and go on without them. Apply `principle-laziness-protocol`, `principle-fix-root-causes`, `principle-type-system-discipline` and `principle-model-the-domain`, plus `typescript-best-practices` on any `.ts` or `.tsx` file. Name the data shape before you write logic. For a bug, write the failing test first (`tdd`), then the fix.
 
+0. Finding code: if `graphify-out/graph.json` exists, ask the graph before you grep. `graphify explain "<symbol>"` shows a node and its neighbours; `graphify query "<question>" --budget 1000` returns a small subgraph with file and line. Read only the files it points to, and confirm any INFERRED edge in the code before relying on it. Never run `graphify update` or build the graph yourself, and never edit `graphify-out/`; the main session refreshes it after the task.
 1. Read `CLAUDE.md` and follow it exactly. Read `.specify/memory/constitution.md`; the reviewer will grade your change against it.
 2. If the request has two plausible readings that change the result, stop and ask. Do not pick silently.
 3. If the task is visual UI work (layout, color, type, motion, copy, responsive), stop. That belongs to the `ui-ux` agent. Say so and hand back.

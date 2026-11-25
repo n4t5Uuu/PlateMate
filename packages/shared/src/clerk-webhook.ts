@@ -29,14 +29,16 @@ const clerkUserEventSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
+/** The fields Clerk owns, as `parseClerkUserEvent` returns them. */
+export type ClerkUserProfile = {
+  clerkUserId: string;
+  email: string;
+  name: string | null;
+  avatarUrl: string | null;
+};
+
 export type ClerkUserEvent =
-  | {
-      type: "user.created" | "user.updated";
-      clerkUserId: string;
-      email: string;
-      name: string | null;
-      avatarUrl: string | null;
-    }
+  | ({ type: "user.created" | "user.updated" } & ClerkUserProfile)
   | { type: "user.deleted"; clerkUserId: string };
 
 const parsedEventSchema = clerkUserEventSchema.transform(

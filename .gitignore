@@ -87,3 +87,6 @@ Thumbs.db
 **/.impeccable/live/*.png
 # impeccable-ignore-end
 .neon
+
+# graphify output (rebuild with /graphify . --update)
+graphify-out/

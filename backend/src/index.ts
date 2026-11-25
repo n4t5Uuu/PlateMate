@@ -3,6 +3,7 @@ import { db, sql } from "@platemate/db";
 import { Hono } from "hono";
 import { appCors } from "./cors";
 import { files } from "./storage";
+import { clerkWebhook } from "./webhooks/clerk";
 
 export const app = new Hono()
   .use(appCors(process.env.APP_URL))
@@ -14,6 +15,7 @@ export const app = new Hono()
   .get("/health/storage", async (c) => {
     await files.exists("health-check");
     return c.json({ ok: true });
-  });
+  })
+  .route("/", clerkWebhook);
 
 serve({ fetch: app.fetch, port: 8787 });

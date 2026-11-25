@@ -87,13 +87,13 @@ Boris Cherny (creator of Claude Code) keeps his team's file around 100 lines. Un
 ### Commands
 
 - Install: `pnpm install` from the repo root
-- Dev, everything: `pnpm dev` (starts Docker, backend and frontend; Docker Desktop must be running)
+- Dev, everything: `pnpm dev` (starts Docker, backend and frontend; Docker Desktop must be running). It also runs `graphify watch .` to keep the code graph fresh, and skips it when graphify is not installed or no graph exists (`graph:watch`, `scripts/graph-watch.mjs`). It also opens an ngrok tunnel to the backend for the Clerk webhook when `NGROK_DOMAIN` is set in `.env.local` and ngrok is installed, and skips it otherwise (`tunnel`, `scripts/tunnel.mjs`)
 - Build: `pnpm build`
 - Lint: `pnpm lint` (frontend and backend); types: `pnpm typecheck` (strict, frontend and backend incl. `backend/db`)
 - Quality gate, everything CI checks in one go (lint, format check, types, react-doctor, tests, `pnpm audit --audit-level high`): `pnpm quality`; CI also scans for secrets (`.github/workflows/code-quality.yml`)
 - Test: `pnpm test` (Jest, one config with a frontend and a backend project); `pnpm test:watch`; end to end: `pnpm test:e2e` (Playwright); API smoke test: `pnpm smoke` (backend must be running; checks every endpoint listed in `backend/smoke-test.sh`, set `BASE_URL` to test another server)
 - Docker services: `pnpm down` or `pnpm services:down` (stop), `pnpm services:restart`, `pnpm services:logs`; `pnpm dev` starts them
-- Database: `pnpm db:push` (push schema, for prototyping), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:seed` (wipes all tables, then loads `backend/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
+- Database: `pnpm db:push` (push schema, for prototyping; not for schemas with RLS policies, see `backend.md`), `pnpm db:generate` then `pnpm db:migrate` (migration files), `pnpm db:apply <local|neon> [--yes]` (migrate, grants and checks for the schema only, never data; `neon` needs `--yes`), `pnpm db:seed` (wipes all tables, then loads `backend/db/src/seed.ts`; local database only), `pnpm db:sync` (push, then seed; same RLS caveat), `pnpm db:studio`, `pnpm db:reset` (deletes all local data)
 - React checks: `pnpm react-doctor` (same as `pnpm --filter @platemate/frontend react-doctor`); `pnpm react-doctor:backend` scans `backend/` on demand (advisory, not in CI: its rules are React-tuned)
 - Deploy: not set up yet
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { AuthForm, type AuthMode } from "./auth-form";
 import { AuthPane } from "./auth-pane";
+import { SignUpForm, SignUpLeaving } from "./sign-up-form";
 
 const tabs = [
   { mode: "sign-in", href: "/sign-in", label: "Sign in" },
@@ -20,6 +21,7 @@ const labelClasses =
   "mt-6 border-t border-foreground pt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground";
 
 export function AuthPage({ mode }: { mode: AuthMode }) {
+  const label = <p className={labelClasses}>{sheetLabels[mode]}</p>;
   return (
     <>
       <nav aria-label="Account" className={tabsClasses}>
@@ -34,9 +36,19 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
           </Link>
         ))}
       </nav>
-      <AuthPane mode={mode}>
-        <AuthForm mode={mode} />
-        <p className={labelClasses}>{sheetLabels[mode]}</p>
+      <AuthPane
+        mode={mode}
+        leaving={
+          mode === "sign-up" ? (
+            <>
+              <SignUpLeaving />
+              {label}
+            </>
+          ) : undefined
+        }
+      >
+        {mode === "sign-up" ? <SignUpForm /> : <AuthForm mode={mode} />}
+        {label}
       </AuthPane>
     </>
   );
