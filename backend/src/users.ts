@@ -1,14 +1,7 @@
 import { and, eq, isNull, users, type Transaction } from "@platemate/db";
+import type { ClerkUserProfile } from "@platemate/shared";
 
 export type User = typeof users.$inferSelect;
-
-/** The fields Clerk owns, as `parseClerkUserEvent` returns them. */
-export type UserProfile = {
-  clerkUserId: string;
-  email: string;
-  name: string | null;
-  avatarUrl: string | null;
-};
 
 /** Emails are stored and compared lowercased and trimmed. */
 export function normalizeEmail(email: string): string {
@@ -22,7 +15,7 @@ export function normalizeEmail(email: string): string {
 /** Creates the user or refreshes name, email, avatar and `updated_at`. Idempotent, keyed by `clerk_user_id`. */
 export async function upsertUser(
   tx: Transaction,
-  profile: UserProfile,
+  profile: ClerkUserProfile,
 ): Promise<User> {
   const fields = {
     email: normalizeEmail(profile.email),

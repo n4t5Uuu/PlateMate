@@ -75,7 +75,7 @@ async function runChecks(tx: Tx, checks: Check[]) {
     add(
       "platemate_app and public.users exist",
       false,
-      "run `pnpm db:push` first",
+      "run `pnpm db:migrate` first",
     );
     return;
   }
