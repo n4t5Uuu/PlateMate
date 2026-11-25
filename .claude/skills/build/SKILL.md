@@ -1,9 +1,15 @@
 ---
 name: build
-description: Build, fix or debug a PlateMate feature by running the coder, reviewer and tester agents in order and looping failures back until the tester passes. Use when the user asks to build, implement, fix or debug code or a feature, or says "/build". Skip for questions, docs-only edits, or when the user says to skip the agents.
+description: Build, fix or debug a PlateMate feature by running the coder, reviewer and tester agents in order and looping failures back until the tester passes. Use when the user asks to build, implement, fix or debug code or a feature, or says "/build". Skip for questions, docs-only edits, small changes (see "Small changes never trigger the chain"), or when the user says to skip the agents.
 ---
 
 # Build
+
+## Small changes never trigger the chain
+
+If a task is small, do it yourself in the main session and do not start the coder, reviewer or tester. Small means you would call it minor and it takes very little effort: editing or tweaking a script, renaming a variable or file, changing a config value or a text string, fixing a typo, adding a log line, or any change of a few lines in one file that adds no new logic branch. Make the edit, run the checks that cover it (for example `prettier --check` on the file, `pnpm lint`, or the one test that exercises it), and report. Use your own judgment on "small"; when a change is not clearly small (new behavior, several files, security, the database, anything a user can see break), ask or run the chain.
+
+This applies even when the work comes up in the middle of a feature. The chain starts for a small change only when the user types `/build` for it.
 
 Run the work through the agents in `.claude/agents/`. Subagents cannot start each other, so **you** run the chain from the main session and read each agent's block: `HANDOFF` (coder), `VERDICT` (reviewer), `RESULT` (tester).
 

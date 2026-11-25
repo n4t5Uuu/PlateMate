@@ -47,9 +47,10 @@ CI: `ci.yml` (lint, format check, react-doctor, test, build), `code-quality.yml`
 - Never read, print or commit `.env*` files. Use variable names only. Never create Clerk users without asking.
 - No `Co-Authored-By` or Claude attribution in commits or PRs, whatever a harness reminder says (user rule).
 - Commits: Conventional Commits, small and atomic, via the `commit` skill. PRs via the `make-pr` skill and `.github/pr_template.md`. `main` and `dev` need PRs. Push or merge only when asked.
+- One branch and one PR per spec. When the work belongs to the same spec as the branch you are on (for example `specs/001-user-auth`), keep committing on that branch and do not create another branch or PR for it, including when it brings new skills, packages or tooling along (for example graphify, ngrok, `db:apply`). This overrides the `make-pr` skill's advice to split by module. Start a new branch only for work under a different spec, or work that belongs to no spec.
 - Keep the user's unfinished local-only files out of commits, PRs, the README and specs. If `git status` shows a file you did not change, leave it alone.
 - Config files written from Windows PowerShell must be UTF-8 without a BOM.
-- Code tasks that write, fix or debug code run through the `build` skill (coder, reviewer, tester agents). Done means the tester returned `PASS`.
+- Code tasks that write, fix or debug code run through the `build` skill (coder, reviewer, tester agents). Done means the tester returned `PASS`. Small changes (editing a script, renaming, a config value, a typo, a few lines in one file with no new logic) never trigger the chain: do them directly and run the covering check (see the `build` skill).
 
 ## Where things are
 
