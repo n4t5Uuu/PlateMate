@@ -31,7 +31,7 @@
     "db:reset": "docker compose down -v && docker compose up -d --wait && pnpm db:push"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.0",
+    "@playwright/test": "^1.65.1",
     "@swc/core": "^1.16.22",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30.0.0",
@@ -41,7 +41,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@neon/config": "^1.14.4",
-    "@neon/env": "^2.1.7"
+    "@neon/config": "^1.14.5",
+    "@neon/env": "^2.1.8"
   }
 }
