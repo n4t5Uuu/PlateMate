@@ -51,6 +51,7 @@ Keep each section under 20 lines. When a section is full, merge or delete the we
 - Use `jest.isolateModules` with a saved and restored `process.env` for module-level caches, and `.bind(obj)` when saving a method off a fake (lint rule `unbound-method`).
 - Run a package's own jest config (`--config <pkg>/jest.config.mjs --rootDir <pkg>`) when the root config is broken by another package, because `--selectProjects` still loads every project's config.
 - Navigations to a Clerk-protected route reach the Clerk dev instance (the handshake redirect is not covered by `blockExternal`), and Playwright reports each navigation twice: collapse repeated `framenavigated` events before asserting redirect hops. The repo has no jsdom or RTL; render async server components with `renderToPipeableStream` and `onAllReady`.
+- The root Jest config has no `scripts` project, so a test for a root `scripts/*.mjs` file goes in `backend/tests/` and spawns the script by absolute path with an empty temp cwd, `PATH` and `LOCALAPPDATA`, so it can never start a real tunnel.
 - Before asserting computed focus styles on shadcn buttons (`transition-all`), wait for CSS transitions to finish; filter `document.getAnimations()` by `playState`, because finished fill-forwards animations stay in the list.
 
 ## ui-ux
