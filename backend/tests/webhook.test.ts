@@ -46,6 +46,7 @@ const writesOutsideSync: string[] = [];
 
 type Webhook = (typeof import("../src/webhooks/clerk"))["clerkWebhook"];
 let clerkWebhook: Webhook;
+let errorSpy: jest.SpyInstance<void, unknown[]>;
 
 beforeAll(async () => {
   // Dummy values: the handler reads them through getEnv, which caches on first use.
@@ -88,6 +89,12 @@ beforeEach(() => {
   });
   // By default Clerk still knows the user.
   mockGetUser.mockResolvedValue({ id: "user_ada" });
+  // Created after resetAllMocks so it is not reset. Keeps the expected 500 paths out of the test output.
+  errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  errorSpy.mockRestore();
 });
 
 function userData(overrides: Record<string, unknown> = {}) {
@@ -400,6 +407,206 @@ describe("POST /webhooks/clerk with a handled event type and a malformed payload
     expect(await res.json()).toEqual({ error: "invalid webhook" });
     nothingWritten();
     expect(mockGetUser).not.toHaveBeenCalled();
+  });
+});
+
+describe("POST /webhooks/clerk failure log line", () => {
+  // Planted in every thrown error: none of it may reach the log.
+  const secrets = [
+    "hunter2-password",
+    "victim@example.com",
+    "INSERT INTO users",
+    "postgres://platemate_app:s3cret@db/platemate",
+  ];
+  const poisoned = secrets.join(" ");
+  const withCause = (cause: unknown) =>
+    Object.assign(new Error(poisoned), { cause });
+
+  /** Every console.error argument, joined, so nothing can hide in a second argument. */
+  const logged = () =>
+    errorSpy.mock.calls.map((args) => args.map(String).join(" "));
+  const expectNoSecrets = () => {
+    const text = logged().join("\n");
+    for (const secret of secrets) expect(text).not.toContain(secret);
+    expect(text).not.toContain("@");
+  };
+
+  it("logs the SQLSTATE read from cause for a database failure on user.created", async () => {
+    mockUpsertUser.mockRejectedValue(withCause({ code: "28P01" }));
+
+    const res = await deliver(created());
+
+    expect(res.status).toBe(500);
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, database write, code 28P01)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it.each([
+    ["user.updated", updated()],
+    ["user.deleted", deleted()],
+  ])("reports the database write step for %s", async (type, event) => {
+    mockUpsertUser.mockRejectedValue(withCause({ code: "23505" }));
+    mockSoftDeleteUser.mockRejectedValue(withCause({ code: "23505" }));
+
+    const res = await deliver(event);
+
+    expect(res.status).toBe(500);
+    expect(logged()).toEqual([
+      `clerk webhook: write failed (${type}, database write, code 23505)`,
+    ]);
+    expect(mockGetUser).not.toHaveBeenCalled();
+    expectNoSecrets();
+  });
+
+  it.each([500, 429])(
+    "reports the Clerk user check step with status %s when getUser fails",
+    async (status) => {
+      mockGetUser.mockRejectedValue(
+        Object.assign(new Error(poisoned), { status }),
+      );
+
+      const res = await deliver(created());
+
+      expect(res.status).toBe(500);
+      expect(logged()).toEqual([
+        `clerk webhook: write failed (user.created, Clerk user check, code ${status})`,
+      ]);
+      expectNoSecrets();
+    },
+  );
+
+  it("goes back to the database write step once getUser has passed", async () => {
+    mockUpsertUser.mockRejectedValue(new Error(poisoned));
+
+    await deliver(created());
+
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, database write, code unknown)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it("logs code unknown for a plain Error", async () => {
+    mockWithSyncContext.mockRejectedValue(new Error(poisoned));
+
+    await deliver(updated());
+
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.updated, database write, code unknown)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it("logs code unknown for a thrown value that is not an Error", async () => {
+    mockUpsertUser.mockRejectedValue(poisoned);
+
+    const res = await deliver(created());
+
+    expect(res.status).toBe(500);
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, database write, code unknown)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it("falls back to error.code when there is no cause", async () => {
+    mockUpsertUser.mockRejectedValue(
+      Object.assign(new Error(poisoned), { code: "ECONNREFUSED" }),
+    );
+
+    await deliver(created());
+
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, database write, code ECONNREFUSED)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it("prefers the code on cause over the code on the error", async () => {
+    mockUpsertUser.mockRejectedValue(
+      Object.assign(new Error(poisoned), {
+        code: "WRAPPER",
+        cause: { code: "28P01" },
+      }),
+    );
+
+    await deliver(created());
+
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, database write, code 28P01)",
+    ]);
+  });
+
+  it.each([
+    ["a newline", "28P01\nclerk webhook: forged line"],
+    ["more than 40 characters", "A".repeat(41)],
+    ["an email address", "victim@example.com"],
+    ["spaces", "28P01 extra"],
+    ["an empty string", ""],
+  ])("logs code unknown when the code has %s", async (_name, code) => {
+    mockUpsertUser.mockRejectedValue(withCause({ code }));
+
+    await deliver(created());
+
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, database write, code unknown)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it("accepts a code of exactly 40 characters", async () => {
+    const code = "A".repeat(40);
+    mockUpsertUser.mockRejectedValue(withCause({ code }));
+
+    await deliver(created());
+
+    expect(logged()).toEqual([
+      `clerk webhook: write failed (user.created, database write, code ${code})`,
+    ]);
+  });
+
+  it("logs code unknown when the Clerk status is hostile", async () => {
+    mockGetUser.mockRejectedValue(
+      Object.assign(new Error(poisoned), { status: "500\nforged" }),
+    );
+
+    await deliver(created());
+
+    expect(logged()).toEqual([
+      "clerk webhook: write failed (user.created, Clerk user check, code unknown)",
+    ]);
+    expectNoSecrets();
+  });
+
+  it("does not log or fail when Clerk says the user is gone (404)", async () => {
+    mockGetUser.mockRejectedValue(
+      Object.assign(new Error(poisoned), { status: 404 }),
+    );
+
+    const res = await deliver(created());
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(ok);
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not log on a successful delivery", async () => {
+    const res = await deliver(created());
+
+    expect(res.status).toBe(200);
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not log for a bad signature or a malformed payload (400)", async () => {
+    mockVerifyWebhook.mockRejectedValue(new Error(poisoned));
+    expect((await post(JSON.stringify(created()))).status).toBe(400);
+    expect(
+      (await deliver(created(userData({ primary_email_address_id: null }))))
+        .status,
+    ).toBe(400);
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 });
 
