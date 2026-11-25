@@ -17,6 +17,7 @@ For anyone writing code under `backend/`, `backend/db`, `packages/` or `services
 - `pnpm db:push` pushes the current schema to the running database (`drizzle-kit push`, for local dev; no migration files).
 - `pnpm db:seed` wipes all tables, then applies dev fixtures (`backend/db/src/seed.ts`). It is safe to re-run, and for the local database only.
 - `pnpm db:sync` runs `db:push` then `db:seed`.
+- `pnpm db:apply <local|neon> [--yes]` runs the migration, the one-time grants and read-only checks on the Docker database or Neon (`neon` needs `--yes` and refuses a local URL). Schema only, never data; use it instead of `db:push` for RLS schemas.
 
 Typical local setup: `pnpm dev`, then `pnpm db:sync`.
 

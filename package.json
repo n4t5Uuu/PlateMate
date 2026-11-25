@@ -25,6 +25,7 @@
     "db:generate": "pnpm --filter @platemate/db generate",
     "db:migrate": "pnpm --filter @platemate/db migrate",
     "db:push": "pnpm --filter @platemate/db push",
+    "db:apply": "pnpm --filter @platemate/db apply",
     "db:seed": "pnpm --filter @platemate/db seed",
     "db:sync": "pnpm db:push && pnpm db:seed",
     "db:studio": "pnpm --filter @platemate/db studio",

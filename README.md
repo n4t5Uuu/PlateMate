@@ -100,17 +100,18 @@ Local development uses the Docker Postgres by default. Copy `.env.example` to `.
 
 ### Commands
 
-| Command                                        | What it does                                                                             |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `pnpm build`, `pnpm lint`                      | Build and lint every package                                                             |
-| `pnpm test`, `pnpm test:e2e`                   | Unit tests (Jest) and end-to-end tests (Playwright)                                      |
-| `pnpm smoke`                                   | Check every API endpoint listed in `backend/smoke-test.sh` (the backend must be running) |
-| `pnpm db:push`, `pnpm db:seed`, `pnpm db:sync` | Push the schema, seed local data, or both                                                |
-| `pnpm db:studio`                               | Browse the database                                                                      |
+| Command                                           | What it does                                                                                        |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm build`, `pnpm lint`                         | Build and lint every package                                                                        |
+| `pnpm test`, `pnpm test:e2e`                      | Unit tests (Jest) and end-to-end tests (Playwright)                                                 |
+| `pnpm smoke`                                      | Check every API endpoint listed in `backend/smoke-test.sh` (the backend must be running)            |
+| `pnpm db:push`, `pnpm db:seed`, `pnpm db:sync`    | Push the schema, seed local data, or both                                                           |
+| `pnpm db:apply local`, `pnpm db:apply neon --yes` | Bring the schema of the Docker or the Neon database up to date (migration, grants, checks; no data) |
+| `pnpm db:studio`                                  | Browse the database                                                                                 |
 
 ### Neon
 
-The project is linked to Neon (`neon.ts`). `neon deploy` provisions what `neon.ts` declares and writes the credentials to `.env.local`. The backend, the db scripts and the frontend all read that file, so `pnpm dev`, `db:push` and `db:migrate` use whatever `DATABASE_URL` and `DATABASE_URL_UNPOOLED` it holds. Point it at a Neon dev branch (`neon checkout dev --create`) or the local Docker database, never production. `db:seed` and `db:verify-rls` refuse a database that is not local.
+The project is linked to Neon (`neon.ts`). `neon deploy` provisions what `neon.ts` declares and writes the credentials to `.env.local`. The backend, the db scripts and the frontend all read that file, so `pnpm dev`, `db:push`, `db:migrate` and `db:apply neon` use whatever `DATABASE_URL` and `DATABASE_URL_UNPOOLED` it holds. Point it at a Neon dev branch (`neon checkout dev --create`) or the local Docker database, never production. `db:seed` and `db:verify-rls` refuse a database that is not local.
 
 The database code lives in `backend/db` (schema in `src/schema.ts`). The client picks its driver from `DATABASE_URL`: Neon URLs use the Neon WebSocket driver, so transactions work, and anything else, like the local Docker Postgres, uses postgres.js.
 
